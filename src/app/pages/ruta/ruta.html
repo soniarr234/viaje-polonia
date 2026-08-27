@@ -1,0 +1,547 @@
+<div class="ruta-page">
+  <div class="tabs">
+    <button
+      [class.active]="vista === 'transportes'"
+      (click)="cambiarVista('transportes')"
+    >
+      Transportes
+    </button>
+
+    <button
+      [class.active]="vista === 'hoteles'"
+      (click)="cambiarVista('hoteles')"
+    >
+      Hoteles
+    </button>
+
+    <button
+      [class.active]="vista === 'ciudades'"
+      (click)="cambiarVista('ciudades')"
+    >
+      Ciudades
+    </button>
+  </div>
+
+  <!-- TRANSPORTES -->
+
+  <div *ngIf="vista === 'transportes'">
+    <button
+      class="btn-add"
+      (click)="mostrarFormularioTransporte = !mostrarFormularioTransporte"
+    >
+      {{ mostrarFormularioTransporte ? '✖ Cancelar' : '+ Añadir transporte' }}
+    </button>
+
+    <div class="card" *ngIf="mostrarFormularioTransporte">
+      <h2>{{ editando ? 'Editar transporte' : 'Nuevo transporte' }}</h2>
+
+      <div class="form-grid">
+        <div class="tipo-transporte">
+          <button
+            type="button"
+            [class.active]="nuevoTransporte.tipo === 'vuelo'"
+            (click)="nuevoTransporte.tipo = 'vuelo'"
+          >
+            Vuelo
+          </button>
+
+          <button
+            type="button"
+            [class.active]="nuevoTransporte.tipo === 'tren'"
+            (click)="nuevoTransporte.tipo = 'tren'"
+          >
+            Tren
+          </button>
+
+          <button
+            type="button"
+            [class.active]="nuevoTransporte.tipo === 'bus'"
+            (click)="nuevoTransporte.tipo = 'bus'"
+          >
+            Bus
+          </button>
+        </div>
+
+        <div class="form-row form-row-2">
+          <input
+            type="text"
+            placeholder="Origen"
+            [(ngModel)]="nuevoTransporte.origen"
+          />
+
+          <input
+            type="text"
+            placeholder="Destino"
+            [(ngModel)]="nuevoTransporte.destino"
+          />
+        </div>
+
+        <div class="date-input">
+          <input type="date" [(ngModel)]="nuevoTransporte.fecha" />
+
+          <span class="calendar-icon"> 📅 </span>
+        </div>
+
+        <div class="form-row form-row-2">
+          <div class="input-group">
+            <label>Hora de salida</label>
+
+            <div class="time-input">
+              <input type="time" [(ngModel)]="nuevoTransporte.horaSalida" />
+
+              <span class="time-icon"> 🕒 </span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Hora de llegada</label>
+
+            <div class="time-input">
+              <input type="time" [(ngModel)]="nuevoTransporte.horaLlegada" />
+
+              <span class="time-icon"> 🕒 </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row form-row-2">
+          <input
+            type="text"
+            placeholder="Empresa"
+            [(ngModel)]="nuevoTransporte.empresa"
+          />
+
+          <input
+            type="text"
+            placeholder="Asiento"
+            [(ngModel)]="nuevoTransporte.asiento"
+          />
+        </div>
+
+        <textarea
+          placeholder="Notas"
+          [(ngModel)]="nuevoTransporte.notas"
+        ></textarea>
+      </div>
+
+      <button class="btn-add" (click)="agregarTransporte()">
+        {{ editando ? 'Guardar cambios' : 'Guardar transporte' }}
+      </button>
+    </div>
+
+    <div *ngIf="transportes.length === 0" class="empty-state">
+      No hay transportes añadidos.
+    </div>
+
+    <!-- VUELOS -->
+
+    <div *ngIf="vuelos.length > 0">
+      <h3 class="grupo-titulo">Vuelos</h3>
+
+      <div class="transporte-card" *ngFor="let transporte of vuelos">
+        <div class="transporte-header">
+          <span class="badge"> Vuelo </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+
+        <div class="premium-route">
+          <div class="premium-city">
+            <span class="airport"> {{ transporte.origen }} </span>
+
+            <span class="hour"> {{ transporte.horaSalida }} </span>
+          </div>
+
+          <div class="premium-line">
+            <div class="line"></div>
+
+            <div class="plane">✈️</div>
+          </div>
+
+          <div class="premium-city premium-city-right">
+            <span class="airport"> {{ transporte.destino }} </span>
+
+            <span class="hour"> {{ transporte.horaLlegada }} </span>
+          </div>
+        </div>
+
+        <div class="premium-footer">
+          <div class="premium-info">
+            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
+
+            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
+          </div>
+
+          <div class="acciones">
+            <button
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="#ffffff"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRENES -->
+
+    <div *ngIf="trenes.length > 0">
+      <h3 class="grupo-titulo">Trenes</h3>
+
+      <div class="transporte-card" *ngFor="let transporte of trenes">
+        <div class="transporte-header">
+          <span class="badge"> Tren </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+
+        <div class="premium-route">
+          <div class="premium-city">
+            <span class="airport"> {{ transporte.origen }} </span>
+
+            <span class="hour"> {{ transporte.horaSalida }} </span>
+          </div>
+
+          <div class="premium-line">
+            <div class="line"></div>
+
+            <div class="plane">🚆</div>
+          </div>
+
+          <div class="premium-city premium-city-right">
+            <span class="airport"> {{ transporte.destino }} </span>
+
+            <span class="hour"> {{ transporte.horaLlegada }} </span>
+          </div>
+        </div>
+
+        <div class="premium-footer">
+          <div class="premium-info">
+            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
+
+            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
+          </div>
+
+          <div class="acciones">
+            <button
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="#ffffff"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSES -->
+
+    <div *ngIf="buses.length > 0">
+      <h3 class="grupo-titulo">Buses</h3>
+
+      <div class="transporte-card" *ngFor="let transporte of buses">
+        <div class="transporte-header">
+          <span class="badge"> Bus </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+
+        <div class="premium-route">
+          <div class="premium-city">
+            <span class="airport"> {{ transporte.origen }} </span>
+
+            <span class="hour"> {{ transporte.horaSalida }} </span>
+          </div>
+
+          <div class="premium-line">
+            <div class="line"></div>
+
+            <div class="plane">🚌</div>
+          </div>
+
+          <div class="premium-city premium-city-right">
+            <span class="airport"> {{ transporte.destino }} </span>
+
+            <span class="hour"> {{ transporte.horaLlegada }} </span>
+          </div>
+        </div>
+
+        <div class="premium-footer">
+          <div class="premium-info">
+            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
+
+            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
+          </div>
+
+          <div class="acciones">
+            <button
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="#ffffff"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOTELES -->
+
+  <div *ngIf="vista === 'hoteles'">
+    <button
+      class="btn-add"
+      (click)="mostrarFormularioHotel = !mostrarFormularioHotel"
+    >
+      {{ mostrarFormularioHotel ? '✖ Cancelar' : '+ Añadir hotel' }}
+    </button>
+
+    <div class="card" *ngIf="mostrarFormularioHotel">
+      <h2>{{ editandoHotel ? 'Editar hotel' : 'Nuevo hotel' }}</h2>
+
+      <div class="form-grid">
+        <input
+          type="text"
+          placeholder="Nombre del hotel"
+          [(ngModel)]="nuevoHotel.nombre"
+        />
+
+        <input
+          type="text"
+          placeholder="Ciudad"
+          [(ngModel)]="nuevoHotel.ciudad"
+        />
+
+        <div class="input-group">
+          <label>Check-in</label>
+
+          <div class="date-input">
+            <input type="date" [(ngModel)]="nuevoHotel.checkIn" />
+
+            <span class="calendar-icon"> 📅 </span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Check-out</label>
+
+          <div class="date-input">
+            <input type="date" [(ngModel)]="nuevoHotel.checkOut" />
+
+            <span class="calendar-icon"> 📅 </span>
+          </div>
+        </div>
+
+        <div class="form-row form-row-2">
+          <input
+            type="number"
+            placeholder="Precio (€)"
+            [(ngModel)]="nuevoHotel.precio"
+          />
+
+          <label class="checkbox-container">
+            <input type="checkbox" [(ngModel)]="nuevoHotel.pagado" />
+
+            Pagado
+          </label>
+        </div>
+
+        <input
+          type="text"
+          placeholder="Dirección"
+          [(ngModel)]="nuevoHotel.direccion"
+        />
+
+        <textarea placeholder="Notas" [(ngModel)]="nuevoHotel.notas"></textarea>
+      </div>
+
+      <button class="btn-add" (click)="agregarHotel()">
+        {{ editandoHotel ? 'Guardar cambios' : 'Guardar hotel' }}
+      </button>
+    </div>
+
+    <div *ngIf="hoteles.length === 0" class="empty-state">
+      No hay hoteles añadidos.
+    </div>
+
+    <div
+      class="hotel-card"
+      *ngFor="
+    let hotel of hotelesOrdenados;
+    let i = index
+  "
+    >
+      <div class="hotel-nombre">{{ hotel.nombre }}</div>
+
+      <div class="hotel-fechas">
+        <div class="hotel-fecha-card">
+          <span class="hotel-fecha-label"> Check-in </span>
+
+          <span class="hotel-fecha-valor">
+            {{ hotel.checkIn | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+
+        <div class="hotel-fecha-card">
+          <span class="hotel-fecha-label"> Check-out </span>
+
+          <span class="hotel-fecha-valor">
+            {{ hotel.checkOut | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="hotel-resumen">
+        <div class="hotel-precio">{{ hotel.precio || 0 }} €</div>
+
+        <div class="hotel-estado" [class.pagado]="hotel.pagado">
+          {{ hotel.pagado ? '✅ Pagado' : '⏳ Pendiente' }}
+        </div>
+      </div>
+
+      <div *ngIf="hotel.direccion" class="hotel-direccion">
+        {{ hotel.direccion }}
+      </div>
+
+      <div *ngIf="hotel.notas" class="hotel-notas">📝 {{ hotel.notas }}</div>
+
+      <div class="premium-footer">
+        <div></div>
+
+        <div class="acciones">
+          <button class="btn-editar" (click)="editarHotel(i)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="1.5em"
+              height="1.5em"
+            >
+              <path
+                fill="#ffffff"
+                d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+              />
+            </svg>
+          </button>
+
+          <button class="btn-eliminar" (click)="eliminarHotel(i)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              width="1.3em"
+              height="1.3em"
+            >
+              <path
+                fill="#ef4444"
+                d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIUDADES -->
+
+  <div *ngIf="vista === 'ciudades'">
+    <div class="card">
+      <h2>🗺️ Ciudades</h2>
+
+      <div class="empty-state">Próximamente...</div>
+    </div>
+  </div>
+</div>

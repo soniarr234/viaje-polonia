@@ -1,0 +1,36 @@
+nav {
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 12px 0;
+
+  background-color: #0c1019;
+  border-radius: 7px;
+  border: 1px solid #1f2732;
+}
+.nav-link {
+  font-size: 11px;
+  color: #94a3b8;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  text-decoration: none;
+
+  transition: all 0.25s ease;
+}
+
+.nav-link.active {
+  color: #7dd3fc;
+  filter: drop-shadow(0 0 8px rgba(145, 218, 251, 0.5));
+}

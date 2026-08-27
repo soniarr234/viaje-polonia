@@ -1,0 +1,65 @@
+:root {
+  /* Colores principales */
+  --background: #01040d;
+  --surface: #161e2c;
+  --primary: #7dd3fc;
+
+  /* Texto */
+  --text: #ffffff;
+  --text-secondary: #94a3b8;
+
+  /* Extras */
+  --border: #334155;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilos globales */
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* Enlaces */
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Botones */
+button {
+  background-color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Inputs */
+input {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+input:focus {
+  outline: 2px solid var(--primary);
+}

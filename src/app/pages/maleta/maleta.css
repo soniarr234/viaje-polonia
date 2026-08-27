@@ -1,0 +1,399 @@
+:host {
+  display: block;
+  padding-top: 20px;
+  padding-bottom: 90px;
+}
+
+/* =========================
+   ESTADO VACÍO
+========================= */
+.empty-state {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-icon {
+  font-size: 90px;
+  margin-bottom: 10px;
+  animation: flotar 3s ease-in-out infinite;
+}
+
+.empty-state h2 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 20px;
+  max-width: 250px;
+}
+
+.add-button {
+  display: block;
+  width: 220px;
+  padding: 8px;
+  margin: 25px auto 0;
+  border-radius: 8px;
+  border: 1px dashed #38bdf8;
+  background: transparent;
+  color: var(--primary);
+}
+
+/* =========================
+   PROGRESO
+========================= */
+.progress-card {
+  margin: 15px;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.progress-header span:last-child {
+  color: var(--primary);
+}
+
+.progress-bar {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: relative;
+
+  height: 100%;
+
+  background: linear-gradient(90deg, var(--primary), #38bdf8);
+
+  box-shadow: 0 0 10px rgba(125, 211, 252, 0.4),
+    0 0 20px rgba(125, 211, 252, 0.2);
+
+  transition: width 0.5s ease;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: brillo 2s infinite;
+}
+
+.progress-fill::before {
+  content: '';
+
+  position: absolute;
+
+  right: -4px;
+  top: 50%;
+
+  width: 12px;
+  height: 12px;
+
+  transform: translateY(-50%);
+
+  border-radius: 50%;
+
+  background: white;
+
+  box-shadow: 0 0 10px white, 0 0 20px var(--primary);
+}
+
+/* =========================
+   CATEGORÍAS
+========================= */
+.categoria-card {
+  margin: 15px;
+  padding: 15px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(125, 211, 252, 0.08),
+    var(--surface)
+  );
+  border: 1px solid rgba(125, 211, 252, 0.12);
+}
+
+.categoria-titulo {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* =========================
+   OBJETOS
+========================= */
+.objeto {
+  background: rgba(255, 255, 255, 0.04);
+  margin: 8px 0;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.objeto:hover {
+  transform: translateY(-1px);
+}
+
+.objeto-preparado {
+  opacity: 0.65;
+}
+
+.objeto-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.objeto-info input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.preparado {
+  text-decoration: line-through;
+}
+
+.objeto-texto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.objeto-texto strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cantidad-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.12);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* =========================
+   ACCIONES
+========================= */
+.acciones {
+  display: flex;
+  gap: 6px;
+}
+
+.edit-btn,
+.delete-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.edit-btn {
+  color: var(--text);
+}
+
+/* =========================
+   MODAL
+========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  width: 92%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: aparecer 0.2s ease;
+}
+
+.modal h2 {
+  text-align: center;
+  font-size: 18px;
+}
+
+.field label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.modal input {
+  width: 100%;
+}
+
+/* =========================
+   NOMBRE + CANTIDAD
+========================= */
+.row {
+  display: flex;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cantidad {
+  flex: 0.35;
+}
+
+/* =========================
+   CATEGORÍAS MODAL
+========================= */
+.categorias-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.categoria-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.categoria-btn {
+  width: 100%;
+  background: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.categoria-btn:hover {
+  border-color: var(--primary);
+}
+
+.categoria-btn.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(125, 211, 252, 0.1);
+}
+
+.categoria-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================
+   BOTONES MODAL
+========================= */
+.modal-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+}
+
+.modal-buttons button:first-child {
+  background: #334155;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background: var(--primary);
+  color: var(--background);
+}
+
+/* =========================
+   ANIMACIONES
+========================= */
+@keyframes brillo {
+  from {
+    left: -100%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

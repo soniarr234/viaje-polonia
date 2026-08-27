@@ -1,0 +1,469 @@
+:host {
+  display: block;
+  padding-top: 20px;
+  padding-bottom: 90px;
+}
+
+.ruta-page {
+  padding: 15px;
+}
+
+/* =========================
+   TABS
+========================= */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tabs button {
+  padding: 14px 10px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabs button.active {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  color: white;
+  box-shadow: 0 6px 20px rgba(24, 142, 197, 0.22);
+}
+
+/* =========================
+   BOTÓN AÑADIR
+========================= */
+.btn-add {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 25px auto;
+  border-radius: 8px;
+  border: 1px dashed #38bdf8;
+  background: transparent;
+  color: var(--primary);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* =========================
+   CARD FORMULARIO
+========================= */
+.card {
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    135deg,
+    rgba(125, 211, 252, 0.08),
+    var(--surface)
+  );
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+  margin-bottom: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* =========================
+   FORMULARIO
+========================= */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.form-row {
+  display: grid;
+  gap: 10px;
+}
+
+.form-row-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.tipo-transporte {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tipo-transporte button {
+  padding: 14px 8px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tipo-transporte button.active {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  color: white;
+}
+
+.form-grid input,
+.form-grid textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.form-grid textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  padding-left: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hotel-footer {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 16px;
+}
+.date-input {
+  position: relative;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.time-input {
+  position: relative;
+}
+
+.time-input input {
+  width: 100%;
+}
+
+.time-input input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  cursor: pointer;
+}
+
+.time-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+}
+
+/* =========================
+   GRUPOS
+========================= */
+.grupo-titulo {
+  margin: 28px 0 12px;
+  color: #38bdf8;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* =========================
+   TARJETAS TRANSPORTE
+========================= */
+.transporte-card {
+  padding: 18px;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(14, 165, 233, 0.04)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.transporte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fecha {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================
+   PREMIUM ROUTE
+========================= */
+.premium-route {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px;
+}
+
+.premium-city {
+  display: flex;
+  flex-direction: column;
+}
+
+.premium-city-right {
+  text-align: right;
+}
+
+.airport {
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hour {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.premium-line {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #38bdf8, rgba(56, 191, 248, 0.5));
+}
+
+.plane {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+}
+
+/* =========================
+   FOOTER TARJETA
+========================= */
+.premium-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.premium-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.premium-info strong {
+  color: white;
+}
+
+/* =========================
+   ACCIONES
+========================= */
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-editar,
+.btn-eliminar {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-editar:hover,
+.btn-eliminar:hover {
+  transform: scale(1.1);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-state {
+  padding: 30px 15px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* =========================
+   HOTEL CARD
+========================= */
+.hotel-card {
+  padding: 20px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(3, 12, 28, 0.95),
+    rgba(2, 17, 38, 0.95)
+  );
+  border: 1px solid rgba(56, 189, 248, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.hotel-nombre {
+  margin-bottom: 18px;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* =========================
+   FECHAS
+========================= */
+
+.hotel-fechas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.hotel-fecha-card {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.hotel-fecha-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.hotel-fecha-valor {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =========================
+   PRECIO Y ESTADO
+========================= */
+.hotel-resumen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.hotel-precio {
+  color: white;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.hotel-estado {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hotel-estado.pagado {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+}
+
+/* =========================
+   INFO ADICIONAL
+========================= */
+.hotel-direccion,
+.hotel-notas {
+  margin-top: 10px;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================
+   CHECKBOX PAGADO
+========================= */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.checkbox-container input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: #38bdf8;
+}
