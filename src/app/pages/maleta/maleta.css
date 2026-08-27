@@ -350,6 +350,7 @@
 
 .modal-buttons button {
   flex: 1;
+  padding: 10px;
 }
 
 .modal-buttons button:first-child {
