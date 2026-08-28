@@ -18,27 +18,26 @@
 }
 
 .empty-icon {
-  font-size: 90px;
-  margin-bottom: 10px;
+  width: 200px;
   animation: flotar 3s ease-in-out infinite;
 }
 
 .empty-state h2 {
-  font-size: 15px;
+  margin-top: -20px;
+  font-size: 17px;
   margin-bottom: 8px;
 }
 
 .empty-state p {
   color: var(--text-secondary);
-  font-size: 12px;
-  margin-bottom: 20px;
+  font-size: 13px;
   max-width: 250px;
 }
 
 .add-button {
   display: block;
-  width: 220px;
-  padding: 8px;
+  width: 100%;
+  padding: 10px;
   margin: 25px auto 0;
   border-radius: 8px;
   border: 1px dashed #38bdf8;
