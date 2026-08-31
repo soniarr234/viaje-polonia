@@ -34,5 +34,94 @@
         </div>
       </div>
     </div>
+    <h2 class="section-title">
+      Próximo vuelo
+    </h2>
+    
+    <div
+      class="flight-card"
+      *ngIf="proximoVuelo"
+    >
+    
+      <div class="flight-top">
+    
+        <div class="airline">
+          {{ proximoVuelo.empresa || 'Vuelo' }}
+        </div>
+    
+        <div class="flight-date">
+          {{ proximoVuelo.fecha | date:'dd MMM' }}
+        </div>
+    
+      </div>
+    
+      <div class="flight-route">
+    
+        <div class="flight-side">
+    
+          <div class="airport-code">
+            {{ proximoVuelo.origen }}
+          </div>
+    
+          <div class="flight-time">
+            {{ proximoVuelo.horaSalida }}
+          </div>
+    
+        </div>
+    
+        <div class="flight-center">
+    
+          <div class="route-line"></div>
+    
+          <div class="plane-icon">
+            ✈️
+          </div>
+    
+        </div>
+    
+        <div class="flight-side right">
+    
+          <div class="airport-code">
+            {{ proximoVuelo.destino }}
+          </div>
+    
+          <div class="flight-time">
+            {{ proximoVuelo.horaLlegada }}
+          </div>
+    
+        </div>
+    
+      </div>      
+    </div>
+
+    <div class="budget-card">
+
+      <div class="budget-title">
+        Presupuesto
+      </div>
+    
+      <div class="budget-amount">
+        {{ dineroRestante | number:'1.2-2' }} €
+      </div>
+    
+      <div class="budget-subtitle">
+        Dinero restante
+      </div>
+    
+      <div class="budget-progress">
+    
+        <div
+          class="budget-progress-fill"
+          [style.width.%]="porcentajeGastado"
+        >
+        </div>
+    
+      </div>
+    
+      <div class="budget-percent">
+        {{ porcentajeGastado | number:'1.0-0' }}% gastado
+      </div>
+    
+    </div>
   </div>
   

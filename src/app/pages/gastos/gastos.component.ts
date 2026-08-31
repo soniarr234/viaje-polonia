@@ -46,8 +46,15 @@ export class Gastos implements OnInit {
 
   // 1. LIMPIAMOS EL nGOnInit: Solo llama a la API
   ngOnInit() {
+
+    localStorage.setItem(
+      'presupuesto',
+      this.presupuesto.toString()
+    );
+  
     this.obtenerCambio();
   }
+  
 
   @HostListener('document:click', ['$event'])
   cerrarSiClickFuera(event: Event) {
@@ -131,8 +138,16 @@ export class Gastos implements OnInit {
       this.gastos.push({ ...this.nuevoGasto });
     }
 
-    localStorage.setItem('gastos', JSON.stringify(this.gastos));
-
+    localStorage.setItem(
+      'gastos',
+      JSON.stringify(this.gastos)
+    );
+    
+    localStorage.setItem(
+      'presupuesto',
+      this.presupuesto.toString()
+    );
+    
     this.nuevoGasto = {
       concepto: '',
       importe: 0,
@@ -140,6 +155,8 @@ export class Gastos implements OnInit {
       categoria: 'comida',
       dia: 'Día 1',
     };
+    
+    this.cerrarDropdowns();
 
     this.cerrarDropdowns();
   }
