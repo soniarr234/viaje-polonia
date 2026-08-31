@@ -1,4 +1,4 @@
-<div *ngIf="objetos.length === 0" class="empty-state">
+<div *ngIf="!objetos.length" class="empty-state">
   <img class="empty-icon" src="https://res.cloudinary.com/dkicsjbbb/image/upload/v1782383447/ChatGPT_Image_24_jun_2026_13_19_21_pugvhv.png" alt="">
 
   <h2>¡Tu maleta está vacía!</h2>
@@ -8,7 +8,7 @@
   <button class="add-button" (click)="abrirModal()">+ Añadir objeto</button>
 </div>
 
-<div *ngIf="objetos.length > 0">
+<div *ngIf="objetos.length">
   <div class="progress-card">
     <div class="progress-header">
       <span>Equipaje preparado</span>
@@ -231,4 +231,3 @@
       <button (click)="guardarObjeto()">Guardar</button>
     </div>
   </div>
-</div>

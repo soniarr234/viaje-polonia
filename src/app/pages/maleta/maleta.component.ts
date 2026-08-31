@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { supabase } from '../../core/supabase';
+
 interface ItemMaleta {
+  id?: number;
   nombre: string;
   cantidad: number;
   categoria: string;
@@ -11,9 +18,10 @@ interface ItemMaleta {
 
 @Component({
   selector: 'app-maleta',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './maleta.html',
-  styleUrl: './maleta.css',
+  styleUrls: ['./maleta.css'],
 })
 export class Maleta implements OnInit {
   objetos: ItemMaleta[] = [];
@@ -50,12 +58,31 @@ export class Maleta implements OnInit {
     preparado: false,
   };
 
-  ngOnInit() {
-    const datos = localStorage.getItem('maletaPolonia');
+  constructor(
+    private cdr: ChangeDetectorRef
+  ) {}
 
-    if (datos) {
-      this.objetos = JSON.parse(datos);
+  async ngOnInit() {
+  
+    await this.cargarObjetos();
+  }
+
+  async cargarObjetos() {
+
+    const { data, error } = await supabase
+      .from('maleta')
+      .select('*');
+  
+    if (error) {
+      console.error(error);
+      return;
     }
+  
+    this.objetos = [...(data || [])];
+  
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    });
   }
 
   abrirModal() {
@@ -66,16 +93,26 @@ export class Maleta implements OnInit {
     this.mostrarModal = false;
   }
 
-  guardarObjeto() {
+  async guardarObjeto() {
     if (!this.nuevoObjeto.nombre.trim()) {
       return;
     }
 
-    this.objetos.push({
-      ...this.nuevoObjeto,
-    });
+    const { error } = await supabase
+      .from('maleta')
+      .insert({
+        nombre: this.nuevoObjeto.nombre,
+        cantidad: this.nuevoObjeto.cantidad,
+        categoria: this.nuevoObjeto.categoria,
+        preparado: false,
+      });
 
-    this.guardarLocalStorage();
+    if (error) {
+      console.error('Error guardando objeto:', error);
+      return;
+    }
+
+    await this.cargarObjetos();
 
     this.nuevoObjeto = {
       nombre: '',
@@ -87,34 +124,73 @@ export class Maleta implements OnInit {
     this.cerrarModal();
   }
 
-  eliminarObjeto(objeto: ItemMaleta) {
-    this.objetos = this.objetos.filter((item) => item !== objeto);
+  async eliminarObjeto(objeto: ItemMaleta) {
+    if (!objeto.id) {
+      return;
+    }
 
-    this.guardarLocalStorage();
+    const { error } = await supabase
+      .from('maleta')
+      .delete()
+      .eq('id', objeto.id);
+
+    if (error) {
+      console.error('Error eliminando objeto:', error);
+      return;
+    }
+
+    await this.cargarObjetos();
   }
 
   editarObjeto(objeto: ItemMaleta) {
-    this.nuevoObjeto = { ...objeto };
+    this.nuevoObjeto = {
+      ...objeto,
+    };
 
     this.eliminarObjeto(objeto);
 
     this.mostrarModal = true;
   }
 
-  toggleObjeto(objeto: ItemMaleta) {
-    objeto.preparado = !objeto.preparado;
+  async toggleObjeto(objeto: ItemMaleta) {
+    if (!objeto.id) {
+      return;
+    }
 
-    this.guardarLocalStorage();
+    const { error } = await supabase
+      .from('maleta')
+      .update({
+        preparado: !objeto.preparado,
+      })
+      .eq('id', objeto.id);
+
+    if (error) {
+      console.error('Error actualizando objeto:', error);
+      return;
+    }
+
+    await this.cargarObjetos();
   }
 
   obtenerObjetosPorCategoria(categoria: string) {
     return this.objetos
-      .filter((objeto) => objeto.categoria === categoria)
+      .filter(
+        (objeto) =>
+          objeto.categoria
+            .trim()
+            .toLowerCase() ===
+          categoria
+            .trim()
+            .toLowerCase()
+      )
       .sort((a, b) => {
         if (a.preparado !== b.preparado) {
-          return Number(a.preparado) - Number(b.preparado);
+          return (
+            Number(a.preparado) -
+            Number(b.preparado)
+          );
         }
-
+  
         return a.nombre.localeCompare(b.nombre);
       });
   }
@@ -124,14 +200,15 @@ export class Maleta implements OnInit {
       return 0;
     }
 
-    const completados = this.objetos.filter(
-      (objeto) => objeto.preparado
-    ).length;
+    const completados =
+      this.objetos.filter(
+        (objeto) => objeto.preparado
+      ).length;
 
-    return Math.round((completados / this.objetos.length) * 100);
-  }
-
-  guardarLocalStorage() {
-    localStorage.setItem('maletaPolonia', JSON.stringify(this.objetos));
+    return Math.round(
+      (completados /
+        this.objetos.length) *
+        100
+    );
   }
 }
