@@ -1,7 +1,6 @@
 :host {
   display: block;
-  padding-top: 20px;
-  padding-bottom: 90px;
+  padding: 20px 10px 90px 10px;
 }
 
 .ruta-page {
