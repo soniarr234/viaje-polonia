@@ -75,6 +75,7 @@
         type="number"
         placeholder="Precio"
         [(ngModel)]="nuevoGasto.importe"
+        (blur)="nuevoGasto.importe = +nuevoGasto.importe.toFixed(2)"
       />
     </div>
 
@@ -223,7 +224,7 @@
 
           <div class="gasto-actions">
             <span class="gasto-precio">
-              {{ gasto.importe }} {{ gasto.moneda }}
+              {{ gasto.importe | number:'1.2-2' }} {{ gasto.moneda }}
 
               <small *ngIf="gasto.moneda === 'PLN'">
                 ({{ convertirAEuros(gasto) | number:'1.2-2' }} €)
@@ -231,7 +232,7 @@
             </span>
             <button
               class="btn-editar"
-              (click)="editarGasto(gastos.indexOf(gasto))"
+              (click)="editarGasto(gasto)"
             >
               <span>
                 <svg
@@ -249,7 +250,7 @@
             </button>
             <button
               class="btn-eliminar"
-              (click)="eliminarGasto(gastos.indexOf(gasto))"
+              (click)="eliminarGasto(gasto)"
             >
               <span>
                 <svg

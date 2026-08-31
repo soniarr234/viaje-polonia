@@ -8,7 +8,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { supabase } from '../../core/supabase';
+
 interface Gasto {
+  id?: number;
   concepto: string;
   importe: number;
   moneda: 'EUR' | 'PLN';
@@ -45,7 +48,7 @@ export class Gastos implements OnInit {
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   // 1. LIMPIAMOS EL nGOnInit: Solo llama a la API
-  ngOnInit() {
+  async ngOnInit() {
 
     localStorage.setItem(
       'presupuesto',
@@ -53,8 +56,25 @@ export class Gastos implements OnInit {
     );
   
     this.obtenerCambio();
+  
+    await this.cargarGastos();
   }
   
+  async cargarGastos() {
+
+    const { data, error } = await supabase
+      .from('gastos')
+      .select('*');
+  
+    if (error) {
+      console.error(error);
+      return;
+    }
+  
+    this.gastos = [...(data || [])];
+  
+    this.cdr.detectChanges();
+  }
 
   @HostListener('document:click', ['$event'])
   cerrarSiClickFuera(event: Event) {
@@ -84,36 +104,34 @@ export class Gastos implements OnInit {
     this.http.get<any>('https://open.er-api.com/v6/latest/EUR').subscribe({
       next: (data) => {
         this.cambioPLN = data.rates.PLN;
-        console.log('Cambio PLN cargado desde API:', this.cambioPLN);
 
         // Cargamos los datos solo cuando ya sobreescribimos el 4.3 con el valor real
-        this.cargarGastosDelStorage();
+        this.cargarGastos();
       },
       error: (error) => {
         console.error('Error de API, usando respaldo fijo de 4.3', error);
 
         // Si no hay internet, cargamos los gastos usando el 4.3 por defecto
-        this.cargarGastosDelStorage();
+        this.cargarGastos();
       },
     });
   }
 
-  private cargarGastosDelStorage() {
-    const gastosGuardados = localStorage.getItem('gastos');
-    if (gastosGuardados) {
-      this.gastos = JSON.parse(gastosGuardados);
-      this.cdr.detectChanges();
-    }
-  }
 
   get cantidadDestino(): number {
     if (!this.cambioPLN) {
       return 0;
     }
-    return this.monedaOrigen === 'EUR'
-      ? this.cantidadOrigen * this.cambioPLN
-      : this.cantidadOrigen / this.cambioPLN;
+  
+    return Number(
+      (
+        this.monedaOrigen === 'EUR'
+          ? this.cantidadOrigen * this.cambioPLN
+          : this.cantidadOrigen / this.cambioPLN
+      ).toFixed(2)
+    );
   }
+  
 
   cambiarMoneda() {
     if (!this.cambioPLN) {
@@ -125,29 +143,61 @@ export class Gastos implements OnInit {
     this.monedaOrigen = this.monedaOrigen === 'EUR' ? 'PLN' : 'EUR';
   }
 
-  agregarGasto() {
-    if (!this.nuevoGasto.concepto.trim() || this.nuevoGasto.importe <= 0) {
+  async agregarGasto() {
+
+    if (
+      !this.nuevoGasto.concepto.trim() ||
+      this.nuevoGasto.importe <= 0
+    ) {
       return;
     }
-
-    if (this.editando && this.indiceEditando >= 0) {
-      this.gastos[this.indiceEditando] = { ...this.nuevoGasto };
-      this.editando = false;
-      this.indiceEditando = -1;
+  
+    if (this.editando) {
+  
+      const { error } = await supabase
+        .from('gastos')
+        .update({
+          concepto: this.nuevoGasto.concepto,
+          importe: Number(this.nuevoGasto.importe.toFixed(2)),
+          moneda: this.nuevoGasto.moneda,
+          categoria: this.nuevoGasto.categoria,
+          dia: this.nuevoGasto.dia,
+        })
+        .eq('id', this.indiceEditando);
+  
+      if (error) {
+        console.error(error);
+        return;
+      }
+  
     } else {
-      this.gastos.push({ ...this.nuevoGasto });
+  
+      const { error } = await supabase
+        .from('gastos')
+        .insert({
+          concepto: this.nuevoGasto.concepto,
+          importe: Number(this.nuevoGasto.importe.toFixed(2)),
+          moneda: this.nuevoGasto.moneda,
+          categoria: this.nuevoGasto.categoria,
+          dia: this.nuevoGasto.dia,
+        });
+  
+      if (error) {
+        console.error(error);
+        return;
+      }
     }
-
-    localStorage.setItem(
-      'gastos',
-      JSON.stringify(this.gastos)
-    );
-    
+  
+    await this.cargarGastos();
+  
     localStorage.setItem(
       'presupuesto',
       this.presupuesto.toString()
     );
-    
+  
+    this.editando = false;
+    this.indiceEditando = -1;
+  
     this.nuevoGasto = {
       concepto: '',
       importe: 0,
@@ -155,17 +205,25 @@ export class Gastos implements OnInit {
       categoria: 'comida',
       dia: 'Día 1',
     };
-    
-    this.cerrarDropdowns();
-
+  
     this.cerrarDropdowns();
   }
 
-  editarGasto(index: number) {
+  editarGasto(gasto: Gasto) {
+
     this.editando = true;
-    this.indiceEditando = index;
-    this.nuevoGasto = { ...this.gastos[index] };
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+    this.indiceEditando =
+      gasto.id || -1;
+  
+    this.nuevoGasto = {
+      ...gasto,
+    };
+  
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   }
 
   cancelarEdicion() {
@@ -180,9 +238,23 @@ export class Gastos implements OnInit {
     };
   }
 
-  eliminarGasto(index: number) {
-    this.gastos.splice(index, 1);
-    localStorage.setItem('gastos', JSON.stringify(this.gastos));
+  async eliminarGasto(gasto: Gasto) {
+
+    if (!gasto.id) {
+      return;
+    }
+  
+    const { error } = await supabase
+      .from('gastos')
+      .delete()
+      .eq('id', gasto.id);
+  
+    if (error) {
+      console.error(error);
+      return;
+    }
+  
+    await this.cargarGastos();
   }
 
   get totalGastado(): number {
