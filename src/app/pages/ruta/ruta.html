@@ -178,7 +178,7 @@
             <button
               class="btn-editar"
               title="Editar transporte"
-              (click)="editarTransporte(transportes.indexOf(transporte))"
+              (click)="editarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +196,7 @@
             <button
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+              (click)="eliminarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +260,7 @@
             <button
               class="btn-editar"
               title="Editar transporte"
-              (click)="editarTransporte(transportes.indexOf(transporte))"
+              (click)="editarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -278,7 +278,7 @@
             <button
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+              (click)="eliminarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -342,7 +342,7 @@
             <button
               class="btn-editar"
               title="Editar transporte"
-              (click)="editarTransporte(transportes.indexOf(transporte))"
+              (click)="editarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +360,7 @@
             <button
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transportes.indexOf(transporte))"
+              (click)="eliminarTransporte(transporte)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -503,7 +503,7 @@
         <div></div>
 
         <div class="acciones">
-          <button class="btn-editar" (click)="editarHotel(i)">
+          <button class="btn-editar" (click)="editarHotel(hotel)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -517,7 +517,7 @@
             </svg>
           </button>
 
-          <button class="btn-eliminar" (click)="eliminarHotel(i)">
+          <button class="btn-eliminar" (click)="eliminarHotel(hotel)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"

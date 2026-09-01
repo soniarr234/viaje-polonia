@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { TRANSPORTES } from './data/transportes';
-import { HOTELES } from './data/hoteles';
+
 import { CIUDADES } from './data/ciudades';
 
 import { Transporte } from './models/transporte.model';
 import { Hotel } from './models/hotel.model';
 import { Ciudad } from './models/ciudad.model';
 
+import { supabase } from '../../core/supabase';
+
 @Component({
   selector: 'app-ruta',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './ruta.html',
   styleUrl: './ruta.css',
@@ -19,17 +21,24 @@ import { Ciudad } from './models/ciudad.model';
 export class Ruta implements OnInit {
   vista: 'transportes' | 'hoteles' | 'ciudades' = 'transportes';
 
-  transportes: Transporte[] = [...TRANSPORTES];
+  transportes: Transporte[] = [];
+  vuelos: Transporte[] = [];
+  trenes: Transporte[] = [];
+  buses: Transporte[] = [];
 
-  hoteles: Hotel[] = [...HOTELES];
-
+  hoteles: Hotel[] = [];
   ciudades: Ciudad[] = [...CIUDADES];
 
   mostrarFormularioTransporte = false;
+  mostrarFormularioHotel = false;
 
   editando = false;
+  editandoHotel = false;
 
   indiceEditando = -1;
+  indiceHotelEditando = -1;
+
+  guardandoTransporte = false;
 
   nuevoTransporte: Transporte = {
     tipo: 'vuelo',
@@ -43,12 +52,6 @@ export class Ruta implements OnInit {
     notas: '',
   };
 
-  mostrarFormularioHotel = false;
-
-  editandoHotel = false;
-
-  indiceHotelEditando = -1;
-
   nuevoHotel: Hotel = {
     nombre: '',
     ciudad: '',
@@ -60,27 +63,86 @@ export class Ruta implements OnInit {
     notas: '',
   };
 
-  constructor() {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
-  ngOnInit() {
-    const transportesGuardados = localStorage.getItem('transportes');
+  async ngOnInit() {
+    await this.cargarTransportes();
+    await this.cargarHoteles();
+  
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    });
+  }
 
-    if (transportesGuardados) {
-      this.transportes = JSON.parse(transportesGuardados);
+  async cargarTransportes() {
+    const { data, error } = await supabase
+      .from('transporte')
+      .select('*')
+      .order('fecha');
+  
+    if (error) {
+      console.error(error);
+      return;
+    }
+  
+    this.transportes = (data || []).map((t) => ({
+      id: t.id,
+      tipo: t.tipo,
+      origen: t.origen,
+      destino: t.destino,
+      fecha: t.fecha,
+      horaSalida: t.horaSalida,
+      horaLlegada: t.horaLlegada,
+      empresa: t.empresa,
+      asiento: t.asiento,
+      notas: t.notas,
+    }));
+  
+    this.vuelos = this.transportes.filter(
+      (t) => t.tipo === 'vuelo'
+    );
+  
+    this.trenes = this.transportes.filter(
+      (t) => t.tipo === 'tren'
+    );
+  
+    this.buses = this.transportes.filter(
+      (t) => t.tipo === 'bus'
+    );
+
+    this.cdr.detectChanges();
+  }
+  
+
+  async cargarHoteles() {
+    const { data, error } = await supabase
+      .from('hoteles')
+      .select('*')
+      .order('checkin');
+
+    if (error) {
+      console.error(error);
+      return;
     }
 
-    const hotelesGuardados = localStorage.getItem('hoteles');
-
-    if (hotelesGuardados) {
-      this.hoteles = JSON.parse(hotelesGuardados);
-    }
+    this.hoteles = (data || []).map((h) => ({
+      id: h.id,
+      nombre: h.nombre,
+      ciudad: h.ciudad,
+      checkIn: h.checkin,
+      checkOut: h.checkout,
+      precio: h.precio,
+      pagado: h.pagado,
+      direccion: h.direccion,
+      notas: h.notas,
+    }));
   }
 
   cambiarVista(vista: 'transportes' | 'hoteles' | 'ciudades') {
     this.vista = vista;
   }
 
-  agregarTransporte() {
+  async agregarTransporte() {
     if (
       !this.nuevoTransporte.origen.trim() ||
       !this.nuevoTransporte.destino.trim()
@@ -88,33 +150,63 @@ export class Ruta implements OnInit {
       return;
     }
 
-    if (this.editando && this.indiceEditando >= 0) {
-      this.transportes[this.indiceEditando] = {
-        ...this.nuevoTransporte,
-      };
+    if (this.editando) {
+      const { error } = await supabase
+        .from('transporte')
+        .update({
+          tipo: this.nuevoTransporte.tipo,
+          origen: this.nuevoTransporte.origen,
+          destino: this.nuevoTransporte.destino,
+          fecha: this.nuevoTransporte.fecha,
+          horaSalida: this.nuevoTransporte.horaSalida,
+          horaLlegada: this.nuevoTransporte.horaLlegada,
+          empresa: this.nuevoTransporte.empresa,
+          asiento: this.nuevoTransporte.asiento,
+          notas: this.nuevoTransporte.notas,
+        })
+        .eq('id', this.indiceEditando);
 
-      this.editando = false;
-      this.indiceEditando = -1;
+      if (error) {
+        console.error(error);
+        return;
+      }
     } else {
-      this.transportes.push({
-        ...this.nuevoTransporte,
-      });
+      const { error } = await supabase
+        .from('transporte')
+        .insert({
+          tipo: this.nuevoTransporte.tipo,
+          origen: this.nuevoTransporte.origen,
+          destino: this.nuevoTransporte.destino,
+          fecha: this.nuevoTransporte.fecha,
+          horaSalida: this.nuevoTransporte.horaSalida,
+          horaLlegada: this.nuevoTransporte.horaLlegada,
+          empresa: this.nuevoTransporte.empresa,
+          asiento: this.nuevoTransporte.asiento,
+          notas: this.nuevoTransporte.notas,
+        });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
     }
 
-    localStorage.setItem('transportes', JSON.stringify(this.transportes));
+    await this.cargarTransportes();
 
     this.reiniciarFormulario();
 
     this.mostrarFormularioTransporte = false;
+
+    this.cdr.detectChanges();
   }
 
-  editarTransporte(index: number) {
+  editarTransporte(transporte: Transporte) {
     this.editando = true;
 
-    this.indiceEditando = index;
+    this.indiceEditando = transporte.id || -1;
 
     this.nuevoTransporte = {
-      ...this.transportes[index],
+      ...transporte,
     };
 
     this.mostrarFormularioTransporte = true;
@@ -125,10 +217,22 @@ export class Ruta implements OnInit {
     });
   }
 
-  eliminarTransporte(index: number) {
-    this.transportes.splice(index, 1);
+  async eliminarTransporte(transporte: Transporte) {
+    if (!transporte.id) {
+      return;
+    }
 
-    localStorage.setItem('transportes', JSON.stringify(this.transportes));
+    const { error } = await supabase
+      .from('transporte')
+      .delete()
+      .eq('id', transporte.id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    await this.cargarTransportes();
   }
 
   reiniciarFormulario() {
@@ -149,77 +253,96 @@ export class Ruta implements OnInit {
     };
   }
 
-  get vuelos(): Transporte[] {
-    return this.transportes
-      .filter((t) => t.tipo === 'vuelo')
-      .sort(
-        (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
-      );
-  }
-
-  get trenes(): Transporte[] {
-    return this.transportes
-      .filter((t) => t.tipo === 'tren')
-      .sort(
-        (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
-      );
-  }
-
-  get buses(): Transporte[] {
-    return this.transportes
-      .filter((t) => t.tipo === 'bus')
-      .sort(
-        (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
-      );
-  }
-
   get hotelesOrdenados(): Hotel[] {
     return [...this.hoteles].sort(
-      (a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime()
+      (a, b) =>
+        new Date(a.checkIn).getTime() -
+        new Date(b.checkIn).getTime()
     );
   }
 
-  agregarHotel() {
-    if (!this.nuevoHotel.nombre.trim() || !this.nuevoHotel.ciudad.trim()) {
+  async agregarHotel() {
+    if (
+      !this.nuevoHotel.nombre.trim() ||
+      !this.nuevoHotel.ciudad.trim()
+    ) {
       return;
     }
 
-    if (this.editandoHotel && this.indiceHotelEditando >= 0) {
-      this.hoteles[this.indiceHotelEditando] = {
-        ...this.nuevoHotel,
-      };
+    if (this.editandoHotel) {
+      const { error } = await supabase
+        .from('hoteles')
+        .update({
+          nombre: this.nuevoHotel.nombre,
+          ciudad: this.nuevoHotel.ciudad,
+          checkin: this.nuevoHotel.checkIn,
+          checkout: this.nuevoHotel.checkOut,
+          precio: this.nuevoHotel.precio,
+          pagado: this.nuevoHotel.pagado,
+          direccion: this.nuevoHotel.direccion,
+          notas: this.nuevoHotel.notas,
+        })
+        .eq('id', this.indiceHotelEditando);
 
-      this.editandoHotel = false;
-      this.indiceHotelEditando = -1;
+      if (error) {
+        console.error(error);
+        return;
+      }
     } else {
-      this.hoteles.push({
-        ...this.nuevoHotel,
-      });
+      const { error } = await supabase
+        .from('hoteles')
+        .insert({
+          nombre: this.nuevoHotel.nombre,
+          ciudad: this.nuevoHotel.ciudad,
+          checkin: this.nuevoHotel.checkIn,
+          checkout: this.nuevoHotel.checkOut,
+          precio: this.nuevoHotel.precio,
+          pagado: this.nuevoHotel.pagado,
+          direccion: this.nuevoHotel.direccion,
+          notas: this.nuevoHotel.notas,
+        });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
     }
 
-    localStorage.setItem('hoteles', JSON.stringify(this.hoteles));
+    await this.cargarHoteles();
 
     this.reiniciarHotel();
 
     this.mostrarFormularioHotel = false;
   }
 
-  editarHotel(index: number) {
+  editarHotel(hotel: Hotel) {
     this.editandoHotel = true;
 
-    this.indiceHotelEditando = index;
+    this.indiceHotelEditando = hotel.id || -1;
 
     this.nuevoHotel = {
-      ...this.hoteles[index],
+      ...hotel,
     };
 
     this.mostrarFormularioHotel = true;
   }
 
-  eliminarHotel(index: number) {
-    this.hoteles.splice(index, 1);
+  async eliminarHotel(hotel: Hotel) {
+    if (!hotel.id) {
+      return;
+    }
 
-    localStorage.setItem('hoteles', JSON.stringify(this.hoteles));
+    const { error } = await supabase
+      .from('hoteles')
+      .delete()
+      .eq('id', hotel.id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    await this.cargarHoteles();
   }
 
   reiniciarHotel() {
