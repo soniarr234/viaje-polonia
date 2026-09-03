@@ -18,7 +18,9 @@ import { supabase } from '../../core/supabase';
   styleUrl: './ruta.css',
 })
 export class Ruta implements OnInit {
-  vista: 'transportes' | 'hoteles' | 'ciudades' = 'transportes';
+  vista: 'transportes' | 'hoteles' | 'ciudades' =
+  (localStorage.getItem('ruta-vista') as
+    'transportes' | 'hoteles' | 'ciudades') || 'transportes';
 
   transportes: Transporte[] = [];
   vuelos: Transporte[] = [];
@@ -141,6 +143,11 @@ export class Ruta implements OnInit {
 
   cambiarVista(vista: 'transportes' | 'hoteles' | 'ciudades') {
     this.vista = vista;
+  
+    localStorage.setItem(
+      'ruta-vista',
+      vista
+    );
   }
 
   async agregarTransporte() {
@@ -340,5 +347,26 @@ export class Ruta implements OnInit {
       notas: '',
     };
     this.cdr.detectChanges();
+  }
+
+
+  ciudadSeleccionada: Ciudad | null = null;
+
+  itemAbierto: string | null = null;
+
+  abrirCiudad(ciudad: Ciudad) {
+    this.ciudadSeleccionada = ciudad;
+  }
+  
+  cerrarCiudad() {
+    this.ciudadSeleccionada = null;
+    this.itemAbierto = null;
+  }
+  
+  toggleItem(id: string) {
+    this.itemAbierto =
+      this.itemAbierto === id
+        ? null
+        : id;
   }
 }

@@ -1,17 +1,23 @@
 import { Actividad } from '../interfaces/actividad.model';
 
+export interface PuntoInteres {
+  nombre: string;
+  direccion: string;
+  imagen: string;
+  descripcion: string;
+  maps?: string;
+}
+
 export interface Ciudad {
   nombre: string;
-
   pais: string;
+  descripcion: string;
 
-  historia: string;
+  lugares: PuntoInteres[];
 
-  imprescindibles: Actividad[];
+  restaurantes: PuntoInteres[];
 
-  restaurantes: Actividad[];
+  cafeterias: PuntoInteres[];
 
-  cafeterias: Actividad[];
-
-  consejos: string[];
+  curiosidades: string[];
 }
