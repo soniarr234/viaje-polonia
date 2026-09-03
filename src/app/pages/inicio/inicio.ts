@@ -80,24 +80,30 @@ export class Inicio implements OnInit, OnDestroy {
         return;
       }
   
-      // CORRECCIÓN CLAVE: Usamos un espacio en blanco en lugar de 'T' para forzar la hora local del PC
-      const fechaVuelo = new Date(`${this.proximoVuelo.fecha} ${this.proximoVuelo.horaSalida}`);
+      const fechaVuelo = new Date(
+        `${this.proximoVuelo.fecha}T${this.proximoVuelo.horaSalida}:00`
+      );
+      
       const ahora = new Date();
+      
       const diferencia = fechaVuelo.getTime() - ahora.getTime();
-  
-      if (diferencia <= 0) {
-        this.days = 0;
-        this.hours = 0;
-        this.minutes = 0;
-        this.cdr.detectChanges();
-        
-        this.cargarProximoVuelo();
-        return;
-      }
-  
+      
       const msPorMinuto = 1000 * 60;
       const msPorHora = msPorMinuto * 60;
       const msPorDia = msPorHora * 24;
+      
+      console.log('FECHA VUELO', fechaVuelo);
+      console.log('AHORA', ahora);
+      
+      console.log('DIAS', Math.floor(diferencia / msPorDia));
+      console.log(
+        'HORAS',
+        Math.floor((diferencia % msPorDia) / msPorHora)
+      );
+      console.log(
+        'MINUTOS',
+        Math.floor((diferencia % msPorHora) / msPorMinuto)
+      );
 
       // Desglose limpio sin arrastrar residuos horarios de UTC
       this.days = Math.floor(diferencia / msPorDia);
