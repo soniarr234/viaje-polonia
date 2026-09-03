@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-
 import { CIUDADES } from './data/ciudades';
 
 import { Transporte } from './models/transporte.model';
@@ -136,6 +135,8 @@ export class Ruta implements OnInit {
       direccion: h.direccion,
       notas: h.notas,
     }));
+
+    this.cdr.detectChanges();
   }
 
   cambiarVista(vista: 'transportes' | 'hoteles' | 'ciudades') {
@@ -192,23 +193,15 @@ export class Ruta implements OnInit {
     }
 
     await this.cargarTransportes();
-
     this.reiniciarFormulario();
-
     this.mostrarFormularioTransporte = false;
-
     this.cdr.detectChanges();
   }
 
   editarTransporte(transporte: Transporte) {
     this.editando = true;
-
     this.indiceEditando = transporte.id || -1;
-
-    this.nuevoTransporte = {
-      ...transporte,
-    };
-
+    this.nuevoTransporte = { ...transporte };
     this.mostrarFormularioTransporte = true;
 
     window.scrollTo({
@@ -237,9 +230,7 @@ export class Ruta implements OnInit {
 
   reiniciarFormulario() {
     this.editando = false;
-
     this.indiceEditando = -1;
-
     this.nuevoTransporte = {
       tipo: 'vuelo',
       origen: '',
@@ -254,76 +245,66 @@ export class Ruta implements OnInit {
   }
 
   get hotelesOrdenados(): Hotel[] {
-    return [...this.hoteles].sort(
-      (a, b) =>
-        new Date(a.checkIn).getTime() -
-        new Date(b.checkIn).getTime()
-    );
+    return [...this.hoteles].sort((a, b) => {
+      const fechaA = a.checkIn ? new Date(a.checkIn).getTime() : 0;
+      const fechaB = b.checkIn ? new Date(b.checkIn).getTime() : 0;
+      return fechaA - fechaB;
+    });
   }
 
   async agregarHotel() {
     if (
-      !this.nuevoHotel.nombre.trim() ||
-      !this.nuevoHotel.ciudad.trim()
+      !this.nuevoHotel.nombre?.trim() ||
+      !this.nuevoHotel.ciudad?.trim()
     ) {
       return;
     }
-
+  
+    const esPrecioValido = this.nuevoHotel.precio !== undefined && 
+                           this.nuevoHotel.precio !== null && 
+                           !isNaN(Number(this.nuevoHotel.precio));
+  
+    const hotelPayload = {
+      nombre: this.nuevoHotel.nombre,
+      ciudad: this.nuevoHotel.ciudad,
+      checkin: this.nuevoHotel.checkIn || null,
+      checkout: this.nuevoHotel.checkOut || null,
+      precio: esPrecioValido ? Number(this.nuevoHotel.precio) : null,
+      pagado: !!this.nuevoHotel.pagado,
+      direccion: this.nuevoHotel.direccion || null,
+      notas: this.nuevoHotel.notas || null,
+    };
+  
     if (this.editandoHotel) {
       const { error } = await supabase
         .from('hoteles')
-        .update({
-          nombre: this.nuevoHotel.nombre,
-          ciudad: this.nuevoHotel.ciudad,
-          checkin: this.nuevoHotel.checkIn,
-          checkout: this.nuevoHotel.checkOut,
-          precio: this.nuevoHotel.precio,
-          pagado: this.nuevoHotel.pagado,
-          direccion: this.nuevoHotel.direccion,
-          notas: this.nuevoHotel.notas,
-        })
+        .update(hotelPayload)
         .eq('id', this.indiceHotelEditando);
-
+  
       if (error) {
-        console.error(error);
+        console.error("Error al actualizar hotel:", error);
         return;
       }
     } else {
       const { error } = await supabase
         .from('hoteles')
-        .insert({
-          nombre: this.nuevoHotel.nombre,
-          ciudad: this.nuevoHotel.ciudad,
-          checkin: this.nuevoHotel.checkIn,
-          checkout: this.nuevoHotel.checkOut,
-          precio: this.nuevoHotel.precio,
-          pagado: this.nuevoHotel.pagado,
-          direccion: this.nuevoHotel.direccion,
-          notas: this.nuevoHotel.notas,
-        });
-
+        .insert(hotelPayload);
+  
       if (error) {
-        console.error(error);
+        console.error("Error al insertar hotel:", error);
         return;
       }
     }
-
+  
     await this.cargarHoteles();
-
     this.reiniciarHotel();
-
     this.mostrarFormularioHotel = false;
   }
 
   editarHotel(hotel: Hotel) {
     this.editandoHotel = true;
-
     this.indiceHotelEditando = hotel.id || -1;
-
-    this.nuevoHotel = {
-      ...hotel,
-    };
-
+    this.nuevoHotel = { ...hotel };
     this.mostrarFormularioHotel = true;
   }
 
@@ -347,9 +328,7 @@ export class Ruta implements OnInit {
 
   reiniciarHotel() {
     this.editandoHotel = false;
-
     this.indiceHotelEditando = -1;
-
     this.nuevoHotel = {
       nombre: '',
       ciudad: '',
@@ -360,5 +339,6 @@ export class Ruta implements OnInit {
       direccion: '',
       notas: '',
     };
+    this.cdr.detectChanges();
   }
 }

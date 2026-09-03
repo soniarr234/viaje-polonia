@@ -95,33 +95,22 @@
     </div>
 
     <div class="budget-card">
-
-      <div class="budget-title">
-        Presupuesto
-      </div>
-    
-      <div class="budget-amount">
-        {{ dineroRestante | number:'1.2-2' }} €
-      </div>
-    
-      <div class="budget-subtitle">
-        Dinero restante
-      </div>
+      <div class="budget-title">Presupuesto</div>
+      <div class="budget-amount">{{ dineroRestante | number:'1.2-2' }} €</div>
+      <div class="budget-subtitle">Dinero restante</div>
     
       <div class="budget-progress">
-    
+        <!-- El ancho cambia con el porcentaje y el fondo muta de color gracias a TypeScript -->
         <div
           class="budget-progress-fill"
           [style.width.%]="porcentajeGastado"
-        >
-        </div>
-    
+          [style.background]="colorProgreso"
+        ></div>
       </div>
     
       <div class="budget-percent">
         {{ porcentajeGastado | number:'1.0-0' }}% gastado
       </div>
-    
     </div>
   </div>
   

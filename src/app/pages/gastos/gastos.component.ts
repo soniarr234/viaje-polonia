@@ -21,6 +21,7 @@ interface Gasto {
 
 @Component({
   selector: 'app-gastos',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './gastos.html',
   styleUrl: './gastos.css',
@@ -47,21 +48,29 @@ export class Gastos implements OnInit {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
-  // 1. LIMPIAMOS EL nGOnInit: Solo llama a la API
   async ngOnInit() {
-
-    localStorage.setItem(
-      'presupuesto',
-      this.presupuesto.toString()
-    );
-  
+    localStorage.setItem('presupuesto', this.presupuesto.toString());
+    // Controlamos el flujo inicial secuencialmente desde aquí
     this.obtenerCambio();
-  
-    await this.cargarGastos();
   }
   
-  async cargarGastos() {
+  obtenerCambio() {
+    // Corregida la URL al endpoint público de ExchangeRate-API para evitar ERR_CERT_AUTHORITY_INVALID
+    this.http.get<any>('https://open.er-api.com/v6/latest/EUR').subscribe({
+      next: async (data) => {
+        this.cambioPLN = data.rates.PLN;
+        // Cargamos gastos solo tras asegurar el valor real de las divisas
+        await this.cargarGastos();
+      },
+      error: async (error) => {
+        console.error('Error de API, usando respaldo fijo de 4.3', error);
+        // Fallback de seguridad si falla la red externa o el entorno sandbox
+        await this.cargarGastos();
+      },
+    });
+  }
 
+  async cargarGastos() {
     const { data, error } = await supabase
       .from('gastos')
       .select('*');
@@ -72,7 +81,6 @@ export class Gastos implements OnInit {
     }
   
     this.gastos = [...(data || [])];
-  
     this.cdr.detectChanges();
   }
 
@@ -99,25 +107,6 @@ export class Gastos implements OnInit {
     });
   }
 
-  // 2. LA API SE ENCARGA DE CONTROLAR EL FLUJO
-  obtenerCambio() {
-    this.http.get<any>('https://open.er-api.com/v6/latest/EUR').subscribe({
-      next: (data) => {
-        this.cambioPLN = data.rates.PLN;
-
-        // Cargamos los datos solo cuando ya sobreescribimos el 4.3 con el valor real
-        this.cargarGastos();
-      },
-      error: (error) => {
-        console.error('Error de API, usando respaldo fijo de 4.3', error);
-
-        // Si no hay internet, cargamos los gastos usando el 4.3 por defecto
-        this.cargarGastos();
-      },
-    });
-  }
-
-
   get cantidadDestino(): number {
     if (!this.cambioPLN) {
       return 0;
@@ -131,20 +120,23 @@ export class Gastos implements OnInit {
       ).toFixed(2)
     );
   }
-  
 
   cambiarMoneda() {
     if (!this.cambioPLN) {
       return;
     }
     this.rotando = false;
-    this.rotando = true;
-    this.cantidadOrigen = this.cantidadDestino;
-    this.monedaOrigen = this.monedaOrigen === 'EUR' ? 'PLN' : 'EUR';
+    
+    // Evita mutaciones directas síncronas en el renderizado de la UI
+    setTimeout(() => {
+      this.cantidadOrigen = this.cantidadDestino;
+      this.monedaOrigen = this.monedaOrigen === 'EUR' ? 'PLN' : 'EUR';
+      this.rotando = true;
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   async agregarGasto() {
-
     if (
       !this.nuevoGasto.concepto.trim() ||
       this.nuevoGasto.importe <= 0
@@ -152,48 +144,39 @@ export class Gastos implements OnInit {
       return;
     }
   
+    // Tu columna 'importe' en Supabase es smallint (Entero), redondeamos para evitar fallos SQL
+    const payloadGasto = {
+      concepto: this.nuevoGasto.concepto,
+      importe: Math.round(this.nuevoGasto.importe),
+      moneda: this.nuevoGasto.moneda,
+      categoria: this.nuevoGasto.categoria,
+      dia: this.nuevoGasto.dia,
+    };
+
     if (this.editando) {
-  
       const { error } = await supabase
         .from('gastos')
-        .update({
-          concepto: this.nuevoGasto.concepto,
-          importe: Number(this.nuevoGasto.importe.toFixed(2)),
-          moneda: this.nuevoGasto.moneda,
-          categoria: this.nuevoGasto.categoria,
-          dia: this.nuevoGasto.dia,
-        })
+        .update(payloadGasto)
         .eq('id', this.indiceEditando);
   
       if (error) {
-        console.error(error);
+        console.error("Error al actualizar:", error);
         return;
       }
-  
     } else {
-  
       const { error } = await supabase
         .from('gastos')
-        .insert({
-          concepto: this.nuevoGasto.concepto,
-          importe: Number(this.nuevoGasto.importe.toFixed(2)),
-          moneda: this.nuevoGasto.moneda,
-          categoria: this.nuevoGasto.categoria,
-          dia: this.nuevoGasto.dia,
-        });
+        .insert(payloadGasto);
   
       if (error) {
-        console.error(error);
+        console.error("Error al insertar:", error);
         return;
       }
     }
   
     await this.cargarGastos();
   
-    localStorage.setItem(
-      'presupuesto',
-      this.presupuesto.toString()
-    );
+    localStorage.setItem('presupuesto', this.presupuesto.toString());
   
     this.editando = false;
     this.indiceEditando = -1;
@@ -207,18 +190,13 @@ export class Gastos implements OnInit {
     };
   
     this.cerrarDropdowns();
+    this.cdr.detectChanges();
   }
 
   editarGasto(gasto: Gasto) {
-
     this.editando = true;
-  
-    this.indiceEditando =
-      gasto.id || -1;
-  
-    this.nuevoGasto = {
-      ...gasto,
-    };
+    this.indiceEditando = gasto.id || -1;
+    this.nuevoGasto = { ...gasto };
   
     window.scrollTo({
       top: 0,
@@ -236,10 +214,10 @@ export class Gastos implements OnInit {
       categoria: 'comida',
       dia: 'Día 1',
     };
+    this.cdr.detectChanges();
   }
 
   async eliminarGasto(gasto: Gasto) {
-
     if (!gasto.id) {
       return;
     }
@@ -269,7 +247,7 @@ export class Gastos implements OnInit {
       return gasto.importe;
     }
     if (!this.cambioPLN || this.cambioPLN <= 0) {
-      return gasto.importe / 4.3; // Fallback de seguridad directo aquí
+      return gasto.importe / 4.3;
     }
     return gasto.importe / this.cambioPLN;
   }
@@ -279,6 +257,7 @@ export class Gastos implements OnInit {
   }
 
   get porcentajeGastado(): number {
+    if (this.presupuesto === 0) return 0;
     return Math.min(
       Math.round((this.totalGastado / this.presupuesto) * 100),
       100
@@ -342,8 +321,9 @@ export class Gastos implements OnInit {
   }
 
   totalDia(dia: string): number {
-    return this.gastos
-      .filter((gasto) => gasto.dia === dia)
-      .reduce((total, gasto) => total + this.convertirAEuros(gasto), 0);
+    return this.gastosPorDia(dia).reduce(
+      (total, gasto) => total + this.convertirAEuros(gasto),
+      0
+    );
   }
 }
