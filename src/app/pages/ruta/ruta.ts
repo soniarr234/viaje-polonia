@@ -30,6 +30,8 @@ export class Ruta implements OnInit {
     (localStorage.getItem('ruta-vista') as
       'transportes' | 'hoteles' | 'ciudades') || 'transportes';
 
+  subVistaCiudades: 'ciudades' | 'ruta' = 'ciudades';
+
   itemAbierto: string | null = null;
 
   // ==========================================
