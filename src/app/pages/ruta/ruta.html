@@ -738,6 +738,231 @@
       </div>
     </div>
 
+    <div *ngIf="subVistaCiudades === 'ruta'">
+
+      <button
+        class="btn-add"
+        (click)="mostrarFormularioDia = !mostrarFormularioDia"
+      >
+        {{
+          mostrarFormularioDia
+          ? '✖ Cancelar'
+          : '+ Añadir día'
+        }}
+      </button>
+
+    <div
+      class="card"
+      *ngIf="mostrarFormularioDia"
+    >
+
+      <h2>Nuevo día</h2>
+
+      <div class="form-grid">
+
+        <input
+          type="text"
+          placeholder="Título (Día 1)"
+          [(ngModel)]="nuevoDia.titulo"
+        >
+
+        <input
+          type="date"
+          [(ngModel)]="nuevoDia.fecha"
+        >
+
+        <select
+          [(ngModel)]="nuevoDia.ciudad"
+        >
+
+          <option value="">
+            Selecciona ciudad
+          </option>
+
+          <option
+            *ngFor="let ciudad of ciudades"
+            [value]="ciudad.nombre"
+          >
+            {{ ciudad.nombre }}
+          </option>
+
+        </select>
+
+      </div>
+
+      <button
+        class="btn-add"
+        (click)="agregarDiaRuta()"
+      >
+        Guardar día
+      </button>
+
+    </div>
+
+    <div
+      class="ruta-dia-card"
+      *ngFor="let dia of rutaDias"
+    >
+
+      <div
+        class="ruta-bloque"
+        *ngIf="obtenerCiudad(dia.ciudad) as ciudad"
+      >
+
+      <h4>🏛️ Lugares</h4>
+    
+      <select [(ngModel)]="dia.lugarSeleccionado">
+    
+        <option value="">
+          Selecciona lugar
+        </option>
+    
+        <option
+          *ngFor="let lugar of ciudad.lugares"
+          [value]="lugar.nombre"
+        >
+          {{ lugar.nombre }}
+        </option>
+    
+      </select>
+    
+      <button
+        class="btn-add-mini"
+        (click)="agregarLugarADia(dia)"
+      >
+        Añadir lugar
+      </button>
+
+      <div
+    class="ruta-elementos"
+    *ngIf="dia.elementos.length > 0"
+  >
+
+    <div
+      class="ruta-elemento"
+      *ngFor="let elemento of dia.elementos"
+    >
+
+    <button
+      class="ruta-link"
+      (click)="abrirElementoRuta(elemento)"
+    >
+      {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }}
+      {{ elemento.referencia }}
+    </button>
+
+    <button
+      class="btn-eliminar"
+      (click)="eliminarElementoDia(
+        dia,
+        elemento
+      )"
+    >
+      ✖
+    </button>
+
+  </div>
+    
+    </div>
+
+    <div *ngIf="obtenerCiudad(dia.ciudad) as ciudad">
+
+      <h4>🍴 Gastronomía</h4>
+    
+      <select [(ngModel)]="dia.gastronomiaSeleccionada">
+    
+        <option value="">
+          Selecciona sitio
+        </option>
+    
+        <option
+          *ngFor="let sitio of ciudad.gastronomia"
+          [value]="sitio.nombre"
+        >
+          {{ sitio.nombre }}
+        </option>
+    
+      </select>
+    
+      <button
+        class="btn-add-mini"
+        (click)="agregarGastronomiaADia(dia)"
+      >
+        Añadir sitio
+      </button>
+    
+    </div>
+
+      <div class="ruta-dia-header">
+
+        <div>
+
+          <h3>
+            📅 {{ dia.titulo }}
+          </h3>
+
+          <span>
+            {{ dia.ciudad }}
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    </div>
+
+    <div
+    class="modal-overlay"
+    *ngIf="elementoRutaAbierto"
+    (click)="elementoRutaAbierto = null"
+  >
+  
+    <div
+      class="modal-ruta"
+      (click)="$event.stopPropagation()"
+    >
+  
+      <button
+        class="btn-cerrar"
+        (click)="elementoRutaAbierto = null"
+      >
+        ✖
+      </button>
+  
+      <h2>
+        {{ elementoRutaAbierto.nombre }}
+      </h2>
+  
+      <img
+        *ngIf="elementoRutaAbierto.imagen"
+        [src]="elementoRutaAbierto.imagen"
+        [alt]="elementoRutaAbierto.nombre"
+        class="lugar-imagen"
+      >
+  
+      <p>
+        {{ elementoRutaAbierto.descripcion }}
+      </p>
+  
+      <div class="direccion">
+        📍 {{ elementoRutaAbierto.direccion }}
+      </div>
+  
+      <a
+        *ngIf="elementoRutaAbierto.maps"
+        [href]="elementoRutaAbierto.maps"
+        target="_blank"
+        class="btn-maps"
+      >
+        Abrir en Maps
+      </a>
+  
+    </div>
+  
+  </div>
+
   </div>
 
   <!-- MODAL CIUDAD -->
@@ -835,11 +1060,13 @@
 
       <div
         class="timeline-item"
+        [id]="'item-imp-' + i"
         *ngFor="
           let lugar of ciudadSeleccionada.lugares;
           let i = index
         "
       >
+
 
         <div
           class="timeline-header"
@@ -1078,6 +1305,7 @@
 
   <div
     class="timeline-item"
+    [id]="'item-rest-' + i"
     *ngFor="let restaurante of obtenerGastronomiaPorTipo('restaurante'); let i = index"
   >
     <div
@@ -1157,6 +1385,7 @@
 
   <div
     class="timeline-item"
+    [id]="'item-cer-' + i"
     *ngFor="let cerveza of obtenerGastronomiaPorTipo('cerveceria'); let i = index"
   >
     <div
@@ -1236,6 +1465,7 @@
 
   <div
     class="timeline-item"
+    [id]="'item-caf-' + i"
     *ngFor="let cafeteria of obtenerGastronomiaPorTipo('cafeteria'); let i = index"
   >
     <div
@@ -1315,6 +1545,7 @@
 
   <div
     class="timeline-item"
+    [id]="'item-pos-' + i"
     *ngFor="let postre of obtenerGastronomiaPorTipo('postres'); let i = index"
   >
     <div

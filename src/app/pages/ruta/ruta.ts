@@ -15,6 +15,26 @@ import {
 
 import { supabase } from '../../core/supabase';
 
+interface RutaElemento {
+  id: string;
+
+  tipo: 'lugar' | 'gastronomia';
+
+  ciudad: string;
+
+  referencia: string;
+}
+
+interface DiaRuta {
+  id: string;
+  titulo: string;
+  ciudad: string;
+  fecha?: string;
+  elementos: RutaElemento[];
+  lugarSeleccionado?: string;
+  gastronomiaSeleccionada?: string;
+}
+
 @Component({
   selector: 'app-ruta',
   standalone: true,
@@ -31,6 +51,17 @@ export class Ruta implements OnInit {
       'transportes' | 'hoteles' | 'ciudades') || 'transportes';
 
   subVistaCiudades: 'ciudades' | 'ruta' = 'ciudades';
+  rutaDias: DiaRuta[] = [];
+
+  mostrarFormularioDia = false;
+
+  nuevoDia: DiaRuta = {
+    id: '',
+    titulo: '',
+    ciudad: '',
+    fecha: '',
+    elementos: []
+  };
 
   itemAbierto: string | null = null;
 
@@ -120,6 +151,12 @@ export class Ruta implements OnInit {
     gastronomia: [],
     curiosidades: []
   };
+
+  elementoRutaAbierto: Lugar | Gastronomia | null = null;
+
+  tipoElementoRuta: 'lugar' | 'gastronomia' | null = null;
+
+  ciudadElementoRuta = '';
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -617,6 +654,173 @@ export class Ruta implements OnInit {
     return this.ciudadSeleccionada.gastronomia.filter(
       item => item.tipo === tipo
     );
+  }
+
+  agregarDiaRuta() {
+
+    if (
+      !this.nuevoDia.titulo.trim() ||
+      !this.nuevoDia.ciudad.trim()
+    ) {
+      return;
+    }
+  
+    this.rutaDias.push({
+      ...this.nuevoDia,
+      id: crypto.randomUUID(),
+      elementos: [],
+      lugarSeleccionado: '',
+      gastronomiaSeleccionada: ''
+    });
+  
+    this.nuevoDia = {
+      id: '',
+      titulo: '',
+      ciudad: '',
+      fecha: '',
+      elementos: []
+    };
+  
+    this.mostrarFormularioDia = false;
+  }
+
+  agregarLugarADia(dia: DiaRuta) {
+
+    if (!dia.lugarSeleccionado) {
+      return;
+    }
+  
+    dia.elementos.push({
+      id: crypto.randomUUID(),
+      tipo: 'lugar',
+      ciudad: dia.ciudad,
+      referencia: dia.lugarSeleccionado
+    });
+  
+    dia.lugarSeleccionado = '';
+  
+  }
+
+  agregarGastronomiaADia(dia: DiaRuta) {
+
+    if (!dia.gastronomiaSeleccionada) {
+      return;
+    }
+  
+    dia.elementos.push({
+      id: crypto.randomUUID(),
+      tipo: 'gastronomia',
+      ciudad: dia.ciudad,
+      referencia: dia.gastronomiaSeleccionada
+    });
+  
+    dia.gastronomiaSeleccionada = '';
+  
+  }
+
+  obtenerCiudad(nombre: string): Ciudad | undefined {
+
+    return this.ciudades.find(
+      ciudad => ciudad.nombre === nombre
+    );
+  
+  }
+
+  agregarElementoADia(
+    dia: DiaRuta,
+    tipo: 'lugar' | 'gastronomia',
+    referencia: string
+  ) {
+  
+    const existe = dia.elementos.some(
+      e => e.tipo === tipo && e.referencia === referencia
+    );
+  
+    if (existe) {
+      return;
+    }
+  
+    dia.elementos.push({
+      id: crypto.randomUUID(),
+      tipo,
+      ciudad: dia.ciudad,
+      referencia
+    });
+  }
+
+  eliminarElementoDia(
+    dia: DiaRuta,
+    elemento: RutaElemento
+  ) {
+  
+    dia.elementos = dia.elementos.filter(
+      e => e.id !== elemento.id
+    );
+  
+  }
+
+  obtenerCiudadDia(nombreCiudad: string): Ciudad | undefined {
+
+    return this.ciudades.find(
+      c => c.nombre === nombreCiudad
+    );
+  
+  }
+
+  obtenerLugar(
+    ciudad: Ciudad,
+    referencia: string
+  ): Lugar | undefined {
+  
+    return ciudad.lugares.find(
+      l => l.nombre === referencia
+    );
+  
+  }
+
+  obtenerGastronomia(
+    ciudad: Ciudad,
+    referencia: string
+  ): Gastronomia | undefined {
+  
+    return ciudad.gastronomia.find(
+      g => g.nombre === referencia
+    );
+  
+  }
+
+  abrirElementoRuta(elemento: RutaElemento) {
+
+    const ciudad = this.obtenerCiudad(elemento.ciudad);
+  
+    if (!ciudad) {
+      return;
+    }
+  
+    this.ciudadElementoRuta = ciudad.nombre;
+  
+    if (elemento.tipo === 'lugar') {
+  
+      const lugar = ciudad.lugares.find(
+        l => l.nombre === elemento.referencia
+      );
+  
+      if (lugar) {
+        this.elementoRutaAbierto = lugar;
+        this.tipoElementoRuta = 'lugar';
+      }
+  
+    } else {
+  
+      const sitio = ciudad.gastronomia.find(
+        g => g.nombre === elemento.referencia
+      );
+  
+      if (sitio) {
+        this.elementoRutaAbierto = sitio;
+        this.tipoElementoRuta = 'gastronomia';
+      }
+    }
   }
 
   // ==========================================

@@ -996,6 +996,7 @@
   background: rgba(56, 189, 248, 0.25);
 }
 
+
 /* =========================
    CURIOSIDADES
 ========================= */
@@ -1008,4 +1009,210 @@
   margin-bottom: 10px;
   color: #cbd5e1;
   line-height: 1.7;
+}
+
+/* =========================
+   RUTA VIAJE
+========================= */
+
+.ruta-dia-card {
+  padding: 22px;
+  margin-bottom: 20px;
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, .95),
+    rgba(30, 41, 59, .95)
+  );
+  border: 1px solid rgba(56, 189, 248, .12);
+  box-shadow: 0 12px 24px rgba(0,0,0,.25);
+}
+
+.ruta-dia-header {
+  margin-bottom: 20px;
+}
+
+.ruta-dia-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.ruta-dia-header span {
+  display: block;
+  margin-top: 4px;
+  color: #38bdf8;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =========================
+   BLOQUES
+========================= */
+
+.ruta-dia-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 20px 0 10px;
+
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* =========================
+   SELECTS
+========================= */
+
+.ruta-dia-card select {
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+
+  background: rgba(255,255,255,.05);
+
+  color: white;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.ruta-dia-card option {
+  background: #0f172a;
+  color: white;
+}
+
+.ruta-dia-card select:focus {
+  border-color: #38bdf8;
+}
+
+/* =========================
+   BOTONES AÑADIR
+========================= */
+
+.btn-add-mini {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 15px;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #0ea5e9,
+    #38bdf8
+  );
+
+  color: white;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-add-mini:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   ELEMENTOS DEL DÍA
+========================= */
+
+.ruta-elementos {
+  margin-top: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ruta-elemento {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  background: rgba(255,255,255,.05);
+
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.ruta-link {
+  flex: 1;
+
+  background: none;
+  border: none;
+
+  color: #60a5fa;
+
+  text-align: left;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.ruta-link:hover {
+  color: #38bdf8;
+}
+
+.ruta-elemento .btn-eliminar {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: rgba(239,68,68,.15);
+
+  color: #ef4444;
+
+  cursor: pointer;
+}
+
+/* =========================
+   MODAL RUTA
+========================= */
+
+.modal-ruta {
+  max-width: 700px;
+
+  margin: 30px auto;
+
+  padding: 24px;
+
+  border-radius: 24px;
+
+  background: #0f172a;
+
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.ruta-bloque {
+  margin-bottom: 18px;
+}
+.modal-ruta h2 {
+  color: white;
+  margin-bottom: 16px;
+}
+
+.modal-ruta p {
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+
+.modal-ruta .direccion {
+  margin-top: 14px;
 }
