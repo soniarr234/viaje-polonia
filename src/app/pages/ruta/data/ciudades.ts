@@ -35,13 +35,14 @@ export const CIUDADES: Ciudad[] = [
         imagen:
           'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a',
         descripcion:
-          'Famosa por su Aula Leopoldina, una joya del barroco.',
+          'Famosa por su Aula Leopoldina, una joya del barroco.'
       }
     ],
 
-    restaurantes: [
+    gastronomia: [
       {
         nombre: 'Konspira',
+        tipo: 'restaurante',
         direccion: 'Plac Solny 11',
         imagen:
           'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
@@ -51,17 +52,17 @@ export const CIUDADES: Ciudad[] = [
 
       {
         nombre: 'Bernard',
+        tipo: 'cerveceria',
         direccion: 'Rynek 35',
         imagen:
           'https://images.unsplash.com/photo-1552566626-52f8b828add9',
         descripcion:
-          'Restaurante muy popular junto a la plaza principal.'
-      }
-    ],
+          'Cervecería tradicional junto a la plaza principal.'
+      },
 
-    cafeterias: [
       {
         nombre: 'Charlotte',
+        tipo: 'cafeteria',
         direccion: 'ul. Świdnicka',
         imagen:
           'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
@@ -71,18 +72,33 @@ export const CIUDADES: Ciudad[] = [
 
       {
         nombre: 'Central Café',
+        tipo: 'postres',
         direccion: 'Rynek',
         imagen:
           'https://images.unsplash.com/photo-1445116572660-236099ec97a0',
         descripcion:
-          'Café moderno con vistas al centro.'
+          'Ideal para café, tartas y postres.'
       }
     ],
 
     curiosidades: [
-      'Hay más de 800 enanos repartidos por toda la ciudad.',
-      'Fue Capital Europea de la Cultura en 2016.',
-      'Tiene más de 100 puentes.'
+      {
+        titulo: 'Los enanos',
+        descripcion:
+          'Hay más de 800 enanos repartidos por toda la ciudad.'
+      },
+
+      {
+        titulo: 'Capital cultural',
+        descripcion:
+          'Fue Capital Europea de la Cultura en 2016.'
+      },
+
+      {
+        titulo: 'Ciudad de puentes',
+        descripcion:
+          'Tiene más de 100 puentes.'
+      }
     ]
   }
 ];

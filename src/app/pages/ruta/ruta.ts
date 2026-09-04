@@ -6,7 +6,12 @@ import { CIUDADES } from './data/ciudades';
 
 import { Transporte } from './models/transporte.model';
 import { Hotel } from './models/hotel.model';
-import { Ciudad } from './models/ciudad.model';
+import {
+  Ciudad,
+  Lugar,
+  Gastronomia,
+  Curiosidad
+} from './models/ciudad.model';
 
 import { supabase } from '../../core/supabase';
 
@@ -18,29 +23,26 @@ import { supabase } from '../../core/supabase';
   styleUrl: './ruta.css',
 })
 export class Ruta implements OnInit {
+  // ==========================================
+  // 1. PROPIEDADES DE ESTADO Y VISTAS
+  // ==========================================
   vista: 'transportes' | 'hoteles' | 'ciudades' =
-  (localStorage.getItem('ruta-vista') as
-    'transportes' | 'hoteles' | 'ciudades') || 'transportes';
+    (localStorage.getItem('ruta-vista') as
+      'transportes' | 'hoteles' | 'ciudades') || 'transportes';
 
+  itemAbierto: string | null = null;
+
+  // ==========================================
+  // 2. PROPIEDADES - TRANSPORTE
+  // ==========================================
   transportes: Transporte[] = [];
   vuelos: Transporte[] = [];
   trenes: Transporte[] = [];
   buses: Transporte[] = [];
-
-  hoteles: Hotel[] = [];
-  ciudades: Ciudad[] = [...CIUDADES];
-
   mostrarFormularioTransporte = false;
-  mostrarFormularioHotel = false;
-
   editando = false;
-  editandoHotel = false;
-
   indiceEditando = -1;
-  indiceHotelEditando = -1;
-
   guardandoTransporte = false;
-
   nuevoTransporte: Transporte = {
     tipo: 'vuelo',
     origen: '',
@@ -53,6 +55,13 @@ export class Ruta implements OnInit {
     notas: '',
   };
 
+  // ==========================================
+  // 3. PROPIEDADES - HOTEL
+  // ==========================================
+  hoteles: Hotel[] = [];
+  mostrarFormularioHotel = false;
+  editandoHotel = false;
+  indiceHotelEditando = -1;
   nuevoHotel: Hotel = {
     nombre: '',
     ciudad: '',
@@ -64,8 +73,57 @@ export class Ruta implements OnInit {
     notas: '',
   };
 
+  // ==========================================
+  // 4. PROPIEDADES - CIUDAD
+  // ==========================================
+  ciudades: Ciudad[] = [...CIUDADES];
+  ciudadSeleccionada: Ciudad | null = null;
+  mostrarFormularioCiudad = false;
+  editandoCiudad = false;
+  indiceCiudadEditando = -1;
+
+  mostrarFormularioLugar = false;
+  editandoLugar = false;
+  indiceLugarEditando = -1;
+
+  nuevoLugar: Lugar = {
+    nombre: '',
+    descripcion: '',
+    direccion: '',
+    imagen: '',
+    maps: ''
+  };
+
+
+  mostrarFormularioGastronomia = false;
+  editandoGastronomia = false;
+  indiceGastronomiaEditando = -1;
+
+  dropdownGastronomiaAbierto = false;
+
+  nuevaGastronomia: Gastronomia = {
+    nombre: '',
+    tipo: 'restaurante',
+    descripcion: '',
+    direccion: '',
+    imagen: '',
+    maps: ''
+  };
+
+  nuevaCiudad: Ciudad = {
+    nombre: '',
+    pais: '',
+    descripcion: '',
+    lugares: [],
+    gastronomia: [],
+    curiosidades: []
+  };
+
   constructor(private cdr: ChangeDetectorRef) {}
 
+  // ==========================================
+  // 5. CICLO DE VIDA (LIFECYCLE HOOKS)
+  // ==========================================
   async ngOnInit() {
     await this.cargarTransportes();
     await this.cargarHoteles();
@@ -75,6 +133,9 @@ export class Ruta implements OnInit {
     });
   }
 
+  // ==========================================
+  // 6. MÉTODOS DE CARGA DE DATOS (SUPABASE)
+  // ==========================================
   async cargarTransportes() {
     const { data, error } = await supabase
       .from('transporte')
@@ -113,7 +174,6 @@ export class Ruta implements OnInit {
 
     this.cdr.detectChanges();
   }
-  
 
   async cargarHoteles() {
     const { data, error } = await supabase
@@ -141,15 +201,9 @@ export class Ruta implements OnInit {
     this.cdr.detectChanges();
   }
 
-  cambiarVista(vista: 'transportes' | 'hoteles' | 'ciudades') {
-    this.vista = vista;
-  
-    localStorage.setItem(
-      'ruta-vista',
-      vista
-    );
-  }
-
+  // ==========================================
+  // 7. MÉTODOS Y ACCIONES - TRANSPORTE
+  // ==========================================
   async agregarTransporte() {
     if (
       !this.nuevoTransporte.origen.trim() ||
@@ -251,6 +305,9 @@ export class Ruta implements OnInit {
     };
   }
 
+  // ==========================================
+  // 8. MÉTODOS Y ACCIONES - HOTEL
+  // ==========================================
   get hotelesOrdenados(): Hotel[] {
     return [...this.hoteles].sort((a, b) => {
       const fechaA = a.checkIn ? new Date(a.checkIn).getTime() : 0;
@@ -349,24 +406,226 @@ export class Ruta implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // ==========================================
+  // 9. MÉTODOS Y ACCIONES - CIUDAD
+  // ==========================================
+  agregarCiudad() {
+    if (!this.nuevaCiudad.nombre.trim()) {
+      return;
+    }
+  
+    if (this.editandoCiudad) {
+      this.ciudades[this.indiceCiudadEditando] = {
+        ...this.nuevaCiudad
+      };} else {this.ciudades.push({...this.nuevaCiudad});}
+  
+      this.nuevaCiudad = {
+        nombre: '',
+        pais: '',
+        descripcion: '',
+        lugares: [],
+        gastronomia: [],
+        curiosidades: []
+      };
+      
+      this.editandoCiudad = false;
+      this.indiceCiudadEditando = -1;
+      this.mostrarFormularioCiudad = false;}
 
-  ciudadSeleccionada: Ciudad | null = null;
-
-  itemAbierto: string | null = null;
+    editarCiudad(ciudad: Ciudad) {
+      this.indiceCiudadEditando = this.ciudades.indexOf(ciudad);
+      this.editandoCiudad = true;
+      this.nuevaCiudad = {
+        ...ciudad
+      };
+      this.mostrarFormularioCiudad = true;
+    }
+  
+  eliminarCiudad(ciudad: Ciudad) {
+    const indice = this.ciudades.indexOf(ciudad);
+    if (indice !== -1) {
+      this.ciudades.splice(indice, 1);
+    }
+  }
 
   abrirCiudad(ciudad: Ciudad) {
     this.ciudadSeleccionada = ciudad;
   }
-  
+
   cerrarCiudad() {
     this.ciudadSeleccionada = null;
     this.itemAbierto = null;
   }
+
+  // ==========================================
+  // 10. MÉTODOS Y ACCIONES - GASTRONOMÍA
+  // ==========================================
+  agregarLugar() {
+    if (
+      !this.ciudadSeleccionada ||
+      !this.nuevoLugar.nombre.trim()
+    ) {
+      return;
+    }
+
+    if (this.editandoLugar) {
+
+      this.ciudadSeleccionada.lugares[
+        this.indiceLugarEditando
+      ] = {
+        ...this.nuevoLugar
+      };
+
+    } else {
+
+      this.ciudadSeleccionada.lugares.push({
+        ...this.nuevoLugar
+      });
+
+    }
+
+    this.reiniciarLugar();
+  }
+
+  editarLugar(lugar: Lugar) {
+
+    if (!this.ciudadSeleccionada) {
+      return;
+    }
+
+    this.indiceLugarEditando =
+      this.ciudadSeleccionada.lugares.indexOf(lugar);
+
+    this.editandoLugar = true;
+
+    this.nuevoLugar = {
+      ...lugar
+    };
+
+    this.mostrarFormularioLugar = true;
+  }
+
+  eliminarLugar(lugar: Lugar) {
+
+    if (!this.ciudadSeleccionada) {
+      return;
+    }
+
+    const indice =
+      this.ciudadSeleccionada.lugares.indexOf(lugar);
+
+    if (indice !== -1) {
+      this.ciudadSeleccionada.lugares.splice(
+        indice,
+        1
+      );
+    }
+  }
+
+  reiniciarLugar() {
+
+    this.nuevoLugar = {
+      nombre: '',
+      descripcion: '',
+      direccion: '',
+      imagen: '',
+      maps: ''
+    };
+
+    this.editandoLugar = false;
+
+    this.indiceLugarEditando = -1;
+
+    this.mostrarFormularioLugar = false;
+  }
+  agregarGastronomia() {
+    if (
+      !this.ciudadSeleccionada ||
+      !this.nuevaGastronomia.nombre.trim()
+    ) {
+      return;
+    }
+
+    if (this.editandoGastronomia) {
+      this.ciudadSeleccionada.gastronomia[
+        this.indiceGastronomiaEditando
+      ] = {
+        ...this.nuevaGastronomia
+      };
+
+    } else {
+      this.ciudadSeleccionada.gastronomia.push({
+        ...this.nuevaGastronomia
+      });
+    }
+
+    this.reiniciarGastronomia();
+  }
+
+  editarGastronomia(item: Gastronomia) {
+    if (!this.ciudadSeleccionada) {
+      return;
+    }
+    this.indiceGastronomiaEditando =
+      this.ciudadSeleccionada.gastronomia.indexOf(item);
+    this.editandoGastronomia = true;
+    this.nuevaGastronomia = {
+      ...item
+    };
+    this.mostrarFormularioGastronomia = true;
+
+    this.dropdownGastronomiaAbierto = false;
+  }
+
+  eliminarGastronomia(item: Gastronomia) {
+    if (!this.ciudadSeleccionada) {
+      return;
+    }
+    const indice = this.ciudadSeleccionada.gastronomia.indexOf(item);
+    if (indice !== -1) {
+      this.ciudadSeleccionada.gastronomia.splice(indice, 1);
+    }
+  }
+
+  reiniciarGastronomia() {
+    this.nuevaGastronomia = {
+      nombre: '',
+      tipo: 'restaurante',
+      descripcion: '',
+      direccion: '',
+      imagen: '',
+      maps: ''
+    };
   
+    this.editandoGastronomia = false;
+    this.indiceGastronomiaEditando = -1;
+    this.mostrarFormularioGastronomia = false;
+
+    this.dropdownGastronomiaAbierto = false;
+  }
+
+  obtenerGastronomiaPorTipo(
+    tipo: 'restaurante' | 'cafeteria' | 'cerveceria' | 'postres'
+  ): Gastronomia[] {
+  
+    if (!this.ciudadSeleccionada) {
+      return [];
+    }
+  
+    return this.ciudadSeleccionada.gastronomia.filter(
+      item => item.tipo === tipo
+    );
+  }
+
+  // ==========================================
+  // 11. MÉTODOS DE CONTROL GLOBAL / INTERFAZ
+  // ==========================================
+  
+  cambiarVista(vista: 'transportes' | 'hoteles' | 'ciudades') {
+    this.vista = vista;localStorage.setItem('ruta-vista', vista);
+  }
+
   toggleItem(id: string) {
-    this.itemAbierto =
-      this.itemAbierto === id
-        ? null
-        : id;
+    this.itemAbierto = this.itemAbierto === id ? null : id;
   }
 }

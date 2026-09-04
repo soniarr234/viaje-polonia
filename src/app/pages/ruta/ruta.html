@@ -534,20 +534,146 @@
       </div>
     </div>
   </div>
+
+
   <!-- CIUDADES -->
 
   <div *ngIf="vista === 'ciudades'">
+
+    <button
+      class="btn-add"
+      (click)="mostrarFormularioCiudad = !mostrarFormularioCiudad"
+    >
+      {{
+        mostrarFormularioCiudad
+          ? '✖ Cancelar'
+          : '+ Añadir ciudad'
+      }}
+    </button>
+
+    <!-- FORMULARIO -->
+
+    <div
+      class="card"
+      *ngIf="mostrarFormularioCiudad"
+    >
+
+      <h2>
+        {{
+          editandoCiudad
+            ? 'Editar ciudad'
+            : 'Nueva ciudad'
+        }}
+      </h2>
+
+      <div class="form-grid">
+
+        <input
+          type="text"
+          placeholder="Ciudad"
+          [(ngModel)]="nuevaCiudad.nombre"
+        >
+
+        <input
+          type="text"
+          placeholder="País"
+          [(ngModel)]="nuevaCiudad.pais"
+        >
+
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevaCiudad.descripcion"
+        >
+        </textarea>
+
+      </div>
+
+      <button
+        class="btn-add"
+        (click)="agregarCiudad()"
+      >
+        {{
+          editandoCiudad
+            ? 'Guardar cambios'
+            : 'Guardar ciudad'
+        }}
+      </button>
+
+    </div>
+
+    <!-- LISTADO -->
 
     <div class="ciudades-grid">
 
       <div
         class="ciudad-card"
         *ngFor="let ciudad of ciudades"
-        (click)="abrirCiudad(ciudad)"
       >
+
         <div class="ciudad-header">
-          <h3>{{ ciudad.nombre }}</h3>
-          <span>{{ ciudad.pais }}</span>
+
+          <div>
+
+            <h3>
+              {{ ciudad.nombre }}
+            </h3>
+
+            <span>
+              {{ ciudad.pais }}
+            </span>
+
+          </div>
+
+          <div class="ciudad-acciones">
+
+            <button
+              class="btn-editar-ciudad"
+              (click)="
+                $event.stopPropagation();
+                editarCiudad(ciudad)
+              "
+              title="Editar ciudad"
+            >
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="1.5em"
+                  height="1.5em"
+                >
+                  <path
+                    fill="#ffffff"
+                    d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                  />
+              </svg>
+            </span>
+            </button>
+
+            <button
+              class="btn-eliminar-ciudad"
+              (click)="
+                $event.stopPropagation();
+                eliminarCiudad(ciudad)
+              "
+              title="Eliminar ciudad"
+            >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.1em"
+                height="1.1em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </span>
+            </button>
+
+          </div>
+
         </div>
 
         <p class="ciudad-descripcion">
@@ -557,16 +683,21 @@
         <div class="ciudad-stats">
 
           <span>
-            🏛️ {{ ciudad.lugares.length }} Lugares
+            🏛️ {{ ciudad.lugares.length }} lugares
           </span>
 
           <span>
-            🍴 {{ ciudad.restaurantes.length + ciudad.cafeterias.length }} restaurantes
+            🍴
+            {{ ciudad.gastronomia.length }}
+            sitios
           </span>
 
         </div>
 
-        <button class="btn-guia">
+        <button
+          class="btn-guia"
+          (click)="abrirCiudad(ciudad)"
+        >
           Ver guía →
         </button>
 
@@ -608,6 +739,67 @@
 
       <h3>🏛️ Lugares</h3>
 
+      <button
+        class="btn-add-mini"
+        (click)="
+          mostrarFormularioLugar =
+          !mostrarFormularioLugar
+        "
+      >
+        {{
+          mostrarFormularioLugar
+            ? '✕ Cerrar'
+            : '+ Añadir'
+        }}
+      </button>
+
+      <div
+        class="card card-gastronomia"
+        *ngIf="mostrarFormularioLugar"
+      >
+
+        <input
+          type="text"
+          placeholder="Nombre"
+          [(ngModel)]="nuevoLugar.nombre"
+        >
+
+        <input
+          type="text"
+          placeholder="Dirección"
+          [(ngModel)]="nuevoLugar.direccion"
+        >
+
+        <input
+          type="text"
+          placeholder="Imagen"
+          [(ngModel)]="nuevoLugar.imagen"
+        >
+
+        <input
+          type="text"
+          placeholder="Google Maps"
+          [(ngModel)]="nuevoLugar.maps"
+        >
+
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevoLugar.descripcion"
+        ></textarea>
+
+        <button
+          class="btn-add"
+          (click)="agregarLugar()"
+        >
+          {{
+            editandoLugar
+              ? 'Guardar cambios'
+              : 'Añadir lugar'
+          }}
+        </button>
+
+      </div>
+
       <div
         class="timeline-item"
         *ngFor="
@@ -621,9 +813,9 @@
           (click)="toggleItem('imp-' + i)"
         >
 
-          <span>
-            {{ i + 1 }}. {{ lugar.nombre }}
-          </span>
+        <span>
+          {{ lugar.nombre }}
+        </span>
 
           <span>
             {{ itemAbierto === 'imp-' + i ? '−' : '+' }}
@@ -644,22 +836,22 @@
 
           <div class="direccion">
             <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
-      width="1.2em"
-      height="1.2em"
-    >
-      <path
-        fill="red"
-        d="M21 32C9.459 32 0 41.43 0 52.94c0 4.46 1.424 8.605 3.835 12.012l14.603 25.244c2.045 2.672 3.405 2.165 5.106-.14l16.106-27.41c.325-.59.58-1.216.803-1.856A20.7 20.7 0 0 0 42 52.94C42 41.43 32.544 32 21 32m0 9.812c6.216 0 11.16 4.931 11.16 11.129S27.215 64.068 21 64.068S9.84 59.138 9.84 52.941S14.786 41.812 21 41.812M87.75 0C81.018 0 75.5 5.501 75.5 12.216c0 2.601.83 5.019 2.237 7.006l8.519 14.726c1.193 1.558 1.986 1.262 2.978-.082l9.395-15.99c.19-.343.339-.708.468-1.082a12 12 0 0 0 .903-4.578C100 5.5 94.484 0 87.75 0m0 5.724c3.626 0 6.51 2.876 6.51 6.492s-2.884 6.49-6.51 6.49s-6.51-2.875-6.51-6.49s2.885-6.492 6.51-6.492"
-      />
-      <path
-        fill="currentColor"
-        fillRule="evenodd"
-        d="M88.209 37.412c-2.247.05-4.5.145-6.757.312l.348 5.532a126 126 0 0 1 6.513-.303zm-11.975.82c-3.47.431-6.97 1.045-10.43 2.032l1.303 5.361c3.144-.896 6.402-1.475 9.711-1.886zM60.623 42.12a24.5 24.5 0 0 0-3.004 1.583l-.004.005l-.006.002c-1.375.866-2.824 1.965-4.007 3.562c-.857 1.157-1.558 2.62-1.722 4.35l5.095.565c.038-.406.246-.942.62-1.446h.002v-.002c.603-.816 1.507-1.557 2.582-2.235l.004-.002a20 20 0 0 1 2.388-1.256zM58 54.655l-3.303 4.235c.783.716 1.604 1.266 2.397 1.726l.01.005l.01.006c2.632 1.497 5.346 2.342 7.862 3.144l1.446-5.318c-2.515-.802-4.886-1.576-6.918-2.73c-.582-.338-1.092-.691-1.504-1.068m13.335 5.294l-1.412 5.327l.668.208l.82.262c2.714.883 5.314 1.826 7.638 3.131l2.358-4.92c-2.81-1.579-5.727-2.611-8.538-3.525l-.008-.002l-.842-.269zm14.867 7.7l-3.623 3.92c.856.927 1.497 2.042 1.809 3.194l.002.006l.002.009c.372 1.345.373 2.927.082 4.525l5.024 1.072c.41-2.256.476-4.733-.198-7.178c-.587-2.162-1.707-4.04-3.098-5.548M82.72 82.643a12 12 0 0 1-1.826 1.572h-.002c-1.8 1.266-3.888 2.22-6.106 3.04l1.654 5.244c2.426-.897 4.917-1.997 7.245-3.635l.006-.005l.003-.002a17 17 0 0 0 2.639-2.287zm-12.64 6.089c-3.213.864-6.497 1.522-9.821 2.08l.784 5.479c3.421-.575 6.856-1.262 10.27-2.18zm-14.822 2.836c-3.346.457-6.71.83-10.084 1.148l.442 5.522c3.426-.322 6.858-.701 10.285-1.17zm-15.155 1.583c-3.381.268-6.77.486-10.162.67l.256 5.536c3.425-.185 6.853-.406 10.28-.678zm-15.259.92c-2.033.095-4.071.173-6.114.245l.168 5.541a560 560 0 0 0 6.166-.246z"
-        color="currentColor"
-      />
-    </svg> {{ lugar.direccion }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 100 100"
+              width="1.2em"
+              height="1.2em"
+            >
+              <path
+                fill="red"
+                d="M21 32C9.459 32 0 41.43 0 52.94c0 4.46 1.424 8.605 3.835 12.012l14.603 25.244c2.045 2.672 3.405 2.165 5.106-.14l16.106-27.41c.325-.59.58-1.216.803-1.856A20.7 20.7 0 0 0 42 52.94C42 41.43 32.544 32 21 32m0 9.812c6.216 0 11.16 4.931 11.16 11.129S27.215 64.068 21 64.068S9.84 59.138 9.84 52.941S14.786 41.812 21 41.812M87.75 0C81.018 0 75.5 5.501 75.5 12.216c0 2.601.83 5.019 2.237 7.006l8.519 14.726c1.193 1.558 1.986 1.262 2.978-.082l9.395-15.99c.19-.343.339-.708.468-1.082a12 12 0 0 0 .903-4.578C100 5.5 94.484 0 87.75 0m0 5.724c3.626 0 6.51 2.876 6.51 6.492s-2.884 6.49-6.51 6.49s-6.51-2.875-6.51-6.49s2.885-6.492 6.51-6.492"
+              />
+              <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M88.209 37.412c-2.247.05-4.5.145-6.757.312l.348 5.532a126 126 0 0 1 6.513-.303zm-11.975.82c-3.47.431-6.97 1.045-10.43 2.032l1.303 5.361c3.144-.896 6.402-1.475 9.711-1.886zM60.623 42.12a24.5 24.5 0 0 0-3.004 1.583l-.004.005l-.006.002c-1.375.866-2.824 1.965-4.007 3.562c-.857 1.157-1.558 2.62-1.722 4.35l5.095.565c.038-.406.246-.942.62-1.446h.002v-.002c.603-.816 1.507-1.557 2.582-2.235l.004-.002a20 20 0 0 1 2.388-1.256zM58 54.655l-3.303 4.235c.783.716 1.604 1.266 2.397 1.726l.01.005l.01.006c2.632 1.497 5.346 2.342 7.862 3.144l1.446-5.318c-2.515-.802-4.886-1.576-6.918-2.73c-.582-.338-1.092-.691-1.504-1.068m13.335 5.294l-1.412 5.327l.668.208l.82.262c2.714.883 5.314 1.826 7.638 3.131l2.358-4.92c-2.81-1.579-5.727-2.611-8.538-3.525l-.008-.002l-.842-.269zm14.867 7.7l-3.623 3.92c.856.927 1.497 2.042 1.809 3.194l.002.006l.002.009c.372 1.345.373 2.927.082 4.525l5.024 1.072c.41-2.256.476-4.733-.198-7.178c-.587-2.162-1.707-4.04-3.098-5.548M82.72 82.643a12 12 0 0 1-1.826 1.572h-.002c-1.8 1.266-3.888 2.22-6.106 3.04l1.654 5.244c2.426-.897 4.917-1.997 7.245-3.635l.006-.005l.003-.002a17 17 0 0 0 2.639-2.287zm-12.64 6.089c-3.213.864-6.497 1.522-9.821 2.08l.784 5.479c3.421-.575 6.856-1.262 10.27-2.18zm-14.822 2.836c-3.346.457-6.71.83-10.084 1.148l.442 5.522c3.426-.322 6.858-.701 10.285-1.17zm-15.155 1.583c-3.381.268-6.77.486-10.162.67l.256 5.536c3.425-.185 6.853-.406 10.28-.678zm-15.259.92c-2.033.095-4.071.173-6.114.245l.168 5.541a560 560 0 0 0 6.166-.246z"
+                color="currentColor"
+              />
+            </svg> {{ lugar.direccion }}
           </div>
 
           <p>{{ lugar.descripcion }}</p>
@@ -673,109 +865,497 @@
             Abrir en Maps
           </a>
 
-        </div>
+          <div class="acciones-gastronomia">
 
-      </div>
-
-      <!-- RESTAURANTES -->
-
-      <h3><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em"><path fill="#cbd5e1" d="M357.57 223.94a79.48 79.48 0 0 0 56.58-23.44l77-76.95c6.09-6.09 6.65-16 .85-22.39a16 16 0 0 0-23.17-.56l-68.63 68.58a12.29 12.29 0 0 1-17.37 0c-4.79-4.78-4.53-12.86.25-17.64l68.33-68.33a16 16 0 0 0-.56-23.16A15.62 15.62 0 0 0 440.27 56a16.7 16.7 0 0 0-11.81 4.9l-68.27 68.26a12.29 12.29 0 0 1-17.37 0c-4.78-4.78-4.53-12.86.25-17.64l68.33-68.31a16 16 0 0 0-.56-23.16A15.62 15.62 0 0 0 400.26 16a16.73 16.73 0 0 0-11.81 4.9L311.5 97.85a79.5 79.5 0 0 0-23.44 56.59v8.23a16 16 0 0 1-4.69 11.33l-35.61 35.62a4 4 0 0 1-5.66 0L68.82 36.33a16 16 0 0 0-22.58-.06C31.09 51.28 23 72.47 23 97.54c-.1 41.4 21.66 89 56.79 124.08l85.45 85.45A64.8 64.8 0 0 0 211 326a64 64 0 0 0 16.21-2.08a16.2 16.2 0 0 1 4.07-.53a15.93 15.93 0 0 1 10.83 4.25l11.39 10.52a16.12 16.12 0 0 1 4.6 11.23v5.54a47.73 47.73 0 0 0 13.77 33.65l90.05 91.57l.09.1a53.29 53.29 0 0 0 75.36-75.37L302.39 269.9a4 4 0 0 1 0-5.66L338 228.63a16 16 0 0 1 11.32-4.69Z"/><path fill="#cbd5e1" d="M211 358a97.32 97.32 0 0 1-68.36-28.25l-13.86-13.86a8 8 0 0 0-11.3 0l-85 84.56c-15.15 15.15-20.56 37.45-13.06 59.29a31 31 0 0 0 1.49 3.6C31 484 50.58 496 72 496a55.68 55.68 0 0 0 39.64-16.44L225 365.66a4.69 4.69 0 0 0 1.32-3.72v-.26a4.63 4.63 0 0 0-5.15-4.27A97 97 0 0 1 211 358"/></svg> Restaurantes</h3>
-
-      <div
-        class="timeline-item"
-        *ngFor="
-          let restaurante of ciudadSeleccionada.restaurantes;
-          let i = index
-        "
-      >
-
-        <div
-          class="timeline-header"
-          (click)="toggleItem('rest-' + i)"
-        >
-
-          <span>
-            {{ i + 1 }}. {{ restaurante.nombre }}
-          </span>
-
-          <span>
-            {{ itemAbierto === 'rest-' + i ? '−' : '+' }}
-          </span>
-
-        </div>
-
-        <div
-          class="timeline-content"
-          *ngIf="itemAbierto === 'rest-' + i"
-        >
-
-          <img
-            [src]="restaurante.imagen"
-            [alt]="restaurante.nombre"
-            class="lugar-imagen"
-          >
-
-          <p>{{ restaurante.descripcion }}</p>
-
-          <div class="direccion">
-            📍 {{ restaurante.direccion }}
+            <button
+              class="btn-editar"
+              (click)="editarLugar(lugar)"
+            >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="#ffffff"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </span>
+            </button>
+          
+            <button
+              class="btn-eliminar"
+              (click)="eliminarLugar(lugar)"
+            >
+            <span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.1em"
+                height="1.1em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </span>
+            </button>
+          
           </div>
 
         </div>
 
       </div>
 
-      <!-- CAFETERIAS -->
+<!-- GASTRONOMÍA -->
+<h3>
+  🍴 Gastronomía
+</h3>
 
-      <h3><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1.1em" height="1.1em"><path fill="#cbd5e1" d="M144 32S94.11 69.4 96 96c1.604 22.57 44.375 25.665 48 48c1.91 11.772-16 32-16 32s48-25.373 48-48s-42.8-25.978-48-48c-3.875-16.414 16-48 16-48m80 0s-49.89 37.4-48 64c1.604 22.57 44.375 25.665 48 48c1.91 11.772-16 32-16 32s48-25.373 48-48s-42.8-25.978-48-48c-3.875-16.414 16-48 16-48m80 0s-49.89 37.4-48 64c1.604 22.57 44.375 25.665 48 48c1.91 11.772-16 32-16 32s48-25.373 48-48s-42.8-25.978-48-48c-3.875-16.414 16-48 16-48M73.293 201c1.43 63.948 18.943 179.432 74.707 238h152c55.764-58.568 73.278-174.052 74.707-238zm319.598.445c-.186 9.152-.652 19.252-1.472 30.057C419.312 235.162 441 259.142 441 288c0 31.374-25.626 57-57 57a56.7 56.7 0 0 1-12.764-1.465c-2.912 9.62-6.176 19.165-9.84 28.51A87.5 87.5 0 0 0 384 375c48.155 0 87-38.845 87-87c0-45.153-34.153-82.12-78.11-86.555zM42.763 457c1.507 5.193 3.854 11.2 6.955 16.37c2.637 4.394 5.69 8.207 8.428 10.58C60.882 486.32 63 487 64 487h320c1 0 3.118-.678 5.855-3.05c2.738-2.373 5.79-6.186 8.428-10.58c3.1-5.17 5.448-11.177 6.955-16.37z"/></svg> Cafeterías</h3>
+<!-- Botón para abrir/cerrar formulario (Siempre visible fuera del contenedor condicional) -->
+<button
+  class="btn-add-mini"
+  (click)="mostrarFormularioGastronomia = !mostrarFormularioGastronomia"
+>
+  {{ mostrarFormularioGastronomia ? '✕ Cerrar' : '+ Añadir' }}
+</button>
 
-      <div
-        class="timeline-item"
-        *ngFor="
-          let cafeteria of ciudadSeleccionada.cafeterias;
-          let i = index
+<!-- Contenedor del Formulario (Solo visible si es true) -->
+<div class="card card-gastronomia" *ngIf="mostrarFormularioGastronomia">
+
+  <input
+    type="text"
+    placeholder="Nombre"
+    [(ngModel)]="nuevaGastronomia.nombre"
+  >
+
+  <div class="custom-select">
+
+    <button
+      type="button"
+      class="custom-select-trigger"
+      (click)="dropdownGastronomiaAbierto = !dropdownGastronomiaAbierto"
+    >
+      {{
+        nuevaGastronomia.tipo === 'restaurante'
+          ? 'Restaurante'
+          : nuevaGastronomia.tipo === 'cafeteria'
+          ? 'Cafetería'
+          : nuevaGastronomia.tipo === 'cerveceria'
+          ? 'Cervecería'
+          : 'Postres'
+      }}
+  
+      <span>
+        {{ dropdownGastronomiaAbierto ? '▲' : '▼' }}
+      </span>
+    </button>
+  
+    <div
+      class="custom-select-menu"
+      *ngIf="dropdownGastronomiaAbierto"
+    >
+  
+      <button
+        type="button"
+        (click)="
+          nuevaGastronomia.tipo = 'restaurante';
+          dropdownGastronomiaAbierto = false
         "
       >
+        Restaurante
+      </button>
+  
+      <button
+        type="button"
+        (click)="
+          nuevaGastronomia.tipo = 'cafeteria';
+          dropdownGastronomiaAbierto = false
+        "
+      >
+        Cafetería
+      </button>
+  
+      <button
+        type="button"
+        (click)="
+          nuevaGastronomia.tipo = 'cerveceria';
+          dropdownGastronomiaAbierto = false
+        "
+      >
+        Cervecería
+      </button>
+  
+      <button
+        type="button"
+        (click)="
+          nuevaGastronomia.tipo = 'postres';
+          dropdownGastronomiaAbierto = false
+        "
+      >
+        Postres
+      </button>
+  
+    </div>
+  
+  </div>
 
-        <div
-          class="timeline-header"
-          (click)="toggleItem('cafe-' + i)"
-        >
+  <input
+    type="text"
+    placeholder="Dirección"
+    [(ngModel)]="nuevaGastronomia.direccion"
+  >
 
-          <span>
-            {{ i + 1 }}. {{ cafeteria.nombre }}
-          </span>
+  <input
+    type="text"
+    placeholder="Imagen"
+    [(ngModel)]="nuevaGastronomia.imagen"
+  >
 
-          <span>
-            {{ itemAbierto === 'cafe-' + i ? '−' : '+' }}
-          </span>
+  <input
+    type="text"
+    placeholder="Maps"
+    [(ngModel)]="nuevaGastronomia.maps"
+  >
 
-        </div>
+  <textarea
+    placeholder="Descripción"
+    [(ngModel)]="nuevaGastronomia.descripcion"
+  ></textarea>
 
-        <div
-          class="timeline-content"
-          *ngIf="itemAbierto === 'cafe-' + i"
-        >
+  <button
+    class="btn-add"
+    (click)="agregarGastronomia()"
+  >
+    {{ editandoGastronomia ? 'Guardar cambios' : 'Añadir' }}
+  </button>
 
-          <img
-            [src]="cafeteria.imagen"
-            [alt]="cafeteria.nombre"
-            class="lugar-imagen"
-          >
+</div>
 
-          <p>{{ cafeteria.descripcion }}</p>
+<!-- RESTAURANTES -->
+<div *ngIf="obtenerGastronomiaPorTipo('restaurante').length > 0">
 
-          <div class="direccion">
-            📍 {{ cafeteria.direccion }}
-          </div>
+  <h4 class="subtitulo-gastronomia">
+    🍽️ Restaurantes
+  </h4>
 
-        </div>
+  <div
+    class="timeline-item"
+    *ngFor="let restaurante of obtenerGastronomiaPorTipo('restaurante'); let i = index"
+  >
+    <div
+      class="timeline-header"
+      (click)="toggleItem('rest-' + i)"
+    >
+      <span>{{ restaurante.nombre }}</span>
+      <span>{{ itemAbierto === 'rest-' + i ? '−' : '+' }}</span>
+    </div>
 
+    <div
+      class="timeline-content"
+      *ngIf="itemAbierto === 'rest-' + i"
+    >
+      <img
+        *ngIf="restaurante.imagen"
+        [src]="restaurante.imagen"
+        [alt]="restaurante.nombre"
+        class="lugar-imagen"
+      >
+
+      <p>{{ restaurante.descripcion }}</p>
+
+      <div class="direccion">
+        📍 {{ restaurante.direccion }}
       </div>
+
+      <div class="acciones-gastronomia">
+        <button
+          class="btn-editar"
+          (click)="editarGastronomia(restaurante)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="1.5em"
+            height="1.5em"
+          >
+            <path
+              fill="#ffffff"
+              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+            />
+          </svg>
+        </span>
+        </button>
+        <button
+          class="btn-eliminar"
+          (click)="eliminarGastronomia(restaurante)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            width="1.1em"
+            height="1.1em"
+          >
+            <path
+              fill="#ef4444"
+              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+            />
+          </svg>
+        </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CERVECERÍAS -->
+<div *ngIf="obtenerGastronomiaPorTipo('cerveceria').length > 0">
+
+  <h4 class="subtitulo-gastronomia">
+    🍺 Cervecerías
+  </h4>
+
+  <div
+    class="timeline-item"
+    *ngFor="let cerveza of obtenerGastronomiaPorTipo('cerveceria'); let i = index"
+  >
+    <div
+      class="timeline-header"
+      (click)="toggleItem('cer-' + i)"
+    >
+      <span>{{ cerveza.nombre }}</span>
+      <span>{{ itemAbierto === 'cer-' + i ? '−' : '+' }}</span>
+    </div>
+
+    <div
+      class="timeline-content"
+      *ngIf="itemAbierto === 'cer-' + i"
+    >
+      <img
+        *ngIf="cerveza.imagen"
+        [src]="cerveza.imagen"
+        [alt]="cerveza.nombre"
+        class="lugar-imagen"
+      >
+
+      <p>{{ cerveza.descripcion }}</p>
+
+      <div class="direccion">
+        📍 {{ cerveza.direccion }}
+      </div>
+
+      <div class="acciones-gastronomia">
+        <button
+          class="btn-editar"
+          (click)="editarGastronomia(cerveza)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="1.5em"
+            height="1.5em"
+          >
+            <path
+              fill="#ffffff"
+              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+            />
+          </svg>
+        </span>
+        </button>
+        <button
+          class="btn-eliminar"
+          (click)="eliminarGastronomia(cerveza)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            width="1.1em"
+            height="1.1em"
+          >
+            <path
+              fill="#ef4444"
+              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+            />
+          </svg>
+        </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CAFETERÍAS -->
+<div *ngIf="obtenerGastronomiaPorTipo('cafeteria').length > 0">
+
+  <h4 class="subtitulo-gastronomia">
+    ☕ Cafeterías
+  </h4>
+
+  <div
+    class="timeline-item"
+    *ngFor="let cafeteria of obtenerGastronomiaPorTipo('cafeteria'); let i = index"
+  >
+    <div
+      class="timeline-header"
+      (click)="toggleItem('caf-' + i)"
+    >
+      <span>{{ cafeteria.nombre }}</span>
+      <span>{{ itemAbierto === 'caf-' + i ? '−' : '+' }}</span>
+    </div>
+
+    <div
+      class="timeline-content"
+      *ngIf="itemAbierto === 'caf-' + i"
+    >
+      <img
+        *ngIf="cafeteria.imagen"
+        [src]="cafeteria.imagen"
+        [alt]="cafeteria.nombre"
+        class="lugar-imagen"
+      >
+
+      <p>{{ cafeteria.descripcion }}</p>
+
+      <div class="direccion">
+        📍 {{ cafeteria.direccion }}
+      </div>
+
+      <div class="acciones-gastronomia">
+        <button
+          class="btn-editar"
+          (click)="editarGastronomia(cafeteria)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="1.5em"
+            height="1.5em"
+          >
+            <path
+              fill="#ffffff"
+              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+            />
+          </svg>
+        </span>
+        </button>
+        <button
+          class="btn-eliminar"
+          (click)="eliminarGastronomia(cafeteria)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            width="1.1em"
+            height="1.1em"
+          >
+            <path
+              fill="#ef4444"
+              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+            />
+          </svg>
+        </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- POSTRES -->
+<div *ngIf="obtenerGastronomiaPorTipo('postres').length > 0">
+
+  <h4 class="subtitulo-gastronomia">
+    🍰 Postres
+  </h4>
+
+  <div
+    class="timeline-item"
+    *ngFor="let postre of obtenerGastronomiaPorTipo('postres'); let i = index"
+  >
+    <div
+      class="timeline-header"
+      (click)="toggleItem('pos-' + i)"
+    >
+      <span>{{ postre.nombre }}</span>
+      <span>{{ itemAbierto === 'pos-' + i ? '−' : '+' }}</span>
+    </div>
+
+    <div
+      class="timeline-content"
+      *ngIf="itemAbierto === 'pos-' + i"
+    >
+      <img
+        *ngIf="postre.imagen"
+        [src]="postre.imagen"
+        [alt]="postre.nombre"
+        class="lugar-imagen"
+      >
+
+      <p>{{ postre.descripcion }}</p>
+
+      <div class="direccion">
+        📍 {{ postre.direccion }}
+      </div>
+
+      <div class="acciones-gastronomia">
+        <button
+          class="btn-editar"
+          (click)="editarGastronomia(postre)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="1.5em"
+            height="1.5em"
+          >
+            <path
+              fill="#ffffff"
+              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+            />
+          </svg>
+        </span>
+        </button>
+        <button
+          class="btn-eliminar"
+          (click)="eliminarGastronomia(postre)"
+        >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            width="1.1em"
+            height="1.1em"
+          >
+            <path
+              fill="#ef4444"
+              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+            />
+          </svg>
+        </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 
       <!-- CURIOSIDADES -->
 
-      <h3>💡 Curiosidades</h3>
+      <h3><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" width="1.1em" height="1.1em"><path fill="#cbd5e1" d="M8.5 13c.25 0 .5.25.5.5s-.25.5-.5.5h-.25s-.25.5-.75.5s-.75-.5-.75-.5H6.5c-.25 0-.5-.25-.5-.5s.25-.5.5-.5zm0-1.25h-2c-.25 0-.5.25-.5.5s.25.5.5.5h2c.25 0 .5-.25.5-.5s-.25-.5-.5-.5M7.5 1.3c2.5 0 3.7 1.2 3.7 2.7c0 3-1.95 4-2.45 5s-.5 1.8-1 1.8H7.2c-.5 0-.45-.8-.95-1.8S3.8 7 3.8 4c0-1.5 1.2-2.7 3.7-2.7m0-.8C5.5.5 3 1.5 3 4c0 2 1 3.5 2 4.5s1 3 1.5 3h2c.5 0 .5-2 1.5-3S12 6 12 4C12 1.5 9.5.5 7.5.5m0 3.5c.75 1.25 1.25 1.25 2.25.25l-1 4.25c0 .25-.5.25-.5 0L9 5.25c-.5.25-.75.25-1.5-.5c-.75.75-1 .75-1.5.5l.75 3.25c0 .25-.5.25-.5 0l-1-4.25c1 1 1.5 1 2.25-.25"/></svg> Curiosidades</h3>
 
       <ul class="curiosidades">
 
@@ -784,7 +1364,11 @@
             let curiosidad of ciudadSeleccionada.curiosidades
           "
         >
-          {{ curiosidad }}
+          <strong>{{ curiosidad.titulo }}</strong>
+
+          <p>
+            {{ curiosidad.descripcion }}
+          </p>
         </li>
 
       </ul>

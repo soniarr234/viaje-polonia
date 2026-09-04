@@ -91,19 +91,6 @@ export class Inicio implements OnInit, OnDestroy {
       const msPorMinuto = 1000 * 60;
       const msPorHora = msPorMinuto * 60;
       const msPorDia = msPorHora * 24;
-      
-      console.log('FECHA VUELO', fechaVuelo);
-      console.log('AHORA', ahora);
-      
-      console.log('DIAS', Math.floor(diferencia / msPorDia));
-      console.log(
-        'HORAS',
-        Math.floor((diferencia % msPorDia) / msPorHora)
-      );
-      console.log(
-        'MINUTOS',
-        Math.floor((diferencia % msPorHora) / msPorMinuto)
-      );
 
       // Desglose limpio sin arrastrar residuos horarios de UTC
       this.days = Math.floor(diferencia / msPorDia);

@@ -1,11 +1,31 @@
 import { Actividad } from '../interfaces/actividad.model';
 
-export interface PuntoInteres {
+export interface Lugar {
   nombre: string;
-  direccion: string;
-  imagen: string;
   descripcion: string;
+  direccion: string;
+  imagen?: string;
   maps?: string;
+}
+
+export type TipoGastronomia =
+  | 'restaurante'
+  | 'cafeteria'
+  | 'cerveceria'
+  | 'postres';
+
+export interface Gastronomia {
+  nombre: string;
+  tipo: TipoGastronomia;
+  descripcion: string;
+  direccion: string;
+  imagen?: string;
+  maps?: string;
+}
+
+export interface Curiosidad {
+  titulo: string;
+  descripcion: string;
 }
 
 export interface Ciudad {
@@ -13,11 +33,9 @@ export interface Ciudad {
   pais: string;
   descripcion: string;
 
-  lugares: PuntoInteres[];
+  lugares: Lugar[];
 
-  restaurantes: PuntoInteres[];
+  gastronomia: Gastronomia[];
 
-  cafeterias: PuntoInteres[];
-
-  curiosidades: string[];
+  curiosidades: Curiosidad[];
 }

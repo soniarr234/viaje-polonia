@@ -60,6 +60,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: var(--surface);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  margin-bottom: 10px;
 }
 
 .card h2 {
@@ -326,6 +327,7 @@
   background: transparent;
   cursor: pointer;
   transition: transform 0.2s ease;
+  background-color: transparent;
 }
 
 .btn-editar:hover,
@@ -469,8 +471,8 @@
   border-radius: 20px;
   background: var(--surface);
   border: 1px solid rgba(56, 189, 248, 0.08);
-  cursor: pointer;
   transition: all 0.25s ease;
+  cursor: pointer;
 }
 
 .ciudad-card:hover {
@@ -481,8 +483,8 @@
 .ciudad-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
 }
 
 .ciudad-header h3 {
@@ -508,9 +510,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.ciudad-stats span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
   color: #94a3b8;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .btn-guia {
@@ -525,7 +534,26 @@
 }
 
 /* =========================
-   MODAL
+   ACCIONES CIUDAD
+========================= */
+
+.ciudad-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-editar-ciudad,
+.btn-eliminar-ciudad {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+/* =========================
+   MODAL CIUDAD
 ========================= */
 
 .modal-overlay {
@@ -557,9 +585,9 @@
 }
 
 .modal-ciudad h2 {
-  margin-bottom: 10px;
   color: white;
-  font-size: 30px;
+  margin-bottom: 12px;
+  font-size: 28px;
 }
 
 .descripcion-ciudad {
@@ -569,9 +597,28 @@
 }
 
 .modal-ciudad h3 {
-  margin: 30px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 28px 0 14px;
   color: #38bdf8;
   font-size: 18px;
+  text-transform: uppercase;
+}
+
+
+.modal-ciudad h3::after {
+  content: '';
+
+  flex: 1;
+
+  height: 1px;
+
+  background: linear-gradient(
+    to right,
+    rgba(56, 191, 248, 0.598),
+    transparent
+  );
 }
 
 /* =========================
@@ -579,9 +626,9 @@
 ========================= */
 
 .timeline-item {
+  overflow: hidden;
   margin-bottom: 12px;
   border-radius: 16px;
-  overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
@@ -606,40 +653,290 @@
 
 .timeline-header span:last-child {
   color: #38bdf8;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
 }
+/* =========================
+   SUBTÍTULOS GASTRONOMÍA
+========================= */
 
-.timeline-content {
-  padding: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+.subtitulo-gastronomia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 14px 0 14px;
+
+  color: #f8fafc;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  letter-spacing: .4px;
 }
 
 /* =========================
-   FOTO
+   GASTRONOMÍA FORMULARIO
+========================= */
+
+.card-gastronomia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 18px;
+  margin-bottom: 24px;
+  margin-top: 5px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(56, 189, 248, 0.15);
+
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.85)
+  );
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.card-gastronomia input,
+.card-gastronomia select,
+.card-gastronomia textarea {
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: white;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: all 0.2s ease;
+}
+
+.card-gastronomia input:focus,
+.card-gastronomia select:focus,
+.card-gastronomia textarea:focus {
+  border-color: #38bdf8;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.card-gastronomia textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select-trigger {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+
+  background: rgba(255,255,255,.05);
+
+  color: white;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.custom-select-trigger:hover {
+  border-color: rgba(56,189,248,.4);
+}
+
+.custom-select-menu {
+  position: absolute;
+
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+
+  z-index: 50;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  background: #0f172a;
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.35);
+}
+
+.custom-select-menu button {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border: none;
+
+  text-align: left;
+
+  background: transparent;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: background .2s ease;
+}
+
+.custom-select-menu button:hover {
+  background: rgba(56,189,248,.12);
+}
+
+.card-gastronomia .btn-add {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 25px auto;
+  border-radius: 8px;
+  border: 1px dashed #38bdf8;
+  background: transparent;
+  color: var(--primary);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.card-gastronomia .btn-add:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 24px rgba(56, 189, 248, 0.25);
+}
+
+/* =========================
+   BOTÓN AÑADIR GASTRONOMÍA
+========================= */
+.btn-add-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+
+  background: rgba(56, 189, 248, 0.12);
+
+  color: #38bdf8;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-add-mini:hover {
+  background: rgba(56, 189, 248, 0.22);
+
+  transform: translateY(-1px);
+}
+
+/* =========================
+   TARJETAS GASTRONOMÍA
+========================= */
+
+.timeline-content {
+  padding: 18px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timeline-content p {
+  margin-bottom: 12px;
+
+  color: #cbd5e1;
+
+  line-height: 1.6;
+}
+
+/* =========================
+   ACCIONES GASTRONOMÍA
+========================= */
+
+.acciones-gastronomia {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 16px;
+}
+
+.acciones-gastronomia .btn-editar,
+.acciones-gastronomia .btn-eliminar {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  background: transparent;
+
+  transition: all 0.2s ease;
+}
+
+.acciones-gastronomia .btn-editar:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.acciones-gastronomia .btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* =========================
+   IMÁGENES
 ========================= */
 
 .lugar-imagen {
   width: 100%;
   height: 220px;
-  border-radius: 14px;
   margin-bottom: 14px;
+  border-radius: 14px;
   object-fit: cover;
 }
 
-.timeline-content p {
-  margin-bottom: 12px;
-  color: #cbd5e1;
-  line-height: 1.6;
-}
+/* =========================
+   INFO LUGAR
+========================= */
 
 .direccion {
   margin-bottom: 10px;
   color: #94a3b8;
+  font-size: 14px;
 }
 
 /* =========================
-   MAPS BUTTON
+   MAPS
 ========================= */
 
 .btn-maps {
@@ -650,6 +947,7 @@
   background: rgba(56, 189, 248, 0.15);
   color: #38bdf8;
   text-decoration: none;
+  font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
 }
@@ -669,5 +967,5 @@
 .curiosidades li {
   margin-bottom: 10px;
   color: #cbd5e1;
-  line-height: 1.6;
+  line-height: 1.7;
 }
