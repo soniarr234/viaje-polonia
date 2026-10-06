@@ -535,221 +535,221 @@
     </div>
   </div>
 
+  <!-- =====================================================
+     CIUDADES
+===================================================== -->
 
-  <!-- CIUDADES -->
+<div *ngIf="vista === 'ciudades'">
 
-  <div *ngIf="vista === 'ciudades'">
-    <div class="subtabs-ciudad">
-      <button
-        [class.active]="subVistaCiudades === 'ciudades'"
-        (click)="subVistaCiudades = 'ciudades'"
+  <!-- SUBTABS -->
+
+  <div class="subtabs-ciudad">
+
+    <button
+      [class.active]="subVistaCiudades === 'ciudades'"
+      (click)="subVistaCiudades = 'ciudades'"
+    >
+      🏙️ Ciudades
+    </button>
+
+    <button
+      [class.active]="subVistaCiudades === 'ruta'"
+      (click)="subVistaCiudades = 'ruta'"
+    >
+      📍 Ruta
+    </button>
+
+  </div>
+
+
+  <!-- ===================================================
+       LISTADO DE CIUDADES
+  ==================================================== -->
+
+  <div *ngIf="subVistaCiudades === 'ciudades'">
+
+    <button
+      class="btn-add"
+      (click)="mostrarFormularioCiudad = !mostrarFormularioCiudad"
+    >
+      {{
+        mostrarFormularioCiudad
+          ? '✖ Cancelar'
+          : '+ Añadir ciudad'
+      }}
+    </button>
+
+
+    <!-- FORMULARIO CIUDAD -->
+
+    <div
+      class="card"
+      *ngIf="mostrarFormularioCiudad"
+    >
+
+      <h2>
+        {{
+          editandoCiudad
+            ? 'Editar ciudad'
+            : 'Nueva ciudad'
+        }}
+      </h2>
+
+      <div class="form-grid">
+
+        <input
+          type="text"
+          placeholder="Ciudad"
+          [(ngModel)]="nuevaCiudad.nombre"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path fill="#cbd5e1" fillRule="evenodd" d="M21 5.5v14h2V21H1v-1.5h2V4.32l3.75-2.19l3.75 2.19V12h3V5.5zM19.5 7H15v5h3v7.5h1.5zm-9 6.5v6h6v-6zM6.75 3.87L4.5 5.18V19.5H9V5.18zM6 9V7h1.5v2zm0 1.5v2h1.5v-2zM6 16v-2h1.5v2zm12-7.5h-1.5v2H18zm-6 8V15h3v1.5z" clipRule="evenodd"/></svg> Ciudades
-      </button>
 
-      <button
-        [class.active]="subVistaCiudades === 'ruta'"
-        (click)="subVistaCiudades = 'ruta'"
+        <input
+          type="text"
+          placeholder="País"
+          [(ngModel)]="nuevaCiudad.pais"
         >
-        <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 100 100"
-              width="1.2em"
-              height="1.2em"
-            >
-              <path
-                fill="red"
-                d="M21 32C9.459 32 0 41.43 0 52.94c0 4.46 1.424 8.605 3.835 12.012l14.603 25.244c2.045 2.672 3.405 2.165 5.106-.14l16.106-27.41c.325-.59.58-1.216.803-1.856A20.7 20.7 0 0 0 42 52.94C42 41.43 32.544 32 21 32m0 9.812c6.216 0 11.16 4.931 11.16 11.129S27.215 64.068 21 64.068S9.84 59.138 9.84 52.941S14.786 41.812 21 41.812M87.75 0C81.018 0 75.5 5.501 75.5 12.216c0 2.601.83 5.019 2.237 7.006l8.519 14.726c1.193 1.558 1.986 1.262 2.978-.082l9.395-15.99c.19-.343.339-.708.468-1.082a12 12 0 0 0 .903-4.578C100 5.5 94.484 0 87.75 0m0 5.724c3.626 0 6.51 2.876 6.51 6.492s-2.884 6.49-6.51 6.49s-6.51-2.875-6.51-6.49s2.885-6.492 6.51-6.492"
-              />
-              <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M88.209 37.412c-2.247.05-4.5.145-6.757.312l.348 5.532a126 126 0 0 1 6.513-.303zm-11.975.82c-3.47.431-6.97 1.045-10.43 2.032l1.303 5.361c3.144-.896 6.402-1.475 9.711-1.886zM60.623 42.12a24.5 24.5 0 0 0-3.004 1.583l-.004.005l-.006.002c-1.375.866-2.824 1.965-4.007 3.562c-.857 1.157-1.558 2.62-1.722 4.35l5.095.565c.038-.406.246-.942.62-1.446h.002v-.002c.603-.816 1.507-1.557 2.582-2.235l.004-.002a20 20 0 0 1 2.388-1.256zM58 54.655l-3.303 4.235c.783.716 1.604 1.266 2.397 1.726l.01.005l.01.006c2.632 1.497 5.346 2.342 7.862 3.144l1.446-5.318c-2.515-.802-4.886-1.576-6.918-2.73c-.582-.338-1.092-.691-1.504-1.068m13.335 5.294l-1.412 5.327l.668.208l.82.262c2.714.883 5.314 1.826 7.638 3.131l2.358-4.92c-2.81-1.579-5.727-2.611-8.538-3.525l-.008-.002l-.842-.269zm14.867 7.7l-3.623 3.92c.856.927 1.497 2.042 1.809 3.194l.002.006l.002.009c.372 1.345.373 2.927.082 4.525l5.024 1.072c.41-2.256.476-4.733-.198-7.178c-.587-2.162-1.707-4.04-3.098-5.548M82.72 82.643a12 12 0 0 1-1.826 1.572h-.002c-1.8 1.266-3.888 2.22-6.106 3.04l1.654 5.244c2.426-.897 4.917-1.997 7.245-3.635l.006-.005l.003-.002a17 17 0 0 0 2.639-2.287zm-12.64 6.089c-3.213.864-6.497 1.522-9.821 2.08l.784 5.479c3.421-.575 6.856-1.262 10.27-2.18zm-14.822 2.836c-3.346.457-6.71.83-10.084 1.148l.442 5.522c3.426-.322 6.858-.701 10.285-1.17zm-15.155 1.583c-3.381.268-6.77.486-10.162.67l.256 5.536c3.425-.185 6.853-.406 10.28-.678zm-15.259.92c-2.033.095-4.071.173-6.114.245l.168 5.541a560 560 0 0 0 6.166-.246z"
-                color="currentColor"
-              />
-            </svg> Ruta
-      </button>
-    </div>
 
-    <div *ngIf="subVistaCiudades === 'ciudades'">
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevaCiudad.descripcion"
+        ></textarea>
+
+      </div>
+
       <button
         class="btn-add"
-        (click)="mostrarFormularioCiudad = !mostrarFormularioCiudad"
+        (click)="agregarCiudad()"
       >
         {{
-          mostrarFormularioCiudad
-            ? '✖ Cancelar'
-            : '+ Añadir ciudad'
+          editandoCiudad
+            ? 'Guardar cambios'
+            : 'Guardar ciudad'
         }}
       </button>
 
-      <!-- FORMULARIO -->
+    </div>
+
+
+    <!-- SIN CIUDADES -->
+
+    <div
+      class="empty-state"
+      *ngIf="ciudades.length === 0"
+    >
+      No hay ciudades añadidas.
+    </div>
+
+
+    <!-- CARDS CIUDADES -->
+
+    <div class="ciudades-grid">
 
       <div
-        class="card"
-        *ngIf="mostrarFormularioCiudad"
+        class="ciudad-card"
+        *ngFor="let ciudad of ciudades"
       >
 
-        <h2>
-          {{
-            editandoCiudad
-              ? 'Editar ciudad'
-              : 'Nueva ciudad'
-          }}
-        </h2>
+        <div class="ciudad-header">
 
-        <div class="form-grid">
+          <div>
 
-          <input
-            type="text"
-            placeholder="Ciudad"
-            [(ngModel)]="nuevaCiudad.nombre"
-          >
+            <h3>
+              {{ ciudad.nombre }}
+            </h3>
 
-          <input
-            type="text"
-            placeholder="País"
-            [(ngModel)]="nuevaCiudad.pais"
-          >
+            <span>
+              {{ ciudad.pais }}
+            </span>
 
-          <textarea
-            placeholder="Descripción"
-            [(ngModel)]="nuevaCiudad.descripcion"
-          >
-          </textarea>
+          </div>
+
+
+          <div class="ciudad-acciones">
+
+            <button
+              type="button"
+              class="btn-editar-ciudad"
+              title="Editar ciudad"
+              (click)="
+                $event.stopPropagation();
+                editarCiudad(ciudad)
+              "
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar-ciudad"
+              title="Eliminar ciudad"
+              (click)="
+                $event.stopPropagation();
+                eliminarCiudad(ciudad)
+              "
+            >
+              🗑️
+            </button>
+
+          </div>
 
         </div>
 
+
+        <p class="ciudad-descripcion">
+          {{ ciudad.descripcion }}
+        </p>
+
+
+        <div class="ciudad-stats">
+
+          <span>
+            🏛️ {{ ciudad.lugares.length }} lugares
+          </span>
+
+          <span>
+            🍴 {{ ciudad.gastronomia.length }} sitios
+          </span>
+
+        </div>
+
+
         <button
-          class="btn-add"
-          (click)="agregarCiudad()"
+          type="button"
+          class="btn-guia"
+          (click)="abrirCiudad(ciudad)"
         >
-          {{
-            editandoCiudad
-              ? 'Guardar cambios'
-              : 'Guardar ciudad'
-          }}
+          Ver guía →
         </button>
 
       </div>
 
-      <!-- LISTADO -->
-
-      <div class="ciudades-grid">
-
-        <div
-          class="ciudad-card"
-          *ngFor="let ciudad of ciudades"
-        >
-
-          <div class="ciudad-header">
-
-            <div>
-
-              <h3>
-                {{ ciudad.nombre }}
-              </h3>
-
-              <span>
-                {{ ciudad.pais }}
-              </span>
-
-            </div>
-
-            <div class="ciudad-acciones">
-
-              <button
-                class="btn-editar-ciudad"
-                (click)="
-                  $event.stopPropagation();
-                  editarCiudad(ciudad)
-                "
-                title="Editar ciudad"
-              >
-                <span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="1.5em"
-                    height="1.5em"
-                  >
-                    <path
-                      fill="#ffffff"
-                      d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                    />
-                </svg>
-              </span>
-              </button>
-
-              <button
-                class="btn-eliminar-ciudad"
-                (click)="
-                  $event.stopPropagation();
-                  eliminarCiudad(ciudad)
-                "
-                title="Eliminar ciudad"
-              >
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  width="1.1em"
-                  height="1.1em"
-                >
-                  <path
-                    fill="#ef4444"
-                    d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                  />
-                </svg>
-              </span>
-              </button>
-
-            </div>
-
-          </div>
-
-          <p class="ciudad-descripcion">
-            {{ ciudad.descripcion }}
-          </p>
-
-          <div class="ciudad-stats">
-
-            <span>
-              🏛️ {{ ciudad.lugares.length }} lugares
-            </span>
-
-            <span>
-              🍴
-              {{ ciudad.gastronomia.length }}
-              sitios
-            </span>
-
-          </div>
-
-          <button
-            class="btn-guia"
-            (click)="abrirCiudad(ciudad)"
-          >
-            Ver guía →
-          </button>
-
-        </div>
-
-      </div>
     </div>
 
-    <div *ngIf="subVistaCiudades === 'ruta'">
+  </div>
 
-      <button
-        class="btn-add"
-        (click)="mostrarFormularioDia = !mostrarFormularioDia"
-      >
-        {{
-          mostrarFormularioDia
+
+  <!-- ===================================================
+       RUTA
+  ==================================================== -->
+
+  <div *ngIf="subVistaCiudades === 'ruta'">
+
+    <button
+      class="btn-add"
+      (click)="
+        mostrarFormularioDia = !mostrarFormularioDia;
+        dropdownCiudadRutaAbierto = false
+      "
+    >
+      {{
+        mostrarFormularioDia
           ? '✖ Cancelar'
           : '+ Añadir día'
-        }}
-      </button>
+      }}
+    </button>
+
+
+    <!-- FORMULARIO NUEVO DIA -->
 
     <div
       class="card"
@@ -771,24 +771,73 @@
           [(ngModel)]="nuevoDia.fecha"
         >
 
-        <select
-          [(ngModel)]="nuevoDia.ciudad"
-        >
 
-          <option value="">
-            Selecciona ciudad
-          </option>
+        <!-- CUSTOM SELECT CIUDAD -->
 
-          <option
-            *ngFor="let ciudad of ciudades"
-            [value]="ciudad.nombre"
+        <div class="custom-select custom-select-ciudad">
+
+          <button
+            type="button"
+            class="custom-select-trigger"
+            [class.has-value]="nuevoDia.ciudadId !== null"
+            (click)="
+              dropdownCiudadRutaAbierto =
+                !dropdownCiudadRutaAbierto
+            "
           >
-            {{ ciudad.nombre }}
-          </option>
 
-        </select>
+            <span>
+              {{
+                nuevoDia.ciudad ||
+                'Selecciona ciudad'
+              }}
+            </span>
+
+            <span
+              class="custom-select-arrow"
+              [class.open]="dropdownCiudadRutaAbierto"
+            >
+              ▼
+            </span>
+
+          </button>
+
+
+          <div
+            class="custom-select-menu"
+            *ngIf="dropdownCiudadRutaAbierto"
+          >
+
+            <button
+              type="button"
+              *ngFor="let ciudad of ciudades"
+              [class.selected]="nuevoDia.ciudadId === ciudad.id"
+              (click)="
+                nuevoDia.ciudadId = ciudad.id || null;
+                nuevoDia.ciudad = ciudad.nombre;
+                dropdownCiudadRutaAbierto = false
+              "
+            >
+
+              <span>
+                {{ ciudad.nombre }}
+              </span>
+
+              <span
+                class="check-ciudad"
+                *ngIf="nuevoDia.ciudadId === ciudad.id"
+              >
+                ✓
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
+
 
       <button
         class="btn-add"
@@ -799,99 +848,27 @@
 
     </div>
 
+
+    <!-- SIN DIAS -->
+
+    <div
+      class="empty-state"
+      *ngIf="rutaDias.length === 0"
+    >
+      Todavía no has añadido ningún día a la ruta.
+    </div>
+
+
+    <!-- =================================================
+         DIAS
+    ================================================== -->
+
     <div
       class="ruta-dia-card"
       *ngFor="let dia of rutaDias"
     >
 
-      <div
-        class="ruta-bloque"
-        *ngIf="obtenerCiudad(dia.ciudad) as ciudad"
-      >
-
-      <h4>🏛️ Lugares</h4>
-    
-      <select [(ngModel)]="dia.lugarSeleccionado">
-    
-        <option value="">
-          Selecciona lugar
-        </option>
-    
-        <option
-          *ngFor="let lugar of ciudad.lugares"
-          [value]="lugar.nombre"
-        >
-          {{ lugar.nombre }}
-        </option>
-    
-      </select>
-    
-      <button
-        class="btn-add-mini"
-        (click)="agregarLugarADia(dia)"
-      >
-        Añadir lugar
-      </button>
-
-      <div
-    class="ruta-elementos"
-    *ngIf="dia.elementos.length > 0"
-  >
-
-    <div
-      class="ruta-elemento"
-      *ngFor="let elemento of dia.elementos"
-    >
-
-    <button
-      class="ruta-link"
-      (click)="abrirElementoRuta(elemento)"
-    >
-      {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }}
-      {{ elemento.referencia }}
-    </button>
-
-    <button
-      class="btn-eliminar"
-      (click)="eliminarElementoDia(
-        dia,
-        elemento
-      )"
-    >
-      ✖
-    </button>
-
-  </div>
-    
-    </div>
-
-    <div *ngIf="obtenerCiudad(dia.ciudad) as ciudad">
-
-      <h4>🍴 Gastronomía</h4>
-    
-      <select [(ngModel)]="dia.gastronomiaSeleccionada">
-    
-        <option value="">
-          Selecciona sitio
-        </option>
-    
-        <option
-          *ngFor="let sitio of ciudad.gastronomia"
-          [value]="sitio.nombre"
-        >
-          {{ sitio.nombre }}
-        </option>
-    
-      </select>
-    
-      <button
-        class="btn-add-mini"
-        (click)="agregarGastronomiaADia(dia)"
-      >
-        Añadir sitio
-      </button>
-    
-    </div>
+      <!-- CABECERA -->
 
       <div class="ruta-dia-header">
 
@@ -905,739 +882,1205 @@
             {{ dia.ciudad }}
           </span>
 
+          <span *ngIf="dia.fecha">
+            {{ dia.fecha | date:'dd/MM/yyyy' }}
+          </span>
+
         </div>
 
-      </div>
 
-    </div>
-
-    </div>
-
-    <div
-    class="modal-overlay"
-    *ngIf="elementoRutaAbierto"
-    (click)="elementoRutaAbierto = null"
-  >
-  
-    <div
-      class="modal-ruta"
-      (click)="$event.stopPropagation()"
-    >
-  
-      <button
-        class="btn-cerrar"
-        (click)="elementoRutaAbierto = null"
-      >
-        ✖
-      </button>
-  
-      <h2>
-        {{ elementoRutaAbierto.nombre }}
-      </h2>
-  
-      <img
-        *ngIf="elementoRutaAbierto.imagen"
-        [src]="elementoRutaAbierto.imagen"
-        [alt]="elementoRutaAbierto.nombre"
-        class="lugar-imagen"
-      >
-  
-      <p>
-        {{ elementoRutaAbierto.descripcion }}
-      </p>
-  
-      <div class="direccion">
-        📍 {{ elementoRutaAbierto.direccion }}
-      </div>
-  
-      <a
-        *ngIf="elementoRutaAbierto.maps"
-        [href]="elementoRutaAbierto.maps"
-        target="_blank"
-        class="btn-maps"
-      >
-        Abrir en Maps
-      </a>
-  
-    </div>
-  
-  </div>
-
-  </div>
-
-  <!-- MODAL CIUDAD -->
-
-  <div
-    class="modal-overlay"
-    *ngIf="ciudadSeleccionada"
-    (click)="cerrarCiudad()"
-  >
-
-    <div
-      class="modal-ciudad"
-      (click)="$event.stopPropagation()"
-    >
-
-      <button
-        class="btn-cerrar"
-        (click)="cerrarCiudad()"
-      >
-        ✖
-      </button>
-
-      <h2>
-        {{ ciudadSeleccionada.nombre }}
-      </h2>
-
-      <p class="descripcion-ciudad">
-        {{ ciudadSeleccionada.descripcion }}
-      </p>
-
-      <!-- lugares -->
-
-      <h3>🏛️ Lugares</h3>
-
-      <button
-        class="btn-add-mini"
-        (click)="
-          mostrarFormularioLugar =
-          !mostrarFormularioLugar
-        "
-      >
-        {{
-          mostrarFormularioLugar
-            ? '✕ Cerrar'
-            : '+ Añadir'
-        }}
-      </button>
-
-      <div
-        class="card card-gastronomia"
-        *ngIf="mostrarFormularioLugar"
-      >
-
-        <input
-          type="text"
-          placeholder="Nombre"
-          [(ngModel)]="nuevoLugar.nombre"
-        >
-
-        <input
-          type="text"
-          placeholder="Dirección"
-          [(ngModel)]="nuevoLugar.direccion"
-        >
-
-        <input
-          type="text"
-          placeholder="Imagen"
-          [(ngModel)]="nuevoLugar.imagen"
-        >
-
-        <input
-          type="text"
-          placeholder="Google Maps"
-          [(ngModel)]="nuevoLugar.maps"
-        >
-
-        <textarea
-          placeholder="Descripción"
-          [(ngModel)]="nuevoLugar.descripcion"
-        ></textarea>
+        <!--
+          eliminarDiaRuta ya existe en ruta.ts.
+        -->
 
         <button
-          class="btn-add"
-          (click)="agregarLugar()"
+          type="button"
+          class="btn-eliminar"
+          title="Eliminar día"
+          (click)="eliminarDiaRuta(dia)"
         >
-          {{
-            editandoLugar
-              ? 'Guardar cambios'
-              : 'Añadir lugar'
-          }}
+          ✖
         </button>
 
       </div>
 
-      <div
-        class="timeline-item"
-        [id]="'item-imp-' + i"
-        *ngFor="
-          let lugar of ciudadSeleccionada.lugares;
-          let i = index
-        "
+
+      <!-- ===============================================
+           DATOS DE LA CIUDAD DEL DIA
+      ================================================ -->
+
+      <ng-container
+        *ngIf="obtenerCiudadPorId(dia.ciudadId) as ciudad"
       >
 
+        <!-- LUGARES -->
+
+        <div class="ruta-bloque">
+
+          <h4>
+            🏛️ Lugares
+          </h4>
+
+          <select
+            [(ngModel)]="dia.lugarSeleccionado"
+          >
+
+            <option value="">
+              Selecciona lugar
+            </option>
+
+            <option
+              *ngFor="let lugar of ciudad.lugares"
+              [value]="lugar.nombre"
+            >
+              {{ lugar.nombre }}
+            </option>
+
+          </select>
+
+
+          <button
+            type="button"
+            class="btn-add-mini"
+            (click)="agregarLugarADia(dia)"
+          >
+            Añadir lugar
+          </button>
+
+        </div>
+
+
+        <!-- GASTRONOMIA -->
+
+        <div class="ruta-bloque">
+
+          <h4>
+            🍴 Gastronomía
+          </h4>
+
+          <select
+            [(ngModel)]="dia.gastronomiaSeleccionada"
+          >
+
+            <option value="">
+              Selecciona sitio
+            </option>
+
+            <option
+              *ngFor="let sitio of ciudad.gastronomia"
+              [value]="sitio.nombre"
+            >
+              {{ sitio.nombre }}
+            </option>
+
+          </select>
+
+
+          <button
+            type="button"
+            class="btn-add-mini"
+            (click)="agregarGastronomiaADia(dia)"
+          >
+            Añadir sitio
+          </button>
+
+        </div>
+
+      </ng-container>
+
+
+      <!-- ===============================================
+           ELEMENTOS AÑADIDOS AL DIA
+      ================================================ -->
+
+      <div
+        class="ruta-elementos"
+        *ngIf="dia.elementos.length > 0"
+      >
 
         <div
-          class="timeline-header"
-          (click)="toggleItem('imp-' + i)"
+          class="ruta-elemento"
+          *ngFor="let elemento of dia.elementos"
         >
+
+          <button
+            type="button"
+            class="ruta-link"
+            (click)="abrirElementoRuta(elemento)"
+          >
+
+            {{
+              elemento.tipo === 'lugar'
+                ? '🏛️'
+                : '🍴'
+            }}
+
+            {{ elemento.referencia }}
+
+          </button>
+
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            title="Quitar de este día"
+            (click)="
+              eliminarElementoDia(
+                dia,
+                elemento
+              )
+            "
+          >
+            ✖
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- DIA VACIO -->
+
+      <div
+        class="ruta-vacia"
+        *ngIf="dia.elementos.length === 0"
+      >
+        Todavía no has añadido lugares o sitios a este día.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL ELEMENTO DE RUTA
+===================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="elementoRutaAbierto"
+  (click)="cerrarElementoRuta()"
+>
+
+  <div
+    class="modal-ruta"
+    (click)="$event.stopPropagation()"
+  >
+
+    <button
+      type="button"
+      class="btn-cerrar"
+      (click)="cerrarElementoRuta()"
+    >
+      ✖
+    </button>
+
+
+    <h2>
+      {{ elementoRutaAbierto.nombre }}
+    </h2>
+
+
+    <div
+      class="fecha"
+      *ngIf="ciudadElementoRuta"
+    >
+      📍 {{ ciudadElementoRuta }}
+    </div>
+
+
+    <img
+      *ngIf="elementoRutaAbierto.imagen"
+      [src]="elementoRutaAbierto.imagen"
+      [alt]="elementoRutaAbierto.nombre"
+      class="lugar-imagen"
+    >
+
+
+    <p *ngIf="elementoRutaAbierto.descripcion">
+      {{ elementoRutaAbierto.descripcion }}
+    </p>
+
+
+    <div
+      class="direccion"
+      *ngIf="elementoRutaAbierto.direccion"
+    >
+      📍 {{ elementoRutaAbierto.direccion }}
+    </div>
+
+
+    <a
+      *ngIf="elementoRutaAbierto.maps"
+      [href]="elementoRutaAbierto.maps"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-maps"
+    >
+      Abrir en Maps
+    </a>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL CIUDAD
+===================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="ciudadSeleccionada"
+  (click)="cerrarCiudad()"
+>
+
+  <div
+    class="modal-ciudad"
+    (click)="$event.stopPropagation()"
+  >
+
+    <button
+      type="button"
+      class="btn-cerrar"
+      (click)="cerrarCiudad()"
+    >
+      ✖
+    </button>
+
+
+    <h2>
+      {{ ciudadSeleccionada.nombre }}
+    </h2>
+
+
+    <p class="descripcion-ciudad">
+      {{ ciudadSeleccionada.descripcion }}
+    </p>
+
+
+    <!-- =================================================
+         LUGARES
+    ================================================== -->
+
+    <h3>
+      🏛️ Lugares
+    </h3>
+
+
+    <button
+      type="button"
+      class="btn-add-mini"
+      (click)="
+        mostrarFormularioLugar =
+          !mostrarFormularioLugar
+      "
+    >
+      {{
+        mostrarFormularioLugar
+          ? '✕ Cerrar'
+          : '+ Añadir'
+      }}
+    </button>
+
+
+    <!-- FORMULARIO LUGAR -->
+
+    <div
+      class="card card-gastronomia"
+      *ngIf="mostrarFormularioLugar"
+    >
+
+      <input
+        type="text"
+        placeholder="Nombre"
+        [(ngModel)]="nuevoLugar.nombre"
+      >
+
+      <input
+        type="text"
+        placeholder="Dirección"
+        [(ngModel)]="nuevoLugar.direccion"
+      >
+
+      <input
+        type="text"
+        placeholder="URL de imagen"
+        [(ngModel)]="nuevoLugar.imagen"
+      >
+
+      <input
+        type="text"
+        placeholder="Google Maps"
+        [(ngModel)]="nuevoLugar.maps"
+      >
+
+      <textarea
+        placeholder="Descripción"
+        [(ngModel)]="nuevoLugar.descripcion"
+      ></textarea>
+
+
+      <button
+        class="btn-add"
+        (click)="agregarLugar()"
+      >
+        {{
+          editandoLugar
+            ? 'Guardar cambios'
+            : 'Añadir lugar'
+        }}
+      </button>
+
+    </div>
+
+
+    <!-- LISTADO LUGARES -->
+
+    <div
+      class="timeline-item"
+      *ngFor="
+        let lugar of ciudadSeleccionada.lugares;
+        let i = index
+      "
+    >
+
+      <div
+        class="timeline-header"
+        (click)="toggleItem('lugar-' + lugar.id)"
+      >
 
         <span>
           {{ lugar.nombre }}
         </span>
 
+        <span>
+          {{
+            itemAbierto === 'lugar-' + lugar.id
+              ? '−'
+              : '+'
+          }}
+        </span>
+
+      </div>
+
+
+      <div
+        class="timeline-content"
+        *ngIf="itemAbierto === 'lugar-' + lugar.id"
+      >
+
+        <img
+          *ngIf="lugar.imagen"
+          [src]="lugar.imagen"
+          [alt]="lugar.nombre"
+          class="lugar-imagen"
+        >
+
+        <div
+          class="direccion"
+          *ngIf="lugar.direccion"
+        >
+          📍 {{ lugar.direccion }}
+        </div>
+
+
+        <p *ngIf="lugar.descripcion">
+          {{ lugar.descripcion }}
+        </p>
+
+
+        <a
+          *ngIf="lugar.maps"
+          [href]="lugar.maps"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-maps"
+        >
+          Abrir en Maps
+        </a>
+
+
+        <div class="acciones-gastronomia">
+
+          <button
+            type="button"
+            class="btn-editar"
+            title="Editar lugar"
+            (click)="editarLugar(lugar)"
+          >
+            ✏️
+          </button>
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            title="Eliminar lugar"
+            (click)="eliminarLugar(lugar)"
+          >
+            🗑️
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="empty-state"
+      *ngIf="ciudadSeleccionada.lugares.length === 0"
+    >
+      No hay lugares añadidos.
+    </div>
+
+
+    <!-- =================================================
+         GASTRONOMIA
+    ================================================== -->
+
+    <h3>
+      🍴 Gastronomía
+    </h3>
+
+
+    <button
+      type="button"
+      class="btn-add-mini"
+      (click)="
+        mostrarFormularioGastronomia =
+          !mostrarFormularioGastronomia;
+        dropdownGastronomiaAbierto = false
+      "
+    >
+      {{
+        mostrarFormularioGastronomia
+          ? '✕ Cerrar'
+          : '+ Añadir'
+      }}
+    </button>
+
+
+    <!-- FORMULARIO GASTRONOMIA -->
+
+    <div
+      class="card card-gastronomia"
+      *ngIf="mostrarFormularioGastronomia"
+    >
+
+      <input
+        type="text"
+        placeholder="Nombre"
+        [(ngModel)]="nuevaGastronomia.nombre"
+      >
+
+
+      <!-- TIPO -->
+
+      <div class="custom-select">
+
+        <button
+          type="button"
+          class="custom-select-trigger"
+          (click)="
+            dropdownGastronomiaAbierto =
+              !dropdownGastronomiaAbierto
+          "
+        >
+
           <span>
-            {{ itemAbierto === 'imp-' + i ? '−' : '+' }}
+            {{
+              nuevaGastronomia.tipo === 'restaurante'
+                ? 'Restaurante'
+                : nuevaGastronomia.tipo === 'cafeteria'
+                ? 'Cafetería'
+                : nuevaGastronomia.tipo === 'cerveceria'
+                ? 'Cervecería'
+                : 'Postres'
+            }}
+          </span>
+
+          <span
+            class="custom-select-arrow"
+            [class.open]="dropdownGastronomiaAbierto"
+          >
+            ▼
+          </span>
+
+        </button>
+
+
+        <div
+          class="custom-select-menu"
+          *ngIf="dropdownGastronomiaAbierto"
+        >
+
+          <button
+            type="button"
+            [class.selected]="
+              nuevaGastronomia.tipo === 'restaurante'
+            "
+            (click)="
+              nuevaGastronomia.tipo = 'restaurante';
+              dropdownGastronomiaAbierto = false
+            "
+          >
+            Restaurante
+          </button>
+
+
+          <button
+            type="button"
+            [class.selected]="
+              nuevaGastronomia.tipo === 'cafeteria'
+            "
+            (click)="
+              nuevaGastronomia.tipo = 'cafeteria';
+              dropdownGastronomiaAbierto = false
+            "
+          >
+            Cafetería
+          </button>
+
+
+          <button
+            type="button"
+            [class.selected]="
+              nuevaGastronomia.tipo === 'cerveceria'
+            "
+            (click)="
+              nuevaGastronomia.tipo = 'cerveceria';
+              dropdownGastronomiaAbierto = false
+            "
+          >
+            Cervecería
+          </button>
+
+
+          <button
+            type="button"
+            [class.selected]="
+              nuevaGastronomia.tipo === 'postres'
+            "
+            (click)="
+              nuevaGastronomia.tipo = 'postres';
+              dropdownGastronomiaAbierto = false
+            "
+          >
+            Postres
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <input
+        type="text"
+        placeholder="Dirección"
+        [(ngModel)]="nuevaGastronomia.direccion"
+      >
+
+      <input
+        type="text"
+        placeholder="URL de imagen"
+        [(ngModel)]="nuevaGastronomia.imagen"
+      >
+
+      <input
+        type="text"
+        placeholder="Google Maps"
+        [(ngModel)]="nuevaGastronomia.maps"
+      >
+
+      <textarea
+        placeholder="Descripción"
+        [(ngModel)]="nuevaGastronomia.descripcion"
+      ></textarea>
+
+
+      <button
+        class="btn-add"
+        (click)="agregarGastronomia()"
+      >
+        {{
+          editandoGastronomia
+            ? 'Guardar cambios'
+            : 'Añadir'
+        }}
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         RESTAURANTES
+    ================================================== -->
+
+    <div
+      *ngIf="
+        obtenerGastronomiaPorTipo('restaurante').length > 0
+      "
+    >
+
+      <h4 class="subtitulo-gastronomia">
+        🍽️ Restaurantes
+      </h4>
+
+
+      <div
+        class="timeline-item"
+        *ngFor="
+          let restaurante
+          of obtenerGastronomiaPorTipo('restaurante')
+        "
+      >
+
+        <div
+          class="timeline-header"
+          (click)="
+            toggleItem('rest-' + restaurante.id)
+          "
+        >
+
+          <span>
+            {{ restaurante.nombre }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'rest-' + restaurante.id
+                ? '−'
+                : '+'
+            }}
           </span>
 
         </div>
 
+
         <div
           class="timeline-content"
-          *ngIf="itemAbierto === 'imp-' + i"
+          *ngIf="
+            itemAbierto === 'rest-' + restaurante.id
+          "
         >
 
           <img
-            [src]="lugar.imagen"
-            [alt]="lugar.nombre"
+            *ngIf="restaurante.imagen"
+            [src]="restaurante.imagen"
+            [alt]="restaurante.nombre"
             class="lugar-imagen"
           >
 
-          <div class="direccion">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 100 100"
-              width="1.2em"
-              height="1.2em"
-            >
-              <path
-                fill="red"
-                d="M21 32C9.459 32 0 41.43 0 52.94c0 4.46 1.424 8.605 3.835 12.012l14.603 25.244c2.045 2.672 3.405 2.165 5.106-.14l16.106-27.41c.325-.59.58-1.216.803-1.856A20.7 20.7 0 0 0 42 52.94C42 41.43 32.544 32 21 32m0 9.812c6.216 0 11.16 4.931 11.16 11.129S27.215 64.068 21 64.068S9.84 59.138 9.84 52.941S14.786 41.812 21 41.812M87.75 0C81.018 0 75.5 5.501 75.5 12.216c0 2.601.83 5.019 2.237 7.006l8.519 14.726c1.193 1.558 1.986 1.262 2.978-.082l9.395-15.99c.19-.343.339-.708.468-1.082a12 12 0 0 0 .903-4.578C100 5.5 94.484 0 87.75 0m0 5.724c3.626 0 6.51 2.876 6.51 6.492s-2.884 6.49-6.51 6.49s-6.51-2.875-6.51-6.49s2.885-6.492 6.51-6.492"
-              />
-              <path
-                fill="currentColor"
-                fillRule="evenodd"
-                d="M88.209 37.412c-2.247.05-4.5.145-6.757.312l.348 5.532a126 126 0 0 1 6.513-.303zm-11.975.82c-3.47.431-6.97 1.045-10.43 2.032l1.303 5.361c3.144-.896 6.402-1.475 9.711-1.886zM60.623 42.12a24.5 24.5 0 0 0-3.004 1.583l-.004.005l-.006.002c-1.375.866-2.824 1.965-4.007 3.562c-.857 1.157-1.558 2.62-1.722 4.35l5.095.565c.038-.406.246-.942.62-1.446h.002v-.002c.603-.816 1.507-1.557 2.582-2.235l.004-.002a20 20 0 0 1 2.388-1.256zM58 54.655l-3.303 4.235c.783.716 1.604 1.266 2.397 1.726l.01.005l.01.006c2.632 1.497 5.346 2.342 7.862 3.144l1.446-5.318c-2.515-.802-4.886-1.576-6.918-2.73c-.582-.338-1.092-.691-1.504-1.068m13.335 5.294l-1.412 5.327l.668.208l.82.262c2.714.883 5.314 1.826 7.638 3.131l2.358-4.92c-2.81-1.579-5.727-2.611-8.538-3.525l-.008-.002l-.842-.269zm14.867 7.7l-3.623 3.92c.856.927 1.497 2.042 1.809 3.194l.002.006l.002.009c.372 1.345.373 2.927.082 4.525l5.024 1.072c.41-2.256.476-4.733-.198-7.178c-.587-2.162-1.707-4.04-3.098-5.548M82.72 82.643a12 12 0 0 1-1.826 1.572h-.002c-1.8 1.266-3.888 2.22-6.106 3.04l1.654 5.244c2.426-.897 4.917-1.997 7.245-3.635l.006-.005l.003-.002a17 17 0 0 0 2.639-2.287zm-12.64 6.089c-3.213.864-6.497 1.522-9.821 2.08l.784 5.479c3.421-.575 6.856-1.262 10.27-2.18zm-14.822 2.836c-3.346.457-6.71.83-10.084 1.148l.442 5.522c3.426-.322 6.858-.701 10.285-1.17zm-15.155 1.583c-3.381.268-6.77.486-10.162.67l.256 5.536c3.425-.185 6.853-.406 10.28-.678zm-15.259.92c-2.033.095-4.071.173-6.114.245l.168 5.541a560 560 0 0 0 6.166-.246z"
-                color="currentColor"
-              />
-            </svg> {{ lugar.direccion }}
+          <p *ngIf="restaurante.descripcion">
+            {{ restaurante.descripcion }}
+          </p>
+
+          <div
+            class="direccion"
+            *ngIf="restaurante.direccion"
+          >
+            📍 {{ restaurante.direccion }}
           </div>
 
-          <p>{{ lugar.descripcion }}</p>
-
           <a
-            *ngIf="lugar.maps"
-            [href]="lugar.maps"
+            *ngIf="restaurante.maps"
+            [href]="restaurante.maps"
             target="_blank"
+            rel="noopener noreferrer"
             class="btn-maps"
           >
             Abrir en Maps
           </a>
 
+
           <div class="acciones-gastronomia">
 
             <button
+              type="button"
               class="btn-editar"
-              (click)="editarLugar(lugar)"
+              (click)="editarGastronomia(restaurante)"
             >
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="#ffffff"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-            </span>
+              ✏️
             </button>
-          
+
             <button
+              type="button"
               class="btn-eliminar"
-              (click)="eliminarLugar(lugar)"
+              (click)="eliminarGastronomia(restaurante)"
             >
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.1em"
-                height="1.1em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-            </span>
+              🗑️
             </button>
-          
+
           </div>
 
         </div>
 
       </div>
 
-<!-- GASTRONOMÍA -->
-<h3>
-  🍴 Gastronomía
-</h3>
+    </div>
 
-<!-- Botón para abrir/cerrar formulario (Siempre visible fuera del contenedor condicional) -->
-<button
-  class="btn-add-mini"
-  (click)="mostrarFormularioGastronomia = !mostrarFormularioGastronomia"
->
-  {{ mostrarFormularioGastronomia ? '✕ Cerrar' : '+ Añadir' }}
-</button>
 
-<!-- Contenedor del Formulario (Solo visible si es true) -->
-<div class="card card-gastronomia" *ngIf="mostrarFormularioGastronomia">
+    <!-- =================================================
+         CERVECERIAS
+    ================================================== -->
 
-  <input
-    type="text"
-    placeholder="Nombre"
-    [(ngModel)]="nuevaGastronomia.nombre"
-  >
+    <div
+      *ngIf="
+        obtenerGastronomiaPorTipo('cerveceria').length > 0
+      "
+    >
 
-  <div class="custom-select">
+      <h4 class="subtitulo-gastronomia">
+        🍺 Cervecerías
+      </h4>
+
+
+      <div
+        class="timeline-item"
+        *ngFor="
+          let cerveza
+          of obtenerGastronomiaPorTipo('cerveceria')
+        "
+      >
+
+        <div
+          class="timeline-header"
+          (click)="toggleItem('cer-' + cerveza.id)"
+        >
+
+          <span>
+            {{ cerveza.nombre }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'cer-' + cerveza.id
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="timeline-content"
+          *ngIf="itemAbierto === 'cer-' + cerveza.id"
+        >
+
+          <img
+            *ngIf="cerveza.imagen"
+            [src]="cerveza.imagen"
+            [alt]="cerveza.nombre"
+            class="lugar-imagen"
+          >
+
+          <p *ngIf="cerveza.descripcion">
+            {{ cerveza.descripcion }}
+          </p>
+
+          <div
+            class="direccion"
+            *ngIf="cerveza.direccion"
+          >
+            📍 {{ cerveza.direccion }}
+          </div>
+
+          <a
+            *ngIf="cerveza.maps"
+            [href]="cerveza.maps"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-maps"
+          >
+            Abrir en Maps
+          </a>
+
+
+          <div class="acciones-gastronomia">
+
+            <button
+              type="button"
+              class="btn-editar"
+              (click)="editarGastronomia(cerveza)"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              (click)="eliminarGastronomia(cerveza)"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CAFETERIAS
+    ================================================== -->
+
+    <div
+      *ngIf="
+        obtenerGastronomiaPorTipo('cafeteria').length > 0
+      "
+    >
+
+      <h4 class="subtitulo-gastronomia">
+        ☕ Cafeterías
+      </h4>
+
+
+      <div
+        class="timeline-item"
+        *ngFor="
+          let cafeteria
+          of obtenerGastronomiaPorTipo('cafeteria')
+        "
+      >
+
+        <div
+          class="timeline-header"
+          (click)="toggleItem('caf-' + cafeteria.id)"
+        >
+
+          <span>
+            {{ cafeteria.nombre }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'caf-' + cafeteria.id
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="timeline-content"
+          *ngIf="itemAbierto === 'caf-' + cafeteria.id"
+        >
+
+          <img
+            *ngIf="cafeteria.imagen"
+            [src]="cafeteria.imagen"
+            [alt]="cafeteria.nombre"
+            class="lugar-imagen"
+          >
+
+          <p *ngIf="cafeteria.descripcion">
+            {{ cafeteria.descripcion }}
+          </p>
+
+          <div
+            class="direccion"
+            *ngIf="cafeteria.direccion"
+          >
+            📍 {{ cafeteria.direccion }}
+          </div>
+
+          <a
+            *ngIf="cafeteria.maps"
+            [href]="cafeteria.maps"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-maps"
+          >
+            Abrir en Maps
+          </a>
+
+
+          <div class="acciones-gastronomia">
+
+            <button
+              type="button"
+              class="btn-editar"
+              (click)="editarGastronomia(cafeteria)"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              (click)="eliminarGastronomia(cafeteria)"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         POSTRES
+    ================================================== -->
+
+    <div
+      *ngIf="
+        obtenerGastronomiaPorTipo('postres').length > 0
+      "
+    >
+
+      <h4 class="subtitulo-gastronomia">
+        🍰 Postres
+      </h4>
+
+
+      <div
+        class="timeline-item"
+        *ngFor="
+          let postre
+          of obtenerGastronomiaPorTipo('postres')
+        "
+      >
+
+        <div
+          class="timeline-header"
+          (click)="toggleItem('pos-' + postre.id)"
+        >
+
+          <span>
+            {{ postre.nombre }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'pos-' + postre.id
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="timeline-content"
+          *ngIf="itemAbierto === 'pos-' + postre.id"
+        >
+
+          <img
+            *ngIf="postre.imagen"
+            [src]="postre.imagen"
+            [alt]="postre.nombre"
+            class="lugar-imagen"
+          >
+
+          <p *ngIf="postre.descripcion">
+            {{ postre.descripcion }}
+          </p>
+
+          <div
+            class="direccion"
+            *ngIf="postre.direccion"
+          >
+            📍 {{ postre.direccion }}
+          </div>
+
+          <a
+            *ngIf="postre.maps"
+            [href]="postre.maps"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-maps"
+          >
+            Abrir en Maps
+          </a>
+
+
+          <div class="acciones-gastronomia">
+
+            <button
+              type="button"
+              class="btn-editar"
+              (click)="editarGastronomia(postre)"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              (click)="eliminarGastronomia(postre)"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+     CURIOSIDADES DE LA CIUDAD
+    ================================================== -->
+
+    <h3>
+      💡 Curiosidades
+    </h3>
 
     <button
       type="button"
-      class="custom-select-trigger"
-      (click)="dropdownGastronomiaAbierto = !dropdownGastronomiaAbierto"
+      class="btn-add-mini"
+      (click)="
+        mostrarFormularioCuriosidad =
+          !mostrarFormularioCuriosidad
+      "
     >
       {{
-        nuevaGastronomia.tipo === 'restaurante'
-          ? 'Restaurante'
-          : nuevaGastronomia.tipo === 'cafeteria'
-          ? 'Cafetería'
-          : nuevaGastronomia.tipo === 'cerveceria'
-          ? 'Cervecería'
-          : 'Postres'
+        mostrarFormularioCuriosidad
+          ? '✕ Cerrar'
+          : '+ Añadir'
       }}
-  
-      <span>
-        {{ dropdownGastronomiaAbierto ? '▲' : '▼' }}
-      </span>
     </button>
-  
+
+
+    <!-- FORMULARIO DENTRO DE LA CIUDAD -->
+
     <div
-      class="custom-select-menu"
-      *ngIf="dropdownGastronomiaAbierto"
+      class="card card-gastronomia"
+      *ngIf="mostrarFormularioCuriosidad"
     >
-  
+
+      <input
+        type="text"
+        placeholder="Título"
+        [(ngModel)]="nuevaCuriosidad.titulo"
+      >
+
+      <textarea
+        placeholder="Descripción"
+        [(ngModel)]="nuevaCuriosidad.descripcion"
+      ></textarea>
+
       <button
         type="button"
-        (click)="
-          nuevaGastronomia.tipo = 'restaurante';
-          dropdownGastronomiaAbierto = false
-        "
+        class="btn-add"
+        (click)="agregarCuriosidad()"
       >
-        Restaurante
+        {{
+          editandoCuriosidad
+            ? 'Guardar cambios'
+            : 'Añadir curiosidad'
+        }}
       </button>
-  
-      <button
-        type="button"
-        (click)="
-          nuevaGastronomia.tipo = 'cafeteria';
-          dropdownGastronomiaAbierto = false
-        "
-      >
-        Cafetería
-      </button>
-  
-      <button
-        type="button"
-        (click)="
-          nuevaGastronomia.tipo = 'cerveceria';
-          dropdownGastronomiaAbierto = false
-        "
-      >
-        Cervecería
-      </button>
-  
-      <button
-        type="button"
-        (click)="
-          nuevaGastronomia.tipo = 'postres';
-          dropdownGastronomiaAbierto = false
-        "
-      >
-        Postres
-      </button>
-  
-    </div>
-  
-  </div>
 
-  <input
-    type="text"
-    placeholder="Dirección"
-    [(ngModel)]="nuevaGastronomia.direccion"
-  >
-
-  <input
-    type="text"
-    placeholder="Imagen"
-    [(ngModel)]="nuevaGastronomia.imagen"
-  >
-
-  <input
-    type="text"
-    placeholder="Maps"
-    [(ngModel)]="nuevaGastronomia.maps"
-  >
-
-  <textarea
-    placeholder="Descripción"
-    [(ngModel)]="nuevaGastronomia.descripcion"
-  ></textarea>
-
-  <button
-    class="btn-add"
-    (click)="agregarGastronomia()"
-  >
-    {{ editandoGastronomia ? 'Guardar cambios' : 'Añadir' }}
-  </button>
-
-</div>
-
-<!-- RESTAURANTES -->
-<div *ngIf="obtenerGastronomiaPorTipo('restaurante').length > 0">
-
-  <h4 class="subtitulo-gastronomia">
-    🍽️ Restaurantes
-  </h4>
-
-  <div
-    class="timeline-item"
-    [id]="'item-rest-' + i"
-    *ngFor="let restaurante of obtenerGastronomiaPorTipo('restaurante'); let i = index"
-  >
-    <div
-      class="timeline-header"
-      (click)="toggleItem('rest-' + i)"
-    >
-      <span>{{ restaurante.nombre }}</span>
-      <span>{{ itemAbierto === 'rest-' + i ? '−' : '+' }}</span>
     </div>
 
+
+    <!-- LISTADO DE CURIOSIDADES DE ESTA CIUDAD -->
+
     <div
-      class="timeline-content"
-      *ngIf="itemAbierto === 'rest-' + i"
+      class="timeline-item"
+      *ngFor="
+        let curiosidad of ciudadSeleccionada.curiosidades;
+        let i = index
+      "
     >
-      <img
-        *ngIf="restaurante.imagen"
-        [src]="restaurante.imagen"
-        [alt]="restaurante.nombre"
-        class="lugar-imagen"
+
+      <div
+        class="timeline-header"
+        (click)="toggleItem('cur-' + curiosidad.id)"
       >
 
-      <p>{{ restaurante.descripcion }}</p>
+        <span>
+          {{ curiosidad.titulo }}
+        </span>
 
-      <div class="direccion">
-        📍 {{ restaurante.direccion }}
+        <span>
+          {{
+            itemAbierto === 'cur-' + curiosidad.id
+              ? '−'
+              : '+'
+          }}
+        </span>
+
       </div>
 
-      <div class="acciones-gastronomia">
-        <button
-          class="btn-editar"
-          (click)="editarGastronomia(restaurante)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="1.5em"
-            height="1.5em"
-          >
-            <path
-              fill="#ffffff"
-              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-            />
-          </svg>
-        </span>
-        </button>
-        <button
-          class="btn-eliminar"
-          (click)="eliminarGastronomia(restaurante)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            width="1.1em"
-            height="1.1em"
-          >
-            <path
-              fill="#ef4444"
-              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-            />
-          </svg>
-        </span>
-        </button>
-      </div>
-    </div>
-  </div>
 
-</div>
-
-<!-- CERVECERÍAS -->
-<div *ngIf="obtenerGastronomiaPorTipo('cerveceria').length > 0">
-
-  <h4 class="subtitulo-gastronomia">
-    🍺 Cervecerías
-  </h4>
-
-  <div
-    class="timeline-item"
-    [id]="'item-cer-' + i"
-    *ngFor="let cerveza of obtenerGastronomiaPorTipo('cerveceria'); let i = index"
-  >
-    <div
-      class="timeline-header"
-      (click)="toggleItem('cer-' + i)"
-    >
-      <span>{{ cerveza.nombre }}</span>
-      <span>{{ itemAbierto === 'cer-' + i ? '−' : '+' }}</span>
-    </div>
-
-    <div
-      class="timeline-content"
-      *ngIf="itemAbierto === 'cer-' + i"
-    >
-      <img
-        *ngIf="cerveza.imagen"
-        [src]="cerveza.imagen"
-        [alt]="cerveza.nombre"
-        class="lugar-imagen"
+      <div
+        class="timeline-content"
+        *ngIf="itemAbierto === 'cur-' + curiosidad.id"
       >
 
-      <p>{{ cerveza.descripcion }}</p>
+        <p>
+          {{ curiosidad.descripcion }}
+        </p>
 
-      <div class="direccion">
-        📍 {{ cerveza.direccion }}
+
+        <div class="acciones-gastronomia">
+
+          <button
+            type="button"
+            class="btn-editar"
+            title="Editar curiosidad"
+            (click)="
+              $event.stopPropagation();
+              editarCuriosidad(curiosidad)
+            "
+          >
+            ✏️
+          </button>
+
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            title="Eliminar curiosidad"
+            (click)="
+              $event.stopPropagation();
+              eliminarCuriosidad(curiosidad)
+            "
+          >
+            🗑️
+          </button>
+
+        </div>
+
       </div>
 
-      <div class="acciones-gastronomia">
-        <button
-          class="btn-editar"
-          (click)="editarGastronomia(cerveza)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="1.5em"
-            height="1.5em"
-          >
-            <path
-              fill="#ffffff"
-              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-            />
-          </svg>
-        </span>
-        </button>
-        <button
-          class="btn-eliminar"
-          (click)="eliminarGastronomia(cerveza)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            width="1.1em"
-            height="1.1em"
-          >
-            <path
-              fill="#ef4444"
-              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-            />
-          </svg>
-        </span>
-        </button>
-      </div>
     </div>
-  </div>
 
-</div>
 
-<!-- CAFETERÍAS -->
-<div *ngIf="obtenerGastronomiaPorTipo('cafeteria').length > 0">
-
-  <h4 class="subtitulo-gastronomia">
-    ☕ Cafeterías
-  </h4>
-
-  <div
-    class="timeline-item"
-    [id]="'item-caf-' + i"
-    *ngFor="let cafeteria of obtenerGastronomiaPorTipo('cafeteria'); let i = index"
-  >
-    <div
-      class="timeline-header"
-      (click)="toggleItem('caf-' + i)"
-    >
-      <span>{{ cafeteria.nombre }}</span>
-      <span>{{ itemAbierto === 'caf-' + i ? '−' : '+' }}</span>
-    </div>
+    <!-- SIN CURIOSIDADES -->
 
     <div
-      class="timeline-content"
-      *ngIf="itemAbierto === 'caf-' + i"
+      class="empty-state"
+      *ngIf="ciudadSeleccionada.curiosidades.length === 0"
     >
-      <img
-        *ngIf="cafeteria.imagen"
-        [src]="cafeteria.imagen"
-        [alt]="cafeteria.nombre"
-        class="lugar-imagen"
-      >
-
-      <p>{{ cafeteria.descripcion }}</p>
-
-      <div class="direccion">
-        📍 {{ cafeteria.direccion }}
-      </div>
-
-      <div class="acciones-gastronomia">
-        <button
-          class="btn-editar"
-          (click)="editarGastronomia(cafeteria)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="1.5em"
-            height="1.5em"
-          >
-            <path
-              fill="#ffffff"
-              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-            />
-          </svg>
-        </span>
-        </button>
-        <button
-          class="btn-eliminar"
-          (click)="eliminarGastronomia(cafeteria)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            width="1.1em"
-            height="1.1em"
-          >
-            <path
-              fill="#ef4444"
-              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-            />
-          </svg>
-        </span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- POSTRES -->
-<div *ngIf="obtenerGastronomiaPorTipo('postres').length > 0">
-
-  <h4 class="subtitulo-gastronomia">
-    🍰 Postres
-  </h4>
-
-  <div
-    class="timeline-item"
-    [id]="'item-pos-' + i"
-    *ngFor="let postre of obtenerGastronomiaPorTipo('postres'); let i = index"
-  >
-    <div
-      class="timeline-header"
-      (click)="toggleItem('pos-' + i)"
-    >
-      <span>{{ postre.nombre }}</span>
-      <span>{{ itemAbierto === 'pos-' + i ? '−' : '+' }}</span>
+      No hay curiosidades añadidas.
     </div>
 
-    <div
-      class="timeline-content"
-      *ngIf="itemAbierto === 'pos-' + i"
-    >
-      <img
-        *ngIf="postre.imagen"
-        [src]="postre.imagen"
-        [alt]="postre.nombre"
-        class="lugar-imagen"
-      >
-
-      <p>{{ postre.descripcion }}</p>
-
-      <div class="direccion">
-        📍 {{ postre.direccion }}
-      </div>
-
-      <div class="acciones-gastronomia">
-        <button
-          class="btn-editar"
-          (click)="editarGastronomia(postre)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="1.5em"
-            height="1.5em"
-          >
-            <path
-              fill="#ffffff"
-              d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-            />
-          </svg>
-        </span>
-        </button>
-        <button
-          class="btn-eliminar"
-          (click)="eliminarGastronomia(postre)"
-        >
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            width="1.1em"
-            height="1.1em"
-          >
-            <path
-              fill="#ef4444"
-              d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-            />
-          </svg>
-        </span>
-        </button>
-      </div>
-    </div>
   </div>
 
 </div>
 
 
-      <!-- CURIOSIDADES -->
-
-      <h3><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" width="1.1em" height="1.1em"><path fill="#cbd5e1" d="M8.5 13c.25 0 .5.25.5.5s-.25.5-.5.5h-.25s-.25.5-.75.5s-.75-.5-.75-.5H6.5c-.25 0-.5-.25-.5-.5s.25-.5.5-.5zm0-1.25h-2c-.25 0-.5.25-.5.5s.25.5.5.5h2c.25 0 .5-.25.5-.5s-.25-.5-.5-.5M7.5 1.3c2.5 0 3.7 1.2 3.7 2.7c0 3-1.95 4-2.45 5s-.5 1.8-1 1.8H7.2c-.5 0-.45-.8-.95-1.8S3.8 7 3.8 4c0-1.5 1.2-2.7 3.7-2.7m0-.8C5.5.5 3 1.5 3 4c0 2 1 3.5 2 4.5s1 3 1.5 3h2c.5 0 .5-2 1.5-3S12 6 12 4C12 1.5 9.5.5 7.5.5m0 3.5c.75 1.25 1.25 1.25 2.25.25l-1 4.25c0 .25-.5.25-.5 0L9 5.25c-.5.25-.75.25-1.5-.5c-.75.75-1 .75-1.5.5l.75 3.25c0 .25-.5.25-.5 0l-1-4.25c1 1 1.5 1 2.25-.25"/></svg> Curiosidades</h3>
-
-      <ul class="curiosidades">
-
-        <li
-          *ngFor="
-            let curiosidad of ciudadSeleccionada.curiosidades
-          "
-        >
-          <strong>{{ curiosidad.titulo }}</strong>
-
-          <p>
-            {{ curiosidad.descripcion }}
-          </p>
-        </li>
-
-      </ul>
-
-    </div>
-
-  </div>
+  
 </div>

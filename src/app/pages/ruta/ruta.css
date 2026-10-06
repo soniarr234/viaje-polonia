@@ -1,15 +1,21 @@
+/* =====================================================
+   1. BASE
+===================================================== */
+
 :host {
   display: block;
-  padding: 20px 10px 90px 10px;
+  padding: 20px 10px 90px;
 }
 
 .ruta-page {
   padding: 15px;
 }
 
-/* =========================
-   TABS
-========================= */
+
+/* =====================================================
+   2. TABS PRINCIPALES
+===================================================== */
+
 .tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -29,50 +35,154 @@
   transition: all 0.2s ease;
 }
 
+.tabs button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .tabs button.active {
   background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-  color: white;
+  color: #ffffff;
   box-shadow: 0 6px 20px rgba(24, 142, 197, 0.22);
 }
 
-/* =========================
-   BOTÓN AÑADIR
-========================= */
+
+/* =====================================================
+   3. SUBTABS CIUDADES / RUTA
+===================================================== */
+
+.subtabs-ciudad {
+  display: flex;
+  padding: 4px;
+  margin: 24px 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.subtabs-ciudad button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #94a3b8;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.subtabs-ciudad button:hover {
+  color: #cbd5e1;
+}
+
+.subtabs-ciudad button.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+}
+
+
+/* =====================================================
+   4. BOTONES GENERALES
+===================================================== */
+
 .btn-add {
   display: block;
   width: 100%;
   padding: 12px;
   margin: 25px auto;
-  border-radius: 8px;
   border: 1px dashed #38bdf8;
+  border-radius: 10px;
   background: transparent;
-  color: var(--primary);
+  color: #38bdf8;
   font-size: 16px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* =========================
-   CARD FORMULARIO
-========================= */
+.btn-add:hover {
+  background: rgba(56, 189, 248, 0.08);
+  transform: translateY(-1px);
+}
+
+.btn-add-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 16px;
+  margin: 10px 0 15px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-mini:hover {
+  background: rgba(56, 189, 248, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-editar,
+.btn-eliminar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-editar:hover {
+  background: rgba(56, 189, 248, 0.12);
+  transform: scale(1.06);
+}
+
+.btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.12);
+  transform: scale(1.06);
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* =====================================================
+   5. CARDS
+===================================================== */
+
 .card {
   padding: 18px;
-  border-radius: 20px;
+  margin-bottom: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
   background: var(--surface);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  margin-bottom: 10px;
 }
 
 .card h2 {
-  margin-bottom: 16px;
-  color: white;
+  margin: 0 0 16px;
+  color: #ffffff;
   font-size: 18px;
   font-weight: 700;
 }
 
-/* =========================
-   FORMULARIO
-========================= */
+
+/* =====================================================
+   6. FORMULARIOS GENERALES
+===================================================== */
+
 .form-grid {
   display: flex;
   flex-direction: column;
@@ -86,8 +196,109 @@
 }
 
 .form-row-2 {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+.form-grid input,
+.form-grid textarea,
+.card-gastronomia input,
+.card-gastronomia textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus,
+.card-gastronomia input:focus,
+.card-gastronomia textarea:focus {
+  border-color: #38bdf8;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.form-grid input::placeholder,
+.form-grid textarea::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.form-grid textarea,
+.card-gastronomia textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  padding-left: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   7. FECHA Y HORA
+===================================================== */
+
+.date-input,
+.time-input {
+  position: relative;
+}
+
+.time-input input {
+  width: 100%;
+}
+
+.calendar-icon,
+.time-icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.time-icon {
+  font-size: 16px;
+}
+
+.time-input input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.form-grid input[type="date"] {
+  min-height: 46px;
+  color: #f8fafc;
+}
+
+.form-grid input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   8. TIPO TRANSPORTE
+===================================================== */
 
 .tipo-transporte {
   display: grid;
@@ -108,93 +319,14 @@
 
 .tipo-transporte button.active {
   background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-  color: white;
+  color: #ffffff;
 }
 
-.form-grid input,
-.form-grid textarea {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  font-size: 14px;
-  outline: none;
-}
 
-.form-grid input:focus,
-.form-grid textarea:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-}
+/* =====================================================
+   9. TRANSPORTES
+===================================================== */
 
-.form-grid textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.input-group label {
-  padding-left: 4px;
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.hotel-footer {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin-top: 16px;
-}
-.date-input {
-  position: relative;
-}
-
-.calendar-icon {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.time-input {
-  position: relative;
-}
-
-.time-input input {
-  width: 100%;
-}
-
-.time-input input::-webkit-calendar-picker-indicator {
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  cursor: pointer;
-}
-
-.time-icon {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 16px;
-}
-
-/* =========================
-   GRUPOS
-========================= */
 .grupo-titulo {
   margin: 28px 0 12px;
   color: #38bdf8;
@@ -202,21 +334,18 @@
   font-weight: 700;
 }
 
-/* =========================
-   TARJETAS TRANSPORTE
-========================= */
 .transporte-card {
   padding: 18px;
   margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 18px;
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .transporte-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .badge {
@@ -234,14 +363,11 @@
   font-weight: 600;
 }
 
-/* =========================
-   PREMIUM ROUTE
-========================= */
 .premium-route {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 22px;
+  margin: 22px 0;
 }
 
 .premium-city {
@@ -254,7 +380,7 @@
 }
 
 .airport {
-  color: white;
+  color: #ffffff;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -266,16 +392,20 @@
 }
 
 .premium-line {
-  flex: 1;
   position: relative;
   display: flex;
+  flex: 1;
   align-items: center;
 }
 
 .line {
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, #38bdf8, rgba(56, 191, 248, 0.5));
+  background: linear-gradient(
+    90deg,
+    #38bdf8,
+    rgba(56, 189, 248, 0.5)
+  );
 }
 
 .plane {
@@ -285,15 +415,12 @@
   font-size: 18px;
 }
 
-/* =========================
-   FOOTER TARJETA
-========================= */
 .premium-footer {
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
-  margin-top: 12px;
+  justify-content: space-between;
   padding-top: 14px;
+  margin-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -305,68 +432,27 @@
   font-size: 14px;
 }
 
-.premium-info strong {
-  color: white;
-}
 
-/* =========================
-   ACCIONES
-========================= */
-.acciones {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+/* =====================================================
+   10. HOTELES
+===================================================== */
 
-.btn-editar,
-.btn-eliminar {
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 12px;
-  background: transparent;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  background-color: transparent;
-}
-
-.btn-editar:hover,
-.btn-eliminar:hover {
-  transform: scale(1.1);
-}
-
-/* =========================
-   EMPTY STATE
-========================= */
-.empty-state {
-  padding: 30px 15px;
-  text-align: center;
-  color: #94a3b8;
-}
-
-/* =========================
-   HOTEL CARD
-========================= */
 .hotel-card {
   padding: 20px;
   margin-bottom: 16px;
+  border: 1px solid rgba(56, 189, 248, 0.08);
   border-radius: 20px;
   background: var(--surface);
-  border: 1px solid rgba(56, 189, 248, 0.08);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .hotel-nombre {
   margin-bottom: 18px;
-  color: white;
+  color: #ffffff;
   font-size: 22px;
   font-weight: 700;
   line-height: 1.4;
 }
-
-/* =========================
-   FECHAS
-========================= */
 
 .hotel-fechas {
   display: grid;
@@ -377,9 +463,9 @@
 
 .hotel-fecha-card {
   padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
   text-align: center;
 }
 
@@ -393,23 +479,20 @@
 }
 
 .hotel-fecha-valor {
-  color: white;
+  color: #ffffff;
   font-size: 15px;
   font-weight: 700;
 }
 
-/* =========================
-   PRECIO Y ESTADO
-========================= */
 .hotel-resumen {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 18px;
 }
 
 .hotel-precio {
-  color: white;
+  color: #ffffff;
   font-size: 20px;
   font-weight: 800;
 }
@@ -428,9 +511,6 @@
   color: #22c55e;
 }
 
-/* =========================
-   INFO ADICIONAL
-========================= */
 .hotel-direccion,
 .hotel-notas {
   margin-top: 10px;
@@ -439,26 +519,25 @@
   line-height: 1.5;
 }
 
-/* =========================
-   CHECKBOX PAGADO
-========================= */
 .checkbox-container {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: white;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
 }
 
-.checkbox-container input[type='checkbox'] {
+.checkbox-container input[type="checkbox"] {
   width: 18px;
   height: 18px;
   accent-color: #38bdf8;
 }
-/* =========================
-   CIUDADES
-========================= */
+
+
+/* =====================================================
+   11. CIUDADES
+===================================================== */
 
 .ciudades-grid {
   display: flex;
@@ -468,68 +547,28 @@
 
 .ciudad-card {
   padding: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.08);
   border-radius: 20px;
   background: var(--surface);
-  border: 1px solid rgba(56, 189, 248, 0.08);
-  transition: all 0.25s ease;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .ciudad-card:hover {
-  transform: translateY(-2px);
   border-color: rgba(56, 189, 248, 0.25);
-}
-
-.subtabs-ciudad {
-  display: flex;
-
-  padding: 4px;
-
-  margin: 24px 0;
-
-  border-radius: 16px;
-
-  background: rgba(255,255,255,.04);
-
-  border: 1px solid rgba(255,255,255,.06);
-}
-
-.subtabs-ciudad button {
-  flex: 1;
-
-  padding: 10px;
-
-  border: none;
-
-  background: transparent;
-
-  color: #94a3b8;
-
-  font-weight: 600;
-
-  border-radius: 12px;
-
-  transition: all .2s ease;
-}
-
-.subtabs-ciudad button.active {
-  background: rgba(56,189,248,.15);
-
-  color: #38bdf8;
-
-  box-shadow: none;
+  transform: translateY(-2px);
 }
 
 .ciudad-header {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 14px;
 }
 
 .ciudad-header h3 {
   margin: 0;
-  color: white;
+  color: #ffffff;
   font-size: 22px;
   font-weight: 700;
 }
@@ -562,21 +601,6 @@
   font-weight: 600;
 }
 
-.btn-guia {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* =========================
-   ACCIONES CIUDAD
-========================= */
-
 .ciudad-acciones {
   display: flex;
   gap: 8px;
@@ -588,13 +612,26 @@
   height: 38px;
   border: none;
   border-radius: 10px;
+  background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: transparent;
 }
-/* =========================
-   MODAL CIUDAD
-========================= */
+
+.btn-guia {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   12. MODALES
+===================================================== */
 
 .modal-overlay {
   position: fixed;
@@ -606,34 +643,51 @@
   backdrop-filter: blur(8px);
 }
 
-.modal-ciudad {
-  max-width: 820px;
-  margin: 30px auto;
+.modal-ciudad,
+.modal-ruta {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 820px);
   padding: 24px;
+  margin: 30px auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.modal-ruta {
+  max-width: 700px;
 }
 
 .btn-cerrar {
   float: right;
   border: none;
   background: transparent;
-  color: white;
+  color: #ffffff;
   font-size: 22px;
   cursor: pointer;
 }
 
-.modal-ciudad h2 {
-  color: white;
-  margin-bottom: 12px;
+.modal-ciudad h2,
+.modal-ruta h2 {
+  margin: 0 40px 12px 0;
+  color: #ffffff;
   font-size: 28px;
+}
+
+.descripcion-ciudad,
+.modal-ruta p {
+  color: #cbd5e1;
+  line-height: 1.7;
 }
 
 .descripcion-ciudad {
   margin-bottom: 24px;
-  color: #cbd5e1;
-  line-height: 1.7;
+}
+
+.modal-ruta .direccion {
+  margin-top: 14px;
 }
 
 .modal-ciudad h3 {
@@ -646,37 +700,34 @@
   text-transform: uppercase;
 }
 
-
 .modal-ciudad h3::after {
-  content: '';
-
+  content: "";
   flex: 1;
-
   height: 1px;
-
   background: linear-gradient(
     to right,
-    rgba(56, 191, 248, 0.598),
+    rgba(56, 189, 248, 0.6),
     transparent
   );
 }
 
-/* =========================
-   TIMELINE
-========================= */
+
+/* =====================================================
+   13. TIMELINE
+===================================================== */
 
 .timeline-item {
   overflow: hidden;
   margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .timeline-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 16px;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -687,7 +738,7 @@
 }
 
 .timeline-header span:first-child {
-  color: white;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -696,266 +747,193 @@
   font-size: 22px;
   font-weight: 700;
 }
-/* =========================
-   SUBTÍTULOS GASTRONOMÍA
-========================= */
-
-.subtitulo-gastronomia {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  margin: 14px 0 14px;
-
-  color: #f8fafc;
-
-  font-size: 15px;
-  font-weight: 700;
-
-  letter-spacing: .4px;
-}
-
-/* =========================
-   GASTRONOMÍA FORMULARIO
-========================= */
-
-.card-gastronomia {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  padding: 18px;
-  margin-bottom: 24px;
-  margin-top: 5px;
-
-  border-radius: 18px;
-
-  border: 1px solid rgba(56, 189, 248, 0.15);
-
-  background: linear-gradient(
-    180deg,
-    rgba(15, 23, 42, 0.95),
-    rgba(15, 23, 42, 0.85)
-  );
-
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-}
-
-.card-gastronomia input,
-.card-gastronomia select,
-.card-gastronomia textarea {
-  width: 100%;
-
-  padding: 14px;
-
-  border-radius: 14px;
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  background: rgba(255, 255, 255, 0.05);
-
-  color: white;
-
-  font-size: 14px;
-
-  outline: none;
-
-  transition: all 0.2s ease;
-}
-
-.card-gastronomia input:focus,
-.card-gastronomia select:focus,
-.card-gastronomia textarea:focus {
-  border-color: #38bdf8;
-
-  background: rgba(255, 255, 255, 0.08);
-
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-}
-
-.card-gastronomia textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.custom-select {
-  position: relative;
-}
-
-.custom-select-trigger {
-  width: 100%;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 14px;
-
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 14px;
-
-  background: rgba(255,255,255,.05);
-
-  color: white;
-
-  font-size: 14px;
-
-  cursor: pointer;
-}
-
-.custom-select-trigger:hover {
-  border-color: rgba(56,189,248,.4);
-}
-
-.custom-select-menu {
-  position: absolute;
-
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-
-  z-index: 50;
-
-  overflow: hidden;
-
-  border-radius: 14px;
-
-  background: #0f172a;
-
-  border: 1px solid rgba(255,255,255,.08);
-
-  box-shadow:
-    0 12px 30px rgba(0,0,0,.35);
-}
-
-.custom-select-menu button {
-  width: 100%;
-
-  padding: 14px 16px;
-
-  border: none;
-
-  text-align: left;
-
-  background: transparent;
-
-  color: white;
-
-  cursor: pointer;
-
-  transition: background .2s ease;
-}
-
-.custom-select-menu button:hover {
-  background: rgba(56,189,248,.12);
-}
-
-.card-gastronomia .btn-add {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin: 25px auto;
-  border-radius: 8px;
-  border: 1px dashed #38bdf8;
-  background: transparent;
-  color: var(--primary);
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.card-gastronomia .btn-add:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 12px 24px rgba(56, 189, 248, 0.25);
-}
-
-/* =========================
-   BOTÓN AÑADIR GASTRONOMÍA
-========================= */
-.btn-add-mini {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 14px;
-
-  padding: 10px 16px;
-  border: none;
-  border-radius: 12px;
-
-  background: rgba(56, 189, 248, 0.12);
-
-  color: #38bdf8;
-
-  font-size: 14px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-}
-
-.btn-add-mini:hover {
-  background: rgba(56, 189, 248, 0.22);
-
-  transform: translateY(-1px);
-}
-
-/* =========================
-   TARJETAS GASTRONOMÍA
-========================= */
 
 .timeline-content {
   padding: 18px;
-
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .timeline-content p {
   margin-bottom: 12px;
-
   color: #cbd5e1;
-
   line-height: 1.6;
 }
 
-/* =========================
-   ACCIONES GASTRONOMÍA
-========================= */
+.subtitulo-gastronomia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+
+/* =====================================================
+   14. FORMULARIO GASTRONOMIA
+===================================================== */
+
+.card-gastronomia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  margin: 5px 0 24px;
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.85)
+  );
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   15. CUSTOM SELECT
+   CIUDAD + GASTRONOMIA
+===================================================== */
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 13px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.custom-select-trigger:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.custom-select-trigger:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+/* Placeholder del selector de ciudad */
+.custom-select-ciudad .custom-select-trigger:not(.has-value) {
+  color: #94a3b8;
+}
+
+.custom-select-trigger.has-value {
+  color: #f8fafc;
+}
+
+
+/* FLECHA */
+
+.custom-select-arrow {
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: #38bdf8;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.custom-select-arrow.open {
+  transform: rotate(180deg);
+}
+
+
+/* MENU */
+
+.custom-select-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  left: 0;
+  z-index: 100;
+  overflow: hidden;
+  padding: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 14px;
+  background: #111827;
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.custom-select-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 13px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #cbd5e1;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.custom-select-menu button:hover {
+  background: rgba(56, 189, 248, 0.1);
+  color: #ffffff;
+}
+
+.custom-select-menu button.selected {
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.check-ciudad {
+  margin-left: 10px;
+  color: #38bdf8;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   16. ACCIONES GASTRONOMIA
+===================================================== */
 
 .acciones-gastronomia {
   display: flex;
   justify-content: flex-end;
-
   gap: 10px;
-
   margin-top: 16px;
 }
 
-.acciones-gastronomia .btn-editar,
-.acciones-gastronomia .btn-eliminar {
-  width: 42px;
-  height: 42px;
 
-  border-radius: 12px;
-
-  background: transparent;
-
-  transition: all 0.2s ease;
-}
-
-.acciones-gastronomia .btn-editar:hover {
-  background: rgba(56, 189, 248, 0.15);
-}
-
-.acciones-gastronomia .btn-eliminar:hover {
-  background: rgba(239, 68, 68, 0.12);
-}
-
-/* =========================
-   IMÁGENES
-========================= */
+/* =====================================================
+   17. IMAGENES / DIRECCION / MAPS
+===================================================== */
 
 .lugar-imagen {
   width: 100%;
@@ -965,30 +943,22 @@
   object-fit: cover;
 }
 
-/* =========================
-   INFO LUGAR
-========================= */
-
 .direccion {
   margin-bottom: 10px;
   color: #94a3b8;
   font-size: 14px;
 }
 
-/* =========================
-   MAPS
-========================= */
-
 .btn-maps {
   display: inline-block;
-  margin-top: 8px;
   padding: 10px 14px;
+  margin-top: 8px;
   border-radius: 10px;
   background: rgba(56, 189, 248, 0.15);
   color: #38bdf8;
-  text-decoration: none;
   font-size: 13px;
   font-weight: 600;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
@@ -997,9 +967,9 @@
 }
 
 
-/* =========================
-   CURIOSIDADES
-========================= */
+/* =====================================================
+   18. CURIOSIDADES
+===================================================== */
 
 .curiosidades {
   padding-left: 22px;
@@ -1011,208 +981,702 @@
   line-height: 1.7;
 }
 
-/* =========================
-   RUTA VIAJE
-========================= */
+
+/* =====================================================
+   19. RUTA - FORMULARIO NUEVO DIA
+===================================================== */
+
+.ruta-dia-form {
+  padding: 20px;
+  margin-bottom: 24px;
+
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 165, 233, 0.06),
+      rgba(15, 23, 42, 0.96) 42%
+    );
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+
+/* =====================================================
+   20. RUTA - TARJETA DEL DIA
+===================================================== */
 
 .ruta-dia-card {
-  padding: 22px;
-  margin-bottom: 20px;
-  border-radius: 24px;
-  background: linear-gradient(
-    180deg,
-    rgba(15, 23, 42, .95),
-    rgba(30, 41, 59, .95)
-  );
-  border: 1px solid rgba(56, 189, 248, .12);
-  box-shadow: 0 12px 24px rgba(0,0,0,.25);
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 0;
+  margin: 20px 0 26px;
+
+  border: 1px solid rgba(71, 116, 180, 0.18);
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 27, 48, 0.98),
+      rgba(19, 31, 53, 0.98)
+    );
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+
+/* Línea superior azul */
+
+.ruta-dia-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    #0ea5e9,
+    #38bdf8,
+    rgba(56, 189, 248, 0.1)
+  );
+}
+
+
+.ruta-dia-card:hover {
+  border-color: rgba(56, 189, 248, 0.24);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+
+/* =====================================================
+   CABECERA DEL DIA
+===================================================== */
 
 .ruta-dia-header {
-  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+
+  padding: 22px 20px 18px;
+  margin: 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(56, 189, 248, 0.035),
+      transparent
+    );
 }
 
+
+.ruta-dia-header > div:first-child {
+  min-width: 0;
+}
+
+
 .ruta-dia-header h3 {
-  margin: 0;
-  color: white;
-  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 0 0 9px;
+
+  color: #f8fafc;
+
+  font-size: 20px;
+  font-weight: 800;
+
+  letter-spacing: -0.25px;
+}
+
+
+/* Ciudad */
+
+.ruta-dia-header span {
+  display: inline-flex;
+  align-items: center;
+
+  margin: 0 12px 0 0;
+
+  color: #38bdf8;
+
+  font-size: 13px;
   font-weight: 700;
 }
 
-.ruta-dia-header span {
-  display: block;
-  margin-top: 4px;
-  color: #38bdf8;
-  font-size: 14px;
+
+/* Segundo span = fecha */
+
+.ruta-dia-header span + span {
+  color: #94a3b8;
   font-weight: 600;
 }
 
-/* =========================
-   BLOQUES
-========================= */
+
+/* =====================================================
+   BOTON BORRAR DIA
+===================================================== */
+
+.ruta-dia-header > .btn-eliminar {
+  flex: 0 0 38px;
+
+  width: 38px;
+  height: 38px;
+
+  margin: 0;
+
+  border: 1px solid rgba(239, 68, 68, 0.12);
+  border-radius: 12px;
+
+  background: rgba(239, 68, 68, 0.06);
+
+  color: #f87171;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  opacity: 0.8;
+}
+
+
+.ruta-dia-header > .btn-eliminar:hover {
+  border-color: rgba(239, 68, 68, 0.3);
+
+  background: rgba(239, 68, 68, 0.12);
+
+  color: #fca5a5;
+
+  opacity: 1;
+
+  transform: none;
+}
+
+
+/* =====================================================
+   BLOQUES LUGARES / GASTRONOMIA
+===================================================== */
+
+.ruta-bloque {
+  position: relative;
+
+  padding: 18px 20px;
+  margin: 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
 
 .ruta-dia-card h4 {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
 
-  margin: 20px 0 10px;
+  margin: 0 0 13px;
 
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
+  color: #e2e8f0;
+
+  font-size: 14px;
+  font-weight: 750;
+
+  letter-spacing: 0.1px;
 }
 
-/* =========================
-   SELECTS
-========================= */
+
+/* La zona selector + botón queda visualmente agrupada */
+
+.ruta-bloque select {
+  margin-bottom: 9px;
+}
+
+
+/* =====================================================
+   21. RUTA - SELECTS
+===================================================== */
 
 .ruta-dia-card select {
+  box-sizing: border-box;
+
   width: 100%;
+  min-height: 46px;
 
-  padding: 14px;
+  padding: 0 42px 0 14px;
 
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  border-radius: 12px;
 
-  background: rgba(255,255,255,.05);
+  background-color: rgba(255, 255, 255, 0.045);
 
-  color: white;
-  font-size: 14px;
+  color: #e2e8f0;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
 
   outline: none;
+  cursor: pointer;
+
+  color-scheme: dark;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #38bdf8 50%
+    ),
+    linear-gradient(
+      135deg,
+      #38bdf8 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 18px) 51%,
+    calc(100% - 13px) 51%;
+
+  background-size: 5px 5px;
+
+  background-repeat: no-repeat;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.ruta-dia-card option {
-  background: #0f172a;
-  color: white;
+
+.ruta-dia-card select:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+
+  background-color: rgba(56, 189, 248, 0.045);
 }
+
 
 .ruta-dia-card select:focus {
-  border-color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.7);
+
+  background-color: rgba(56, 189, 248, 0.05);
+
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.08);
 }
 
-/* =========================
-   BOTONES AÑADIR
-========================= */
 
-.btn-add-mini {
+.ruta-dia-card select option {
+  background: #111827;
+  color: #f8fafc;
+}
+
+
+/* =====================================================
+   BOTON AÑADIR DEL DIA
+===================================================== */
+
+.ruta-dia-card .btn-add-mini {
   width: 100%;
-  margin-top: 10px;
-  margin-bottom: 15px;
 
-  border: none;
-  border-radius: 14px;
+  min-height: 40px;
 
-  padding: 12px;
+  padding: 9px 14px;
 
-  background: linear-gradient(
-    135deg,
-    #0ea5e9,
-    #38bdf8
-  );
+  margin: 0;
 
-  color: white;
-  font-weight: 700;
+  border: 1px solid rgba(56, 189, 248, 0.08);
+  border-radius: 11px;
 
-  cursor: pointer;
+  background: rgba(14, 165, 233, 0.12);
+
+  color: #38bdf8;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  box-shadow: none;
 }
 
-.btn-add-mini:hover {
-  transform: translateY(-2px);
+
+.ruta-dia-card .btn-add-mini:hover {
+  border-color: rgba(56, 189, 248, 0.2);
+
+  background: rgba(14, 165, 233, 0.2);
+
+  color: #7dd3fc;
+
+  transform: none;
 }
 
-/* =========================
-   ELEMENTOS DEL DÍA
-========================= */
+
+/* =====================================================
+   22. RUTA - ELEMENTOS AÑADIDOS
+===================================================== */
 
 .ruta-elementos {
-  margin-top: 24px;
-
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+
+  padding: 18px 20px 20px;
+  margin: 0;
+
+  border: 0;
+
+  background: rgba(2, 6, 23, 0.12);
 }
+
+
+/*
+ * Cada elemento se parece más a una parada
+ * del itinerario que a otro formulario.
+ */
 
 .ruta-elemento {
+  position: relative;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
 
-  padding: 14px;
+  min-height: 48px;
 
-  border-radius: 14px;
+  padding: 5px 7px 5px 13px;
 
-  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(148, 163, 184, 0.09);
+  border-radius: 13px;
 
-  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255, 255, 255, 0.035);
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
+
+
+.ruta-elemento::before {
+  content: "";
+
+  flex: 0 0 3px;
+
+  align-self: stretch;
+
+  margin: 5px 2px 5px 0;
+
+  border-radius: 999px;
+
+  background: #38bdf8;
+
+  opacity: 0.65;
+}
+
+
+.ruta-elemento:hover {
+  border-color: rgba(56, 189, 248, 0.19);
+
+  background: rgba(56, 189, 248, 0.055);
+
+  transform: translateX(2px);
+}
+
+
+/* Lugar / restaurante clickable */
 
 .ruta-link {
   flex: 1;
 
-  background: none;
+  min-width: 0;
+
+  padding: 9px 4px;
+
+  overflow: hidden;
+
   border: none;
 
-  color: #60a5fa;
+  background: transparent;
+
+  color: #e2e8f0;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
 
   text-align: left;
 
-  font-size: 15px;
-  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   cursor: pointer;
+
+  transition: color 0.15s ease;
 }
+
 
 .ruta-link:hover {
-  color: #38bdf8;
+  color: #7dd3fc;
 }
 
+
+/* Borrar elemento */
+
 .ruta-elemento .btn-eliminar {
+  flex: 0 0 32px;
+
   width: 32px;
   height: 32px;
 
-  border: none;
-  border-radius: 8px;
+  border-radius: 9px;
 
-  background: rgba(239,68,68,.15);
+  background: transparent;
 
-  color: #ef4444;
+  color: #64748b;
 
-  cursor: pointer;
+  font-size: 11px;
+
+  opacity: 0.7;
 }
 
-/* =========================
-   MODAL RUTA
-========================= */
 
-.modal-ruta {
-  max-width: 700px;
+.ruta-elemento .btn-eliminar:hover {
+  background: rgba(239, 68, 68, 0.1);
 
-  margin: 30px auto;
+  color: #f87171;
 
-  padding: 24px;
+  opacity: 1;
 
-  border-radius: 24px;
-
-  background: #0f172a;
-
-  border: 1px solid rgba(255,255,255,.08);
+  transform: none;
 }
 
-.ruta-bloque {
-  margin-bottom: 18px;
-}
-.modal-ruta h2 {
-  color: white;
-  margin-bottom: 16px;
+
+/* =====================================================
+   RUTA VACIA
+===================================================== */
+
+.ruta-vacia {
+  padding: 14px 20px 20px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-style: italic;
+
+  line-height: 1.5;
 }
 
-.modal-ruta p {
-  color: #cbd5e1;
-  line-height: 1.7;
+
+/* =====================================================
+   SEPARACION ENTRE DIAS
+===================================================== */
+
+.ruta-dia-card + .ruta-dia-card {
+  margin-top: 24px;
 }
 
-.modal-ruta .direccion {
-  margin-top: 14px;
+
+/* =====================================================
+   RESPONSIVE ESPECIFICO DE RUTA
+===================================================== */
+
+@media (min-width: 700px) {
+
+  /*
+   * En escritorio Lugares y Gastronomía quedan
+   * visualmente más compactos.
+   */
+
+  .ruta-dia-card {
+    padding-bottom: 4px;
+  }
+
+  .ruta-bloque {
+    padding: 20px 24px;
+  }
+
+  .ruta-dia-header {
+    padding: 24px;
+  }
+
+  .ruta-elementos {
+    padding: 20px 24px 24px;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  .ruta-dia-card {
+    margin-bottom: 20px;
+
+    border-radius: 18px;
+  }
+
+
+  .ruta-dia-header {
+    padding: 19px 16px 16px;
+  }
+
+
+  .ruta-dia-header h3 {
+    margin-bottom: 8px;
+
+    font-size: 19px;
+  }
+
+
+  .ruta-dia-header span {
+    margin-right: 9px;
+
+    font-size: 12px;
+  }
+
+
+  .ruta-dia-header > .btn-eliminar {
+    flex-basis: 34px;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 10px;
+  }
+
+
+  .ruta-bloque {
+    padding: 16px;
+  }
+
+
+  .ruta-dia-card h4 {
+    margin-bottom: 11px;
+
+    font-size: 14px;
+  }
+
+
+  .ruta-dia-card select {
+    min-height: 44px;
+
+    font-size: 13px;
+  }
+
+
+  .ruta-dia-card .btn-add-mini {
+    min-height: 39px;
+  }
+
+
+  .ruta-elementos {
+    padding: 16px;
+  }
+
+
+  .ruta-elemento {
+    min-height: 46px;
+  }
+
+
+  .ruta-link {
+    font-size: 13px;
+  }
+
+
+  .ruta-vacia {
+    padding: 12px 16px 18px;
+  }
+}
+
+
+/* =====================================================
+   23. EMPTY STATE
+===================================================== */
+
+.empty-state {
+  padding: 30px 15px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+
+/* =====================================================
+   24. RESPONSIVE
+===================================================== */
+
+@media (max-width: 520px) {
+
+  :host {
+    padding-right: 4px;
+    padding-left: 4px;
+  }
+
+  .ruta-page {
+    padding: 10px;
+  }
+
+  .card,
+  .hotel-card,
+  .ciudad-card,
+  .ruta-dia-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-route {
+    gap: 8px;
+  }
+
+  .airport {
+    font-size: 17px;
+  }
+
+  .ruta-dia-header h3 {
+    font-size: 20px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-ciudad,
+  .modal-ruta {
+    padding: 18px;
+    margin: 15px auto;
+    border-radius: 20px;
+  }
+
+  .modal-ciudad h2,
+  .modal-ruta h2 {
+    font-size: 23px;
+  }
+
+  .lugar-imagen {
+    height: 190px;
+  }
 }
