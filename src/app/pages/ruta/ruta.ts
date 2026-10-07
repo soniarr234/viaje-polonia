@@ -31,13 +31,6 @@ interface RutaElemento {
   lugarId?: number;
   gastronomiaId?: number;
 
-  /*
-   * referencia se mantiene para no tener que cambiar
-   * tu HTML actual.
-   *
-   * Pero la relación real en Supabase utiliza lugarId
-   * o gastronomiaId.
-   */
   referencia: string;
 
   lugar?: Lugar;
@@ -52,10 +45,6 @@ interface DiaRuta {
 
   ciudadId: number | null;
 
-  /*
-   * Se mantiene ciudad como string para que tu HTML
-   * actual siga funcionando.
-   */
   ciudad: string;
 
   fecha?: string;
@@ -244,8 +233,9 @@ export class Ruta implements OnInit {
     maps: ''
   };
 
+
   /* ===================================================
-   8. CURIOSIDADES
+     8. CURIOSIDADES
   =================================================== */
 
   mostrarFormularioCuriosidad = false;
@@ -261,7 +251,7 @@ export class Ruta implements OnInit {
 
 
   /* ===================================================
-     8. INTERFAZ
+     9. INTERFAZ
   =================================================== */
 
   itemAbierto: string | null = null;
@@ -273,16 +263,11 @@ export class Ruta implements OnInit {
 
 
   /* ===================================================
-     9. INICIALIZACION
+     10. INICIALIZACION
   =================================================== */
 
   async ngOnInit() {
 
-    /*
-     * Las ciudades tienen que cargarse antes que la ruta
-     * porque ruta_elementos referencia lugares y
-     * gastronomía pertenecientes a las ciudades.
-     */
     await Promise.all([
       this.cargarTransportes(),
       this.cargarHoteles(),
@@ -296,7 +281,7 @@ export class Ruta implements OnInit {
 
 
   /* ===================================================
-     10. CARGAR TRANSPORTES
+     11. TRANSPORTES - CARGA
   =================================================== */
 
   async cargarTransportes() {
@@ -307,39 +292,26 @@ export class Ruta implements OnInit {
       .order('fecha');
 
     if (error) {
-
       console.error(
         'Error cargando transportes:',
         error
       );
-
       return;
     }
 
     this.transportes =
       (data || []).map((t: any) => ({
-
         id: t.id,
-
         tipo: t.tipo,
-
         origen: t.origen,
-
         destino: t.destino,
-
         fecha: t.fecha,
-
         horaSalida: t.horaSalida,
-
         horaLlegada: t.horaLlegada,
-
         empresa: t.empresa,
-
         asiento: t.asiento,
-
         notas: t.notas
       }));
-
 
     this.vuelos =
       this.transportes.filter(
@@ -355,14 +327,30 @@ export class Ruta implements OnInit {
       this.transportes.filter(
         t => t.tipo === 'bus'
       );
-      
-      this.cdr.detectChanges();
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     11. TRANSPORTES CRUD
+     12. TRANSPORTES CRUD
   =================================================== */
+
+  abrirFormularioTransporte() {
+
+    this.reiniciarFormulario();
+
+    this.mostrarFormularioTransporte = true;
+  }
+
+
+  cancelarFormularioTransporte() {
+
+    this.reiniciarFormulario();
+
+    this.mostrarFormularioTransporte = false;
+  }
+
 
   async agregarTransporte() {
 
@@ -373,81 +361,77 @@ export class Ruta implements OnInit {
       return;
     }
 
-
-    const payload = {
-
-      tipo:
-        this.nuevoTransporte.tipo,
-
-      origen:
-        this.nuevoTransporte.origen,
-
-      destino:
-        this.nuevoTransporte.destino,
-
-      fecha:
-        this.nuevoTransporte.fecha,
-
-      horaSalida:
-        this.nuevoTransporte.horaSalida,
-
-      horaLlegada:
-        this.nuevoTransporte.horaLlegada,
-
-      empresa:
-        this.nuevoTransporte.empresa,
-
-      asiento:
-        this.nuevoTransporte.asiento,
-
-      notas:
-        this.nuevoTransporte.notas
-    };
-
-
-    if (this.editando) {
-
-      const { error } = await supabase
-        .from('transporte')
-        .update(payload)
-        .eq(
-          'id',
-          this.indiceEditando
-        );
-
-      if (error) {
-
-        console.error(
-          'Error actualizando transporte:',
-          error
-        );
-
-        return;
-      }
-
-    } else {
-
-      const { error } = await supabase
-        .from('transporte')
-        .insert(payload);
-
-      if (error) {
-
-        console.error(
-          'Error creando transporte:',
-          error
-        );
-
-        return;
-      }
+    if (this.guardandoTransporte) {
+      return;
     }
 
+    this.guardandoTransporte = true;
 
-    await this.cargarTransportes();
+    try {
 
-    this.reiniciarFormulario();
+      const payload = {
+        tipo: this.nuevoTransporte.tipo,
+        origen: this.nuevoTransporte.origen.trim(),
+        destino: this.nuevoTransporte.destino.trim(),
+        fecha: this.nuevoTransporte.fecha || null,
+        horaSalida: this.nuevoTransporte.horaSalida || null,
+        horaLlegada: this.nuevoTransporte.horaLlegada || null,
+        empresa: this.nuevoTransporte.empresa?.trim() || null,
+        asiento: this.nuevoTransporte.asiento?.trim() || null,
+        notas: this.nuevoTransporte.notas?.trim() || null
+      };
 
-    this.mostrarFormularioTransporte = false;
+
+      if (this.editando) {
+
+        if (this.indiceEditando < 0) {
+          return;
+        }
+
+        const { error } = await supabase
+          .from('transporte')
+          .update(payload)
+          .eq(
+            'id',
+            this.indiceEditando
+          );
+
+        if (error) {
+          console.error(
+            'Error actualizando transporte:',
+            error
+          );
+          return;
+        }
+
+      } else {
+
+        const { error } = await supabase
+          .from('transporte')
+          .insert(payload);
+
+        if (error) {
+          console.error(
+            'Error creando transporte:',
+            error
+          );
+          return;
+        }
+      }
+
+
+      await this.cargarTransportes();
+
+      this.reiniciarFormulario();
+
+      this.mostrarFormularioTransporte = false;
+
+      this.cdr.detectChanges();
+
+    } finally {
+
+      this.guardandoTransporte = false;
+    }
   }
 
 
@@ -455,16 +439,22 @@ export class Ruta implements OnInit {
     transporte: Transporte
   ) {
 
+    if (transporte.id == null) {
+      return;
+    }
+
     this.editando = true;
 
     this.indiceEditando =
-      transporte.id || -1;
+      transporte.id;
 
     this.nuevoTransporte = {
       ...transporte
     };
 
     this.mostrarFormularioTransporte = true;
+
+    this.cdr.detectChanges();
 
     window.scrollTo({
       top: 0,
@@ -477,7 +467,7 @@ export class Ruta implements OnInit {
     transporte: Transporte
   ) {
 
-    if (!transporte.id) {
+    if (transporte.id == null) {
       return;
     }
 
@@ -490,12 +480,10 @@ export class Ruta implements OnInit {
       );
 
     if (error) {
-
       console.error(
         'Error eliminando transporte:',
         error
       );
-
       return;
     }
 
@@ -505,36 +493,48 @@ export class Ruta implements OnInit {
 
   reiniciarFormulario() {
 
+    /*
+     * IMPORTANTE:
+     * también reseteamos el estado de edición.
+     */
+
     this.editando = false;
 
     this.indiceEditando = -1;
 
     this.nuevoTransporte = {
-
       tipo: 'vuelo',
-
       origen: '',
-
       destino: '',
-
       fecha: '',
-
       horaSalida: '',
-
       horaLlegada: '',
-
       empresa: '',
-
       asiento: '',
-
       notas: ''
     };
   }
 
 
   /* ===================================================
-     12. HOTELES
+     13. HOTELES
   =================================================== */
+
+  abrirFormularioHotel() {
+
+    this.reiniciarHotel();
+
+    this.mostrarFormularioHotel = true;
+  }
+
+
+  cancelarFormularioHotel() {
+
+    this.reiniciarHotel();
+
+    this.mostrarFormularioHotel = false;
+  }
+
 
   async cargarHoteles() {
 
@@ -544,38 +544,27 @@ export class Ruta implements OnInit {
       .order('checkin');
 
     if (error) {
-
       console.error(
         'Error cargando hoteles:',
         error
       );
-
       return;
     }
 
     this.hoteles =
       (data || []).map((h: any) => ({
-
         id: h.id,
-
         nombre: h.nombre,
-
         ciudad: h.ciudad,
-
         checkIn: h.checkin,
-
         checkOut: h.checkout,
-
         precio: h.precio,
-
         pagado: h.pagado,
-
         direccion: h.direccion,
-
         notas: h.notas
       }));
 
-      this.cdr.detectChanges();
+    this.cdr.detectChanges();
   }
 
 
@@ -608,27 +597,22 @@ export class Ruta implements OnInit {
       return;
     }
 
-
     const esPrecioValido =
-
       this.nuevoHotel.precio !== undefined &&
-
       this.nuevoHotel.precio !== null &&
-
       !isNaN(
         Number(
           this.nuevoHotel.precio
         )
       );
 
-
     const payload = {
 
       nombre:
-        this.nuevoHotel.nombre,
+        this.nuevoHotel.nombre.trim(),
 
       ciudad:
-        this.nuevoHotel.ciudad,
+        this.nuevoHotel.ciudad.trim(),
 
       checkin:
         this.nuevoHotel.checkIn || null,
@@ -638,23 +622,27 @@ export class Ruta implements OnInit {
 
       precio:
         esPrecioValido
-          ? Number(
-              this.nuevoHotel.precio
-            )
+          ? Number(this.nuevoHotel.precio)
           : null,
 
       pagado:
         !!this.nuevoHotel.pagado,
 
       direccion:
-        this.nuevoHotel.direccion || null,
+        this.nuevoHotel.direccion?.trim()
+        || null,
 
       notas:
-        this.nuevoHotel.notas || null
+        this.nuevoHotel.notas?.trim()
+        || null
     };
 
 
     if (this.editandoHotel) {
+
+      if (this.indiceHotelEditando < 0) {
+        return;
+      }
 
       const { error } = await supabase
         .from('hoteles')
@@ -665,12 +653,10 @@ export class Ruta implements OnInit {
         );
 
       if (error) {
-
         console.error(
           'Error actualizando hotel:',
           error
         );
-
         return;
       }
 
@@ -681,22 +667,21 @@ export class Ruta implements OnInit {
         .insert(payload);
 
       if (error) {
-
         console.error(
           'Error creando hotel:',
           error
         );
-
         return;
       }
     }
-
 
     await this.cargarHoteles();
 
     this.reiniciarHotel();
 
     this.mostrarFormularioHotel = false;
+
+    this.cdr.detectChanges();
   }
 
 
@@ -704,16 +689,22 @@ export class Ruta implements OnInit {
     hotel: Hotel
   ) {
 
+    if (hotel.id == null) {
+      return;
+    }
+
     this.editandoHotel = true;
 
     this.indiceHotelEditando =
-      hotel.id || -1;
+      hotel.id;
 
     this.nuevoHotel = {
       ...hotel
     };
 
     this.mostrarFormularioHotel = true;
+
+    this.cdr.detectChanges();
   }
 
 
@@ -721,7 +712,7 @@ export class Ruta implements OnInit {
     hotel: Hotel
   ) {
 
-    if (!hotel.id) {
+    if (hotel.id == null) {
       return;
     }
 
@@ -734,12 +725,10 @@ export class Ruta implements OnInit {
       );
 
     if (error) {
-
       console.error(
         'Error eliminando hotel:',
         error
       );
-
       return;
     }
 
@@ -754,28 +743,20 @@ export class Ruta implements OnInit {
     this.indiceHotelEditando = -1;
 
     this.nuevoHotel = {
-
       nombre: '',
-
       ciudad: '',
-
       checkIn: '',
-
       checkOut: '',
-
       precio: undefined,
-
       pagado: false,
-
       direccion: '',
-
       notas: ''
     };
   }
 
 
   /* ===================================================
-     13. CARGAR CIUDADES
+     14. CARGAR CIUDADES
   =================================================== */
 
   async cargarCiudades() {
@@ -821,14 +802,11 @@ export class Ruta implements OnInit {
         { ascending: true }
       );
 
-
     if (error) {
-
       console.error(
         'Error cargando ciudades:',
         error
       );
-
       return;
     }
 
@@ -850,91 +828,104 @@ export class Ruta implements OnInit {
 
 
           lugares:
-            (c.lugares || [])
-              .map(
-                (l: any): Lugar => ({
+            (c.lugares || []).map(
+              (l: any): Lugar => ({
 
-                  id: l.id,
+                id: l.id,
 
-                  ciudadId:
-                    l.ciudad_id,
+                ciudadId:
+                  l.ciudad_id,
 
-                  nombre:
-                    l.nombre,
+                nombre:
+                  l.nombre,
 
-                  descripcion:
-                    l.descripcion || '',
+                descripcion:
+                  l.descripcion || '',
 
-                  direccion:
-                    l.direccion || '',
+                direccion:
+                  l.direccion || '',
 
-                  imagen:
-                    l.imagen || '',
+                imagen:
+                  l.imagen || '',
 
-                  maps:
-                    l.maps || ''
-                })
-              ),
+                maps:
+                  l.maps || ''
+              })
+            ),
 
 
           gastronomia:
-            (c.gastronomia || [])
-              .map(
-                (g: any): Gastronomia => ({
+            (c.gastronomia || []).map(
+              (g: any): Gastronomia => ({
 
-                  id: g.id,
+                id: g.id,
 
-                  ciudadId:
-                    g.ciudad_id,
+                ciudadId:
+                  g.ciudad_id,
 
-                  nombre:
-                    g.nombre,
+                nombre:
+                  g.nombre,
 
-                  tipo:
-                    g.tipo,
+                tipo:
+                  g.tipo,
 
-                  descripcion:
-                    g.descripcion || '',
+                descripcion:
+                  g.descripcion || '',
 
-                  direccion:
-                    g.direccion || '',
+                direccion:
+                  g.direccion || '',
 
-                  imagen:
-                    g.imagen || '',
+                imagen:
+                  g.imagen || '',
 
-                  maps:
-                    g.maps || ''
-                })
-              ),
+                maps:
+                  g.maps || ''
+              })
+            ),
 
 
           curiosidades:
-            (c.curiosidades || [])
-              .map(
-                (cur: any) => ({
+            (c.curiosidades || []).map(
+              (cur: any): Curiosidad => ({
 
-                  id: cur.id,
+                id: cur.id,
 
-                  ciudadId:
-                    cur.ciudad_id,
+                ciudadId:
+                  cur.ciudad_id,
 
-                  titulo:
-                    cur.titulo,
+                titulo:
+                  cur.titulo,
 
-                  descripcion:
-                    cur.descripcion || ''
-                })
-              )
+                descripcion:
+                  cur.descripcion || ''
+              })
+            )
         })
       );
 
-      this.cdr.detectChanges();
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     14. CIUDADES CRUD
+     15. CIUDADES CRUD
   =================================================== */
+
+  abrirFormularioCiudad() {
+
+    this.reiniciarCiudad();
+
+    this.mostrarFormularioCiudad = true;
+  }
+
+
+  cancelarFormularioCiudad() {
+
+    this.reiniciarCiudad();
+
+    this.mostrarFormularioCiudad = false;
+  }
+
 
   async agregarCiudad() {
 
@@ -943,7 +934,6 @@ export class Ruta implements OnInit {
     ) {
       return;
     }
-
 
     const payload = {
 
@@ -967,15 +957,12 @@ export class Ruta implements OnInit {
           this.indiceCiudadEditando
         ];
 
-      if (!ciudadEditada?.id) {
-
+      if (ciudadEditada?.id == null) {
         console.error(
           'No se encontró el id de la ciudad'
         );
-
         return;
       }
-
 
       const { error } = await supabase
         .from('ciudades')
@@ -985,14 +972,11 @@ export class Ruta implements OnInit {
           ciudadEditada.id
         );
 
-
       if (error) {
-
         console.error(
           'Error actualizando ciudad:',
           error
         );
-
         return;
       }
 
@@ -1002,14 +986,11 @@ export class Ruta implements OnInit {
         .from('ciudades')
         .insert(payload);
 
-
       if (error) {
-
         console.error(
           'Error creando ciudad:',
           error
         );
-
         return;
       }
     }
@@ -1019,12 +1000,9 @@ export class Ruta implements OnInit {
 
     await this.cargarCiudades();
 
-    /*
-     * Importante:
-     * una ruta ya cargada conserva el nombre visual
-     * de la ciudad, así que actualizamos también ruta.
-     */
     await this.cargarRutaDias();
+
+    this.cdr.detectChanges();
   }
 
 
@@ -1052,6 +1030,8 @@ export class Ruta implements OnInit {
     };
 
     this.mostrarFormularioCiudad = true;
+
+    this.cdr.detectChanges();
   }
 
 
@@ -1059,10 +1039,9 @@ export class Ruta implements OnInit {
     ciudad: Ciudad
   ) {
 
-    if (!ciudad.id) {
+    if (ciudad.id == null) {
       return;
     }
-
 
     const { error } = await supabase
       .from('ciudades')
@@ -1072,17 +1051,13 @@ export class Ruta implements OnInit {
         ciudad.id
       );
 
-
     if (error) {
-
       console.error(
         'Error eliminando ciudad:',
         error
       );
-
       return;
     }
-
 
     if (
       this.ciudadSeleccionada?.id
@@ -1091,27 +1066,22 @@ export class Ruta implements OnInit {
       this.cerrarCiudad();
     }
 
-
     await this.cargarCiudades();
 
     await this.cargarRutaDias();
+
+    this.cdr.detectChanges();
   }
 
 
   reiniciarCiudad() {
 
     this.nuevaCiudad = {
-
       nombre: '',
-
       pais: '',
-
       descripcion: '',
-
       lugares: [],
-
       gastronomia: [],
-
       curiosidades: []
     };
 
@@ -1128,40 +1098,50 @@ export class Ruta implements OnInit {
   ) {
 
     this.ciudadSeleccionada = ciudad;
+
+    this.itemAbierto = null;
+
+    this.reiniciarLugar();
+
+    this.reiniciarGastronomia();
+
+    this.reiniciarCuriosidad();
+
+    this.cdr.detectChanges();
   }
 
 
   cerrarCiudad() {
 
     this.ciudadSeleccionada = null;
-  
+
     this.itemAbierto = null;
-  
+
     this.reiniciarLugar();
-  
+
     this.reiniciarGastronomia();
-  
+
     this.reiniciarCuriosidad();
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     15. LUGARES CRUD
+     16. LUGARES CRUD
   =================================================== */
 
   async agregarLugar() {
 
     if (
-      !this.ciudadSeleccionada?.id ||
+      this.ciudadSeleccionada?.id == null ||
       !this.nuevoLugar.nombre.trim()
     ) {
       return;
     }
 
-
     const ciudadId =
       this.ciudadSeleccionada.id;
-
 
     const payload = {
 
@@ -1197,11 +1177,9 @@ export class Ruta implements OnInit {
             this.indiceLugarEditando
           ];
 
-
-      if (!lugar?.id) {
+      if (lugar?.id == null) {
         return;
       }
-
 
       const { error } = await supabase
         .from('lugares')
@@ -1211,14 +1189,11 @@ export class Ruta implements OnInit {
           lugar.id
         );
 
-
       if (error) {
-
         console.error(
           'Error actualizando lugar:',
           error
         );
-
         return;
       }
 
@@ -1228,14 +1203,11 @@ export class Ruta implements OnInit {
         .from('lugares')
         .insert(payload);
 
-
       if (error) {
-
         console.error(
           'Error creando lugar:',
           error
         );
-
         return;
       }
     }
@@ -1245,20 +1217,14 @@ export class Ruta implements OnInit {
 
     await this.cargarCiudades();
 
-
     this.ciudadSeleccionada =
       this.ciudades.find(
         ciudad =>
           ciudad.id === ciudadId
-      )
-      || null;
+      ) || null;
 
-
-    /*
-     * Actualizamos Ruta para que las referencias
-     * siempre apunten a los datos actuales.
-     */
     await this.cargarRutaDias();
+
     this.cdr.detectChanges();
   }
 
@@ -1271,22 +1237,24 @@ export class Ruta implements OnInit {
       return;
     }
 
-
     this.indiceLugarEditando =
       this.ciudadSeleccionada
         .lugares
         .indexOf(lugar);
 
+    if (this.indiceLugarEditando < 0) {
+      return;
+    }
 
     this.editandoLugar = true;
-
 
     this.nuevoLugar = {
       ...lugar
     };
 
-
     this.mostrarFormularioLugar = true;
+
+    this.cdr.detectChanges();
   }
 
 
@@ -1295,16 +1263,14 @@ export class Ruta implements OnInit {
   ) {
 
     if (
-      !this.ciudadSeleccionada?.id ||
-      !lugar.id
+      this.ciudadSeleccionada?.id == null ||
+      lugar.id == null
     ) {
       return;
     }
 
-
     const ciudadId =
       this.ciudadSeleccionada.id;
-
 
     const { error } = await supabase
       .from('lugares')
@@ -1314,28 +1280,21 @@ export class Ruta implements OnInit {
         lugar.id
       );
 
-
     if (error) {
-
       console.error(
         'Error eliminando lugar:',
         error
       );
-
       return;
     }
 
-
     await this.cargarCiudades();
-
 
     this.ciudadSeleccionada =
       this.ciudades.find(
         ciudad =>
           ciudad.id === ciudadId
-      )
-      || null;
-
+      ) || null;
 
     await this.cargarRutaDias();
 
@@ -1346,15 +1305,10 @@ export class Ruta implements OnInit {
   reiniciarLugar() {
 
     this.nuevoLugar = {
-
       nombre: '',
-
       descripcion: '',
-
       direccion: '',
-
       imagen: '',
-
       maps: ''
     };
 
@@ -1367,22 +1321,20 @@ export class Ruta implements OnInit {
 
 
   /* ===================================================
-     16. GASTRONOMIA CRUD
+     17. GASTRONOMIA CRUD
   =================================================== */
 
   async agregarGastronomia() {
 
     if (
-      !this.ciudadSeleccionada?.id ||
+      this.ciudadSeleccionada?.id == null ||
       !this.nuevaGastronomia.nombre.trim()
     ) {
       return;
     }
 
-
     const ciudadId =
       this.ciudadSeleccionada.id;
-
 
     const payload = {
 
@@ -1425,11 +1377,9 @@ export class Ruta implements OnInit {
             this.indiceGastronomiaEditando
           ];
 
-
-      if (!item?.id) {
+      if (item?.id == null) {
         return;
       }
-
 
       const { error } = await supabase
         .from('gastronomia')
@@ -1439,14 +1389,11 @@ export class Ruta implements OnInit {
           item.id
         );
 
-
       if (error) {
-
         console.error(
           'Error actualizando gastronomía:',
           error
         );
-
         return;
       }
 
@@ -1456,31 +1403,24 @@ export class Ruta implements OnInit {
         .from('gastronomia')
         .insert(payload);
 
-
       if (error) {
-
         console.error(
           'Error creando gastronomía:',
           error
         );
-
         return;
       }
     }
-
 
     this.reiniciarGastronomia();
 
     await this.cargarCiudades();
 
-
     this.ciudadSeleccionada =
       this.ciudades.find(
         ciudad =>
           ciudad.id === ciudadId
-      )
-      || null;
-
+      ) || null;
 
     await this.cargarRutaDias();
 
@@ -1496,24 +1436,28 @@ export class Ruta implements OnInit {
       return;
     }
 
-
     this.indiceGastronomiaEditando =
       this.ciudadSeleccionada
         .gastronomia
         .indexOf(item);
 
+    if (
+      this.indiceGastronomiaEditando < 0
+    ) {
+      return;
+    }
 
     this.editandoGastronomia = true;
-
 
     this.nuevaGastronomia = {
       ...item
     };
 
-
     this.mostrarFormularioGastronomia = true;
 
     this.dropdownGastronomiaAbierto = false;
+
+    this.cdr.detectChanges();
   }
 
 
@@ -1522,16 +1466,14 @@ export class Ruta implements OnInit {
   ) {
 
     if (
-      !this.ciudadSeleccionada?.id ||
-      !item.id
+      this.ciudadSeleccionada?.id == null ||
+      item.id == null
     ) {
       return;
     }
 
-
     const ciudadId =
       this.ciudadSeleccionada.id;
-
 
     const { error } = await supabase
       .from('gastronomia')
@@ -1541,28 +1483,21 @@ export class Ruta implements OnInit {
         item.id
       );
 
-
     if (error) {
-
       console.error(
         'Error eliminando gastronomía:',
         error
       );
-
       return;
     }
 
-
     await this.cargarCiudades();
-
 
     this.ciudadSeleccionada =
       this.ciudades.find(
         ciudad =>
           ciudad.id === ciudadId
-      )
-      || null;
-
+      ) || null;
 
     await this.cargarRutaDias();
 
@@ -1573,20 +1508,13 @@ export class Ruta implements OnInit {
   reiniciarGastronomia() {
 
     this.nuevaGastronomia = {
-
       nombre: '',
-
       tipo: 'restaurante',
-
       descripcion: '',
-
       direccion: '',
-
       imagen: '',
-
       maps: ''
     };
-
 
     this.editandoGastronomia = false;
 
@@ -1610,7 +1538,6 @@ export class Ruta implements OnInit {
       return [];
     }
 
-
     return this.ciudadSeleccionada
       .gastronomia
       .filter(
@@ -1619,237 +1546,227 @@ export class Ruta implements OnInit {
       );
   }
 
+
   /* ===================================================
-   CURIOSIDADES CRUD
-=================================================== */
+     18. CURIOSIDADES CRUD
+  =================================================== */
 
-async agregarCuriosidad() {
+  async agregarCuriosidad() {
 
-  if (
-    !this.ciudadSeleccionada?.id ||
-    !this.nuevaCuriosidad.titulo.trim()
-  ) {
-    return;
-  }
-
-  const ciudadId =
-    this.ciudadSeleccionada.id;
-
-  const payload = {
-
-    ciudad_id:
-      ciudadId,
-
-    titulo:
-      this.nuevaCuriosidad.titulo.trim(),
-
-    descripcion:
-      this.nuevaCuriosidad.descripcion?.trim()
-      || null
-  };
-
-
-  /* ===============================
-     EDITAR
-  =============================== */
-
-  if (this.editandoCuriosidad) {
-
-    const curiosidad =
-      this.ciudadSeleccionada
-        .curiosidades[
-          this.indiceCuriosidadEditando
-        ];
-
-    if (!curiosidad?.id) {
+    if (
+      this.ciudadSeleccionada?.id == null ||
+      !this.nuevaCuriosidad.titulo.trim()
+    ) {
       return;
     }
 
+    const ciudadId =
+      this.ciudadSeleccionada.id;
+
+    const payload = {
+
+      ciudad_id:
+        ciudadId,
+
+      titulo:
+        this.nuevaCuriosidad.titulo.trim(),
+
+      descripcion:
+        this.nuevaCuriosidad.descripcion
+          ?.trim()
+        || null
+    };
+
+
+    if (this.editandoCuriosidad) {
+
+      const curiosidad =
+        this.ciudadSeleccionada
+          .curiosidades[
+            this.indiceCuriosidadEditando
+          ];
+
+      if (curiosidad?.id == null) {
+        return;
+      }
+
+      const { error } = await supabase
+        .from('curiosidades')
+        .update(payload)
+        .eq(
+          'id',
+          curiosidad.id
+        );
+
+      if (error) {
+        console.error(
+          'Error actualizando curiosidad:',
+          error
+        );
+        return;
+      }
+
+    } else {
+
+      const { error } = await supabase
+        .from('curiosidades')
+        .insert(payload);
+
+      if (error) {
+        console.error(
+          'Error creando curiosidad:',
+          error
+        );
+        return;
+      }
+    }
+
+
+    this.reiniciarCuriosidad();
+
+    await this.cargarCiudades();
+
+    this.ciudadSeleccionada =
+      this.ciudades.find(
+        ciudad =>
+          ciudad.id === ciudadId
+      ) || null;
+
+    this.cdr.detectChanges();
+  }
+
+
+  editarCuriosidad(
+    curiosidad: Curiosidad
+  ) {
+
+    if (!this.ciudadSeleccionada) {
+      return;
+    }
+
+    this.indiceCuriosidadEditando =
+      this.ciudadSeleccionada
+        .curiosidades
+        .indexOf(curiosidad);
+
+    if (
+      this.indiceCuriosidadEditando < 0
+    ) {
+      return;
+    }
+
+    this.editandoCuriosidad = true;
+
+    this.nuevaCuriosidad = {
+      ...curiosidad
+    };
+
+    this.mostrarFormularioCuriosidad = true;
+
+    this.cdr.detectChanges();
+  }
+
+
+  async eliminarCuriosidad(
+    curiosidad: Curiosidad
+  ) {
+
+    if (
+      this.ciudadSeleccionada?.id == null ||
+      curiosidad.id == null
+    ) {
+      return;
+    }
+
+    const ciudadId =
+      this.ciudadSeleccionada.id;
 
     const { error } = await supabase
       .from('curiosidades')
-      .update(payload)
+      .delete()
       .eq(
         'id',
         curiosidad.id
       );
 
-
     if (error) {
-
       console.error(
-        'Error actualizando curiosidad:',
+        'Error eliminando curiosidad:',
         error
       );
-
       return;
     }
 
-  }
+    await this.cargarCiudades();
 
-  /* ===============================
-     CREAR
-  =============================== */
-
-  else {
-
-    const { error } = await supabase
-      .from('curiosidades')
-      .insert(payload);
-
-
-    if (error) {
-
-      console.error(
-        'Error creando curiosidad:',
-        error
-      );
-
-      return;
-    }
-  }
-
-
-  /* ===============================
-     RECARGAR DATOS
-  =============================== */
-
-  this.reiniciarCuriosidad();
-
-  await this.cargarCiudades();
-
-  this.ciudadSeleccionada =
-    this.ciudades.find(
-      ciudad =>
-        ciudad.id === ciudadId
-    )
-    || null;
+    this.ciudadSeleccionada =
+      this.ciudades.find(
+        ciudad =>
+          ciudad.id === ciudadId
+      ) || null;
 
     this.cdr.detectChanges();
-}
-
-
-/* ===================================================
-   EDITAR CURIOSIDAD
-=================================================== */
-
-editarCuriosidad(
-  curiosidad: Curiosidad
-) {
-
-  if (!this.ciudadSeleccionada) {
-    return;
   }
 
 
-  this.indiceCuriosidadEditando =
-    this.ciudadSeleccionada
-      .curiosidades
-      .indexOf(curiosidad);
+  reiniciarCuriosidad() {
 
+    this.nuevaCuriosidad = {
+      titulo: '',
+      descripcion: ''
+    };
 
-  if (
-    this.indiceCuriosidadEditando === -1
-  ) {
-    return;
+    this.editandoCuriosidad = false;
+
+    this.indiceCuriosidadEditando = -1;
+
+    this.mostrarFormularioCuriosidad = false;
   }
-
-
-  this.editandoCuriosidad = true;
-
-
-  this.nuevaCuriosidad = {
-    ...curiosidad
-  };
-
-
-  this.mostrarFormularioCuriosidad = true;
-}
-
-
-/* ===================================================
-   ELIMINAR CURIOSIDAD
-=================================================== */
-
-async eliminarCuriosidad(
-  curiosidad: Curiosidad
-) {
-
-  if (
-    !this.ciudadSeleccionada?.id ||
-    !curiosidad.id
-  ) {
-    return;
-  }
-
-
-  const ciudadId =
-    this.ciudadSeleccionada.id;
-
-
-  const { error } = await supabase
-    .from('curiosidades')
-    .delete()
-    .eq(
-      'id',
-      curiosidad.id
-    );
-
-
-  if (error) {
-
-    console.error(
-      'Error eliminando curiosidad:',
-      error
-    );
-
-    return;
-  }
-
-
-  await this.cargarCiudades();
-
-
-  this.ciudadSeleccionada =
-    this.ciudades.find(
-      ciudad =>
-        ciudad.id === ciudadId
-    )
-    || null;
-
-    this.cdr.detectChanges();
-}
-
-
-/* ===================================================
-   REINICIAR CURIOSIDAD
-=================================================== */
-
-reiniciarCuriosidad() {
-
-  this.nuevaCuriosidad = {
-    titulo: '',
-    descripcion: ''
-  };
-
-
-  this.editandoCuriosidad = false;
-
-  this.indiceCuriosidadEditando = -1;
-
-  this.mostrarFormularioCuriosidad = false;
-}
 
 
   /* ===================================================
-     17. CARGAR RUTA DESDE SUPABASE
+     19. RUTA - FORMULARIO DIA
+  =================================================== */
+
+  abrirFormularioDia() {
+
+    this.reiniciarDia();
+
+    this.mostrarFormularioDia = true;
+  }
+
+
+  cancelarFormularioDia() {
+
+    this.reiniciarDia();
+
+    this.mostrarFormularioDia = false;
+  }
+
+
+  reiniciarDia() {
+
+    this.nuevoDia = {
+      id: null,
+      titulo: '',
+      ciudadId: null,
+      ciudad: '',
+      fecha: '',
+      elementos: [],
+      lugarSeleccionado: '',
+      gastronomiaSeleccionada: ''
+    };
+
+    this.dropdownCiudadRutaAbierto = false;
+  }
+
+
+  /* ===================================================
+     20. CARGAR RUTA
   =================================================== */
 
   async cargarRutaDias() {
 
-    /*
-     * Cargamos primero los días.
-     */
     const {
       data: diasData,
       error: diasError
@@ -1861,25 +1778,15 @@ reiniciarCuriosidad() {
         { ascending: true }
       );
 
-
     if (diasError) {
-
       console.error(
         'Error cargando días de ruta:',
         diasError
       );
-
       return;
     }
 
 
-    /*
-     * Después cargamos todos los elementos.
-     *
-     * No necesitamos una consulta compleja con joins:
-     * los lugares/gastronomía ya están cargados dentro
-     * de this.ciudades.
-     */
     const {
       data: elementosData,
       error: elementosError
@@ -1891,14 +1798,11 @@ reiniciarCuriosidad() {
         { ascending: true }
       );
 
-
     if (elementosError) {
-
       console.error(
         'Error cargando elementos de ruta:',
         elementosError
       );
-
       return;
     }
 
@@ -1927,9 +1831,6 @@ reiniciarCuriosidad() {
                   (elementoDb: any):
                     RutaElemento => {
 
-                    /*
-                     * LUGAR
-                     */
                     if (
                       elementoDb.tipo
                       === 'lugar'
@@ -1941,7 +1842,6 @@ reiniciarCuriosidad() {
                             lugar.id
                             === elementoDb.lugar_id
                         );
-
 
                       return {
 
@@ -1964,9 +1864,6 @@ reiniciarCuriosidad() {
                     }
 
 
-                    /*
-                     * GASTRONOMIA
-                     */
                     const gastronomia =
                       ciudad?.gastronomia.find(
                         item =>
@@ -2008,10 +1905,6 @@ reiniciarCuriosidad() {
               ciudadId:
                 diaDb.ciudad_id,
 
-              /*
-               * Mantenemos el nombre porque tu HTML
-               * actual usa dia.ciudad.
-               */
               ciudad:
                 ciudad?.nombre || '',
 
@@ -2028,12 +1921,12 @@ reiniciarCuriosidad() {
           }
         );
 
-        this.cdr.detectChanges();
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     18. CREAR DIA DE RUTA
+     21. CREAR DIA
   =================================================== */
 
   async agregarDiaRuta() {
@@ -2045,25 +1938,28 @@ reiniciarCuriosidad() {
       return;
     }
 
-
     /*
-     * El selector HTML sigue guardando el nombre,
-     * pero Supabase necesita ciudad_id.
+     * Preferimos ciudadId porque ya lo tenemos
+     * seleccionado en el HTML.
+     *
+     * Dejamos el nombre como respaldo.
      */
     const ciudad =
       this.ciudades.find(
         ciudad =>
-          ciudad.nombre
-          === this.nuevoDia.ciudad
+          ciudad.id === this.nuevoDia.ciudadId
+      )
+      ||
+      this.ciudades.find(
+        ciudad =>
+          ciudad.nombre === this.nuevoDia.ciudad
       );
 
 
-    if (!ciudad?.id) {
-
+    if (ciudad?.id == null) {
       console.error(
         'No se encontró la ciudad seleccionada'
       );
-
       return;
     }
 
@@ -2084,40 +1980,17 @@ reiniciarCuriosidad() {
 
 
     if (error) {
-
       console.error(
         'Error creando día de ruta:',
         error
       );
-
       return;
     }
 
 
-    this.nuevoDia = {
-
-      id: null,
-
-      titulo: '',
-
-      ciudadId: null,
-
-      ciudad: '',
-
-      fecha: '',
-
-      elementos: [],
-
-      lugarSeleccionado: '',
-
-      gastronomiaSeleccionada: ''
-    };
-
-
-    this.dropdownCiudadRutaAbierto = false;
+    this.reiniciarDia();
 
     this.mostrarFormularioDia = false;
-
 
     await this.cargarRutaDias();
 
@@ -2126,7 +1999,7 @@ reiniciarCuriosidad() {
 
 
   /* ===================================================
-     19. AÑADIR LUGAR AL DIA
+     22. AÑADIR LUGAR AL DIA
   =================================================== */
 
   async agregarLugarADia(
@@ -2134,13 +2007,12 @@ reiniciarCuriosidad() {
   ) {
 
     if (
-      !dia.id ||
-      !dia.ciudadId ||
+      dia.id == null ||
+      dia.ciudadId == null ||
       !dia.lugarSeleccionado
     ) {
       return;
     }
-
 
     const ciudad =
       this.ciudades.find(
@@ -2148,16 +2020,10 @@ reiniciarCuriosidad() {
           ciudad.id === dia.ciudadId
       );
 
-
     if (!ciudad) {
       return;
     }
 
-
-    /*
-     * El <select> actual devuelve el nombre.
-     * Localizamos el registro real para obtener su id.
-     */
     const lugar =
       ciudad.lugares.find(
         lugar =>
@@ -2165,21 +2031,14 @@ reiniciarCuriosidad() {
           === dia.lugarSeleccionado
       );
 
-
-    if (!lugar?.id) {
-
+    if (lugar?.id == null) {
       console.error(
         'No se encontró el lugar seleccionado'
       );
-
       return;
     }
 
 
-    /*
-     * Evitamos añadir dos veces el mismo lugar
-     * al mismo día.
-     */
     const existe =
       dia.elementos.some(
         elemento =>
@@ -2187,11 +2046,9 @@ reiniciarCuriosidad() {
           elemento.lugarId === lugar.id
       );
 
-
     if (existe) {
-
       dia.lugarSeleccionado = '';
-
+      this.cdr.detectChanges();
       return;
     }
 
@@ -2215,25 +2072,24 @@ reiniciarCuriosidad() {
 
 
     if (error) {
-
       console.error(
         'Error añadiendo lugar al día:',
         error
       );
-
       return;
     }
 
 
     dia.lugarSeleccionado = '';
 
-
     await this.cargarRutaDias();
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     20. AÑADIR GASTRONOMIA AL DIA
+     23. AÑADIR GASTRONOMIA AL DIA
   =================================================== */
 
   async agregarGastronomiaADia(
@@ -2241,13 +2097,12 @@ reiniciarCuriosidad() {
   ) {
 
     if (
-      !dia.id ||
-      !dia.ciudadId ||
+      dia.id == null ||
+      dia.ciudadId == null ||
       !dia.gastronomiaSeleccionada
     ) {
       return;
     }
-
 
     const ciudad =
       this.ciudades.find(
@@ -2255,11 +2110,9 @@ reiniciarCuriosidad() {
           ciudad.id === dia.ciudadId
       );
 
-
     if (!ciudad) {
       return;
     }
-
 
     const gastronomia =
       ciudad.gastronomia.find(
@@ -2268,13 +2121,10 @@ reiniciarCuriosidad() {
           === dia.gastronomiaSeleccionada
       );
 
-
-    if (!gastronomia?.id) {
-
+    if (gastronomia?.id == null) {
       console.error(
         'No se encontró el sitio seleccionado'
       );
-
       return;
     }
 
@@ -2282,17 +2132,14 @@ reiniciarCuriosidad() {
     const existe =
       dia.elementos.some(
         elemento =>
-          elemento.tipo
-            === 'gastronomia' &&
+          elemento.tipo === 'gastronomia' &&
           elemento.gastronomiaId
             === gastronomia.id
       );
 
-
     if (existe) {
-
       dia.gastronomiaSeleccionada = '';
-
+      this.cdr.detectChanges();
       return;
     }
 
@@ -2316,25 +2163,24 @@ reiniciarCuriosidad() {
 
 
     if (error) {
-
       console.error(
         'Error añadiendo gastronomía al día:',
         error
       );
-
       return;
     }
 
 
     dia.gastronomiaSeleccionada = '';
 
-
     await this.cargarRutaDias();
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     21. ELIMINAR ELEMENTO DE RUTA
+     24. ELIMINAR ELEMENTO DIA
   =================================================== */
 
   async eliminarElementoDia(
@@ -2342,10 +2188,9 @@ reiniciarCuriosidad() {
     elemento: RutaElemento
   ) {
 
-    if (!elemento.id) {
+    if (elemento.id == null) {
       return;
     }
-
 
     const { error } = await supabase
       .from('ruta_elementos')
@@ -2355,39 +2200,35 @@ reiniciarCuriosidad() {
         elemento.id
       );
 
-
     if (error) {
-
       console.error(
         'Error eliminando elemento de ruta:',
         error
       );
-
       return;
     }
-
 
     dia.elementos =
       dia.elementos.filter(
         item =>
           item.id !== elemento.id
       );
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     22. ELIMINAR DIA COMPLETO
-     Aunque todavía no tengas el botón, queda preparado.
+     25. ELIMINAR DIA
   =================================================== */
 
   async eliminarDiaRuta(
     dia: DiaRuta
   ) {
 
-    if (!dia.id) {
+    if (dia.id == null) {
       return;
     }
-
 
     const { error } = await supabase
       .from('ruta_dias')
@@ -2397,24 +2238,22 @@ reiniciarCuriosidad() {
         dia.id
       );
 
-
     if (error) {
-
       console.error(
         'Error eliminando día:',
         error
       );
-
       return;
     }
 
-
     await this.cargarRutaDias();
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     23. HELPERS CIUDAD / RUTA
+     26. HELPERS CIUDAD / RUTA
   =================================================== */
 
   obtenerCiudad(
@@ -2432,7 +2271,7 @@ reiniciarCuriosidad() {
     id: number | null
   ): Ciudad | undefined {
 
-    if (id === null) {
+    if (id == null) {
       return undefined;
     }
 
@@ -2478,19 +2317,12 @@ reiniciarCuriosidad() {
 
 
   /* ===================================================
-     24. POPUP ELEMENTO RUTA
+     27. POPUP ELEMENTO RUTA
   =================================================== */
 
   abrirElementoRuta(
     elemento: RutaElemento
   ) {
-
-    /*
-     * Ya no buscamos realmente por nombre.
-     *
-     * RutaElemento contiene la referencia original
-     * al lugar o gastronomía de Ciudad.
-     */
 
     if (
       elemento.tipo === 'lugar'
@@ -2503,11 +2335,9 @@ reiniciarCuriosidad() {
           elemento.lugarId
         );
 
-
       if (!lugar) {
         return;
       }
-
 
       this.elementoRutaAbierto =
         lugar;
@@ -2519,13 +2349,14 @@ reiniciarCuriosidad() {
       const ciudad =
         this.ciudades.find(
           ciudad =>
-            ciudad.id
-            === lugar.ciudadId
+            ciudad.id === lugar.ciudadId
         );
 
 
       this.ciudadElementoRuta =
         ciudad?.nombre || '';
+
+      this.cdr.detectChanges();
 
       return;
     }
@@ -2538,11 +2369,9 @@ reiniciarCuriosidad() {
         elemento.gastronomiaId
       );
 
-
     if (!gastronomia) {
       return;
     }
-
 
     this.elementoRutaAbierto =
       gastronomia;
@@ -2561,6 +2390,8 @@ reiniciarCuriosidad() {
 
     this.ciudadElementoRuta =
       ciudad?.nombre || '';
+
+    this.cdr.detectChanges();
   }
 
 
@@ -2568,10 +2399,9 @@ reiniciarCuriosidad() {
     lugarId?: number
   ): Lugar | undefined {
 
-    if (!lugarId) {
+    if (lugarId == null) {
       return undefined;
     }
-
 
     for (
       const ciudad
@@ -2584,12 +2414,10 @@ reiniciarCuriosidad() {
             lugar.id === lugarId
         );
 
-
       if (lugar) {
         return lugar;
       }
     }
-
 
     return undefined;
   }
@@ -2599,10 +2427,9 @@ reiniciarCuriosidad() {
     gastronomiaId?: number
   ): Gastronomia | undefined {
 
-    if (!gastronomiaId) {
+    if (gastronomiaId == null) {
       return undefined;
     }
-
 
     for (
       const ciudad
@@ -2616,12 +2443,10 @@ reiniciarCuriosidad() {
             === gastronomiaId
         );
 
-
       if (item) {
         return item;
       }
     }
-
 
     return undefined;
   }
@@ -2634,11 +2459,13 @@ reiniciarCuriosidad() {
     this.tipoElementoRuta = null;
 
     this.ciudadElementoRuta = '';
+
+    this.cdr.detectChanges();
   }
 
 
   /* ===================================================
-     25. INTERFAZ GENERAL
+     28. INTERFAZ GENERAL
   =================================================== */
 
   cambiarVista(

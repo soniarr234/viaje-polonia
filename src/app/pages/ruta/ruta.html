@@ -1,6 +1,13 @@
 <div class="ruta-page">
+
+  <!-- =====================================================
+       TABS PRINCIPALES
+  ====================================================== -->
+
   <div class="tabs">
+
     <button
+      type="button"
       [class.active]="vista === 'transportes'"
       (click)="cambiarVista('transportes')"
     >
@@ -8,6 +15,7 @@
     </button>
 
     <button
+      type="button"
       [class.active]="vista === 'hoteles'"
       (click)="cambiarVista('hoteles')"
     >
@@ -15,28 +23,48 @@
     </button>
 
     <button
+      type="button"
       [class.active]="vista === 'ciudades'"
       (click)="cambiarVista('ciudades')"
     >
       Ciudades
     </button>
+
   </div>
 
-  <!-- TRANSPORTES -->
+
+  <!-- =====================================================
+       TRANSPORTES
+  ====================================================== -->
 
   <div *ngIf="vista === 'transportes'">
+
     <button
+      *ngIf="!mostrarFormularioTransporte"
+      type="button"
       class="btn-add"
-      (click)="mostrarFormularioTransporte = !mostrarFormularioTransporte"
+      (click)="abrirFormularioTransporte()"
     >
-      {{ mostrarFormularioTransporte ? '✖ Cancelar' : '+ Añadir transporte' }}
+      + Añadir transporte
     </button>
 
-    <div class="card" *ngIf="mostrarFormularioTransporte">
-      <h2>{{ editando ? 'Editar transporte' : 'Nuevo transporte' }}</h2>
+
+    <!-- FORMULARIO TRANSPORTE -->
+
+    <div
+      class="card"
+      *ngIf="mostrarFormularioTransporte"
+    >
+
+      <h2>
+        {{ editando ? 'Editar transporte' : 'Nuevo transporte' }}
+      </h2>
+
 
       <div class="form-grid">
+
         <div class="tipo-transporte">
+
           <button
             type="button"
             [class.active]="nuevoTransporte.tipo === 'vuelo'"
@@ -60,742 +88,1729 @@
           >
             Bus
           </button>
+
         </div>
 
+
         <div class="form-row form-row-2">
+
           <input
             type="text"
             placeholder="Origen"
             [(ngModel)]="nuevoTransporte.origen"
-          />
+          >
 
           <input
             type="text"
             placeholder="Destino"
             [(ngModel)]="nuevoTransporte.destino"
-          />
+          >
+
         </div>
+
 
         <div class="date-input">
-          <input type="date" [(ngModel)]="nuevoTransporte.fecha" />
 
-          <span class="calendar-icon"> 📅 </span>
+          <input
+            type="date"
+            [(ngModel)]="nuevoTransporte.fecha"
+          >
+
+          <span class="calendar-icon">
+            📅
+          </span>
+
         </div>
 
+
         <div class="form-row form-row-2">
-          <div class="input-group">
-            <label>Hora de salida</label>
-
-            <div class="time-input">
-              <input type="time" [(ngModel)]="nuevoTransporte.horaSalida" />
-
-              <span class="time-icon"> 🕒 </span>
-            </div>
-          </div>
 
           <div class="input-group">
-            <label>Hora de llegada</label>
+
+            <label>
+              Hora de salida
+            </label>
 
             <div class="time-input">
-              <input type="time" [(ngModel)]="nuevoTransporte.horaLlegada" />
 
-              <span class="time-icon"> 🕒 </span>
+              <input
+                type="time"
+                [(ngModel)]="nuevoTransporte.horaSalida"
+              >
+
+              <span class="time-icon">
+                🕒
+              </span>
+
             </div>
+
           </div>
+
+
+          <div class="input-group">
+
+            <label>
+              Hora de llegada
+            </label>
+
+            <div class="time-input">
+
+              <input
+                type="time"
+                [(ngModel)]="nuevoTransporte.horaLlegada"
+              >
+
+              <span class="time-icon">
+                🕒
+              </span>
+
+            </div>
+
+          </div>
+
         </div>
 
+
         <div class="form-row form-row-2">
+
           <input
             type="text"
             placeholder="Empresa"
             [(ngModel)]="nuevoTransporte.empresa"
-          />
+          >
 
           <input
             type="text"
             placeholder="Asiento"
             [(ngModel)]="nuevoTransporte.asiento"
-          />
+          >
+
         </div>
+
 
         <textarea
           placeholder="Notas"
           [(ngModel)]="nuevoTransporte.notas"
         ></textarea>
-      </div>
-
-      <button class="btn-add" (click)="agregarTransporte()">
-        {{ editando ? 'Guardar cambios' : 'Guardar transporte' }}
-      </button>
-    </div>
-
-    <div *ngIf="transportes.length === 0" class="empty-state">
-      No hay transportes añadidos.
-    </div>
-
-    <!-- VUELOS -->
-
-    <div *ngIf="vuelos.length > 0">
-      <h3 class="grupo-titulo">Vuelos</h3>
-
-      <div class="transporte-card" *ngFor="let transporte of vuelos">
-        <div class="transporte-header">
-          <span class="badge"> Vuelo </span>
-
-          <span class="fecha">
-            {{ transporte.fecha | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-
-        <div class="premium-route">
-          <div class="premium-city">
-            <span class="airport"> {{ transporte.origen }} </span>
-
-            <span class="hour"> {{ transporte.horaSalida }} </span>
-          </div>
-
-          <div class="premium-line">
-            <div class="line"></div>
-
-            <div class="plane">✈️</div>
-          </div>
-
-          <div class="premium-city premium-city-right">
-            <span class="airport"> {{ transporte.destino }} </span>
-
-            <span class="hour"> {{ transporte.horaLlegada }} </span>
-          </div>
-        </div>
-
-        <div class="premium-footer">
-          <div class="premium-info">
-            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
-
-            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
-          </div>
-
-          <div class="acciones">
-            <button
-              class="btn-editar"
-              title="Editar transporte"
-              (click)="editarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="#ffffff"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-            </button>
-
-            <button
-              class="btn-eliminar"
-              title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TRENES -->
-
-    <div *ngIf="trenes.length > 0">
-      <h3 class="grupo-titulo">Trenes</h3>
-
-      <div class="transporte-card" *ngFor="let transporte of trenes">
-        <div class="transporte-header">
-          <span class="badge"> Tren </span>
-
-          <span class="fecha">
-            {{ transporte.fecha | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-
-        <div class="premium-route">
-          <div class="premium-city">
-            <span class="airport"> {{ transporte.origen }} </span>
-
-            <span class="hour"> {{ transporte.horaSalida }} </span>
-          </div>
-
-          <div class="premium-line">
-            <div class="line"></div>
-
-            <div class="plane">🚆</div>
-          </div>
-
-          <div class="premium-city premium-city-right">
-            <span class="airport"> {{ transporte.destino }} </span>
-
-            <span class="hour"> {{ transporte.horaLlegada }} </span>
-          </div>
-        </div>
-
-        <div class="premium-footer">
-          <div class="premium-info">
-            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
-
-            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
-          </div>
-
-          <div class="acciones">
-            <button
-              class="btn-editar"
-              title="Editar transporte"
-              (click)="editarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="#ffffff"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-            </button>
-
-            <button
-              class="btn-eliminar"
-              title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BUSES -->
-
-    <div *ngIf="buses.length > 0">
-      <h3 class="grupo-titulo">Buses</h3>
-
-      <div class="transporte-card" *ngFor="let transporte of buses">
-        <div class="transporte-header">
-          <span class="badge"> Bus </span>
-
-          <span class="fecha">
-            {{ transporte.fecha | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-
-        <div class="premium-route">
-          <div class="premium-city">
-            <span class="airport"> {{ transporte.origen }} </span>
-
-            <span class="hour"> {{ transporte.horaSalida }} </span>
-          </div>
-
-          <div class="premium-line">
-            <div class="line"></div>
-
-            <div class="plane">🚌</div>
-          </div>
-
-          <div class="premium-city premium-city-right">
-            <span class="airport"> {{ transporte.destino }} </span>
-
-            <span class="hour"> {{ transporte.horaLlegada }} </span>
-          </div>
-        </div>
-
-        <div class="premium-footer">
-          <div class="premium-info">
-            <div *ngIf="transporte.empresa">{{ transporte.empresa }}</div>
-
-            <div *ngIf="transporte.asiento">💺 {{ transporte.asiento }}</div>
-          </div>
-
-          <div class="acciones">
-            <button
-              class="btn-editar"
-              title="Editar transporte"
-              (click)="editarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="#ffffff"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-            </button>
-
-            <button
-              class="btn-eliminar"
-              title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HOTELES -->
-
-  <div *ngIf="vista === 'hoteles'">
-    <button
-      class="btn-add"
-      (click)="mostrarFormularioHotel = !mostrarFormularioHotel"
-    >
-      {{ mostrarFormularioHotel ? '✖ Cancelar' : '+ Añadir hotel' }}
-    </button>
-
-    <div class="card" *ngIf="mostrarFormularioHotel">
-      <h2>{{ editandoHotel ? 'Editar hotel' : 'Nuevo hotel' }}</h2>
-
-      <div class="form-grid">
-        <input
-          type="text"
-          placeholder="Nombre del hotel"
-          [(ngModel)]="nuevoHotel.nombre"
-        />
-
-        <input
-          type="text"
-          placeholder="Ciudad"
-          [(ngModel)]="nuevoHotel.ciudad"
-        />
-
-        <div class="input-group">
-          <label>Check-in</label>
-
-          <div class="date-input">
-            <input type="date" [(ngModel)]="nuevoHotel.checkIn" />
-
-            <span class="calendar-icon"> 📅 </span>
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label>Check-out</label>
-
-          <div class="date-input">
-            <input type="date" [(ngModel)]="nuevoHotel.checkOut" />
-
-            <span class="calendar-icon"> 📅 </span>
-          </div>
-        </div>
-
-        <div class="form-row form-row-2">
-          <input
-            type="number"
-            placeholder="Precio (€)"
-            [(ngModel)]="nuevoHotel.precio"
-          />
-
-          <label class="checkbox-container">
-            <input type="checkbox" [(ngModel)]="nuevoHotel.pagado" />
-
-            Pagado
-          </label>
-        </div>
-
-        <input
-          type="text"
-          placeholder="Dirección"
-          [(ngModel)]="nuevoHotel.direccion"
-        />
-
-        <textarea placeholder="Notas" [(ngModel)]="nuevoHotel.notas"></textarea>
-      </div>
-
-      <button class="btn-add" (click)="agregarHotel()">
-        {{ editandoHotel ? 'Guardar cambios' : 'Guardar hotel' }}
-      </button>
-    </div>
-
-    <div *ngIf="hoteles.length === 0" class="empty-state">
-      No hay hoteles añadidos.
-    </div>
-
-    <div
-      class="hotel-card"
-      *ngFor="
-    let hotel of hotelesOrdenados;
-    let i = index
-  "
-    >
-      <div class="hotel-nombre">{{ hotel.nombre }}</div>
-
-      <div class="hotel-fechas">
-        <div class="hotel-fecha-card">
-          <span class="hotel-fecha-label"> Check-in </span>
-
-          <span class="hotel-fecha-valor">
-            {{ hotel.checkIn | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-
-        <div class="hotel-fecha-card">
-          <span class="hotel-fecha-label"> Check-out </span>
-
-          <span class="hotel-fecha-valor">
-            {{ hotel.checkOut | date:'dd/MM/yyyy' }}
-          </span>
-        </div>
-      </div>
-
-      <div *ngIf="hotel.direccion" class="hotel-direccion">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path fill="rgb(203, 28, 28)" d="M12 11.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7"/></svg>{{ hotel.direccion }}
-      </div>
-
-      <div class="hotel-resumen">
-        <div class="hotel-precio">{{ hotel.precio || 0 }} €</div>
-
-        <div class="hotel-estado" [class.pagado]="hotel.pagado">
-          {{ hotel.pagado ? '✅ Pagado' : '⏳ Pendiente' }}
-        </div>
-      </div>
-
-      <div *ngIf="hotel.notas" class="hotel-notas">📝 {{ hotel.notas }}</div>
-
-      <div class="premium-footer">
-        <div></div>
-
-        <div class="acciones">
-          <button class="btn-editar" (click)="editarHotel(hotel)">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="1.5em"
-              height="1.5em"
-            >
-              <path
-                fill="#ffffff"
-                d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-              />
-            </svg>
-          </button>
-
-          <button class="btn-eliminar" (click)="eliminarHotel(hotel)">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              width="1.3em"
-              height="1.3em"
-            >
-              <path
-                fill="#ef4444"
-                d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =====================================================
-     CIUDADES
-===================================================== -->
-
-<div *ngIf="vista === 'ciudades'">
-
-  <!-- SUBTABS -->
-
-  <div class="subtabs-ciudad">
-
-    <button
-      [class.active]="subVistaCiudades === 'ciudades'"
-      (click)="subVistaCiudades = 'ciudades'"
-    >
-      🏙️ Ciudades
-    </button>
-
-    <button
-      [class.active]="subVistaCiudades === 'ruta'"
-      (click)="subVistaCiudades = 'ruta'"
-    >
-      📍 Ruta
-    </button>
-
-  </div>
-
-
-  <!-- ===================================================
-       LISTADO DE CIUDADES
-  ==================================================== -->
-
-  <div *ngIf="subVistaCiudades === 'ciudades'">
-
-    <button
-      class="btn-add"
-      (click)="mostrarFormularioCiudad = !mostrarFormularioCiudad"
-    >
-      {{
-        mostrarFormularioCiudad
-          ? '✖ Cancelar'
-          : '+ Añadir ciudad'
-      }}
-    </button>
-
-
-    <!-- FORMULARIO CIUDAD -->
-
-    <div
-      class="card"
-      *ngIf="mostrarFormularioCiudad"
-    >
-
-      <h2>
-        {{
-          editandoCiudad
-            ? 'Editar ciudad'
-            : 'Nueva ciudad'
-        }}
-      </h2>
-
-      <div class="form-grid">
-
-        <input
-          type="text"
-          placeholder="Ciudad"
-          [(ngModel)]="nuevaCiudad.nombre"
-        >
-
-        <input
-          type="text"
-          placeholder="País"
-          [(ngModel)]="nuevaCiudad.pais"
-        >
-
-        <textarea
-          placeholder="Descripción"
-          [(ngModel)]="nuevaCiudad.descripcion"
-        ></textarea>
 
       </div>
 
-      <button
-        class="btn-add"
-        (click)="agregarCiudad()"
-      >
-        {{
-          editandoCiudad
-            ? 'Guardar cambios'
-            : 'Guardar ciudad'
-        }}
-      </button>
 
-    </div>
-
-
-    <!-- SIN CIUDADES -->
-
-    <div
-      class="empty-state"
-      *ngIf="ciudades.length === 0"
-    >
-      No hay ciudades añadidas.
-    </div>
-
-
-    <!-- CARDS CIUDADES -->
-
-    <div class="ciudades-grid">
-
-      <div
-        class="ciudad-card"
-        *ngFor="let ciudad of ciudades"
-      >
-
-        <div class="ciudad-header">
-
-          <div>
-
-            <h3>
-              {{ ciudad.nombre }}
-            </h3>
-
-            <span>
-              {{ ciudad.pais }}
-            </span>
-
-          </div>
-
-
-          <div class="ciudad-acciones">
-
-            <button
-              type="button"
-              class="btn-editar-ciudad"
-              title="Editar ciudad"
-              (click)="
-                $event.stopPropagation();
-                editarCiudad(ciudad)
-              "
-            >
-              ✏️
-            </button>
-
-            <button
-              type="button"
-              class="btn-eliminar-ciudad"
-              title="Eliminar ciudad"
-              (click)="
-                $event.stopPropagation();
-                eliminarCiudad(ciudad)
-              "
-            >
-              🗑️
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <p class="ciudad-descripcion">
-          {{ ciudad.descripcion }}
-        </p>
-
-
-        <div class="ciudad-stats">
-
-          <span>
-            🏛️ {{ ciudad.lugares.length }} lugares
-          </span>
-
-          <span>
-            🍴 {{ ciudad.gastronomia.length }} sitios
-          </span>
-
-        </div>
-
+      <div class="form-actions">
 
         <button
           type="button"
-          class="btn-guia"
-          (click)="abrirCiudad(ciudad)"
+          class="btn-cancelar-form"
+          [disabled]="guardandoTransporte"
+          (click)="cancelarFormularioTransporte()"
         >
-          Ver guía →
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-guardar-form"
+          [disabled]="guardandoTransporte"
+          (click)="agregarTransporte()"
+        >
+          {{
+            guardandoTransporte
+              ? 'Guardando...'
+              : editando
+                ? 'Guardar cambios'
+                : 'Guardar transporte'
+          }}
         </button>
 
       </div>
 
     </div>
 
+
+    <div
+      *ngIf="transportes.length === 0"
+      class="empty-state"
+    >
+      No hay transportes añadidos.
+    </div>
+
+
+    <!-- ==========================
+         VUELOS
+    =========================== -->
+
+    <div *ngIf="vuelos.length > 0">
+
+      <h3 class="grupo-titulo">
+        Vuelos
+      </h3>
+
+      <div
+        class="transporte-card"
+        *ngFor="let transporte of vuelos"
+      >
+
+        <div class="transporte-header">
+
+          <span class="badge">
+            Vuelo
+          </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+
+        </div>
+
+
+        <div class="premium-route">
+
+          <div class="premium-city">
+
+            <span class="airport">
+              {{ transporte.origen }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaSalida }}
+            </span>
+
+          </div>
+
+
+          <div class="premium-line">
+            <div class="line"></div>
+            <div class="plane">✈️</div>
+          </div>
+
+
+          <div class="premium-city premium-city-right">
+
+            <span class="airport">
+              {{ transporte.destino }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaLlegada }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="premium-footer">
+
+          <div class="premium-info">
+
+            <div *ngIf="transporte.empresa">
+              {{ transporte.empresa }}
+            </div>
+
+            <div *ngIf="transporte.asiento">
+              💺 {{ transporte.asiento }}
+            </div>
+
+          </div>
+
+
+          <div class="acciones">
+
+            <button
+              type="button"
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================
+         TRENES
+    =========================== -->
+
+    <div *ngIf="trenes.length > 0">
+
+      <h3 class="grupo-titulo">
+        Trenes
+      </h3>
+
+      <div
+        class="transporte-card"
+        *ngFor="let transporte of trenes"
+      >
+
+        <div class="transporte-header">
+
+          <span class="badge">
+            Tren
+          </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+
+        </div>
+
+
+        <div class="premium-route">
+
+          <div class="premium-city">
+
+            <span class="airport">
+              {{ transporte.origen }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaSalida }}
+            </span>
+
+          </div>
+
+
+          <div class="premium-line">
+            <div class="line"></div>
+            <div class="plane">🚆</div>
+          </div>
+
+
+          <div class="premium-city premium-city-right">
+
+            <span class="airport">
+              {{ transporte.destino }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaLlegada }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="premium-footer">
+
+          <div class="premium-info">
+
+            <div *ngIf="transporte.empresa">
+              {{ transporte.empresa }}
+            </div>
+
+            <div *ngIf="transporte.asiento">
+              💺 {{ transporte.asiento }}
+            </div>
+
+          </div>
+
+
+          <div class="acciones">
+
+            <button
+              type="button"
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================
+         BUSES
+    =========================== -->
+
+    <div *ngIf="buses.length > 0">
+
+      <h3 class="grupo-titulo">
+        Buses
+      </h3>
+
+      <div
+        class="transporte-card"
+        *ngFor="let transporte of buses"
+      >
+
+        <div class="transporte-header">
+
+          <span class="badge">
+            Bus
+          </span>
+
+          <span class="fecha">
+            {{ transporte.fecha | date:'dd/MM/yyyy' }}
+          </span>
+
+        </div>
+
+
+        <div class="premium-route">
+
+          <div class="premium-city">
+
+            <span class="airport">
+              {{ transporte.origen }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaSalida }}
+            </span>
+
+          </div>
+
+
+          <div class="premium-line">
+            <div class="line"></div>
+            <div class="plane">🚌</div>
+          </div>
+
+
+          <div class="premium-city premium-city-right">
+
+            <span class="airport">
+              {{ transporte.destino }}
+            </span>
+
+            <span class="hour">
+              {{ transporte.horaLlegada }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="premium-footer">
+
+          <div class="premium-info">
+
+            <div *ngIf="transporte.empresa">
+              {{ transporte.empresa }}
+            </div>
+
+            <div *ngIf="transporte.asiento">
+              💺 {{ transporte.asiento }}
+            </div>
+
+          </div>
+
+
+          <div class="acciones">
+
+            <button
+              type="button"
+              class="btn-editar"
+              title="Editar transporte"
+              (click)="editarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Eliminar transporte"
+              (click)="eliminarTransporte(transporte)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
 
-  <!-- ===================================================
-       RUTA
-  ==================================================== -->
+  <!-- =====================================================
+       HOTELES
+  ====================================================== -->
 
-  <div *ngIf="subVistaCiudades === 'ruta'">
+  <div *ngIf="vista === 'hoteles'">
 
     <button
+      *ngIf="!mostrarFormularioHotel"
+      type="button"
       class="btn-add"
-      (click)="
-        mostrarFormularioDia = !mostrarFormularioDia;
-        dropdownCiudadRutaAbierto = false
-      "
+      (click)="abrirFormularioHotel()"
     >
-      {{
-        mostrarFormularioDia
-          ? '✖ Cancelar'
-          : '+ Añadir día'
-      }}
+      + Añadir hotel
     </button>
 
 
-    <!-- FORMULARIO NUEVO DIA -->
+    <!-- FORMULARIO HOTEL -->
 
     <div
       class="card"
-      *ngIf="mostrarFormularioDia"
+      *ngIf="mostrarFormularioHotel"
     >
 
-      <h2>Nuevo día</h2>
+      <h2>
+        {{ editandoHotel ? 'Editar hotel' : 'Nuevo hotel' }}
+      </h2>
+
 
       <div class="form-grid">
 
         <input
           type="text"
-          placeholder="Título (Día 1)"
-          [(ngModel)]="nuevoDia.titulo"
+          placeholder="Nombre del hotel"
+          [(ngModel)]="nuevoHotel.nombre"
         >
 
         <input
-          type="date"
-          [(ngModel)]="nuevoDia.fecha"
+          type="text"
+          placeholder="Ciudad"
+          [(ngModel)]="nuevoHotel.ciudad"
         >
 
 
-        <!-- CUSTOM SELECT CIUDAD -->
+        <div class="input-group">
 
-        <div class="custom-select custom-select-ciudad">
+          <label>
+            Check-in
+          </label>
+
+          <div class="date-input">
+
+            <input
+              type="date"
+              [(ngModel)]="nuevoHotel.checkIn"
+            >
+
+            <span class="calendar-icon">
+              📅
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="input-group">
+
+          <label>
+            Check-out
+          </label>
+
+          <div class="date-input">
+
+            <input
+              type="date"
+              [(ngModel)]="nuevoHotel.checkOut"
+            >
+
+            <span class="calendar-icon">
+              📅
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-row form-row-2">
+
+          <input
+            type="number"
+            placeholder="Precio (€)"
+            [(ngModel)]="nuevoHotel.precio"
+          >
+
+          <label class="checkbox-container">
+
+            <input
+              type="checkbox"
+              [(ngModel)]="nuevoHotel.pagado"
+            >
+
+            Pagado
+
+          </label>
+
+        </div>
+
+
+        <input
+          type="text"
+          placeholder="Dirección"
+          [(ngModel)]="nuevoHotel.direccion"
+        >
+
+        <textarea
+          placeholder="Notas"
+          [(ngModel)]="nuevoHotel.notas"
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          class="btn-cancelar-form"
+          (click)="cancelarFormularioHotel()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-guardar-form"
+          (click)="agregarHotel()"
+        >
+          {{
+            editandoHotel
+              ? 'Guardar cambios'
+              : 'Guardar hotel'
+          }}
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      *ngIf="hoteles.length === 0"
+      class="empty-state"
+    >
+      No hay hoteles añadidos.
+    </div>
+
+
+    <!-- LISTADO HOTELES -->
+
+    <div
+      class="hotel-card"
+      *ngFor="let hotel of hotelesOrdenados"
+    >
+
+      <div class="hotel-nombre">
+        {{ hotel.nombre }}
+      </div>
+
+
+      <div class="hotel-fechas">
+
+        <div class="hotel-fecha-card">
+
+          <span class="hotel-fecha-label">
+            Check-in
+          </span>
+
+          <span class="hotel-fecha-valor">
+            {{ hotel.checkIn | date:'dd/MM/yyyy' }}
+          </span>
+
+        </div>
+
+
+        <div class="hotel-fecha-card">
+
+          <span class="hotel-fecha-label">
+            Check-out
+          </span>
+
+          <span class="hotel-fecha-valor">
+            {{ hotel.checkOut | date:'dd/MM/yyyy' }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div
+        *ngIf="hotel.direccion"
+        class="hotel-direccion"
+      >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.1em" height="1.1em"><path fill="#ef4444" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/></svg> {{ hotel.direccion }}
+      </div>
+
+
+      <div class="hotel-resumen">
+
+        <div class="hotel-precio">
+          {{ hotel.precio || 0 }} €
+        </div>
+
+        <div
+          class="hotel-estado"
+          [class.pagado]="hotel.pagado"
+        >
+          {{ hotel.pagado ? '✅ Pagado' : '⏳ Pendiente' }}
+        </div>
+
+      </div>
+
+
+      <div
+        *ngIf="hotel.notas"
+        class="hotel-notas"
+      >
+        📝 {{ hotel.notas }}
+      </div>
+
+
+      <div class="premium-footer">
+
+        <div></div>
+
+        <div class="acciones">
+
+          <button
+            type="button"
+            class="btn-editar"
+            title="Editar hotel"
+            (click)="editarHotel(hotel)"
+          >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+          </button>
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            title="Eliminar hotel"
+            (click)="eliminarHotel(hotel)"
+          >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       CIUDADES
+  ====================================================== -->
+
+  <div *ngIf="vista === 'ciudades'">
+
+
+    <!-- SUBTABS -->
+
+    <div class="subtabs-ciudad">
+
+      <button
+        type="button"
+        [class.active]="subVistaCiudades === 'ciudades'"
+        (click)="subVistaCiudades = 'ciudades'"
+      >
+        🏙️ Ciudades
+      </button>
+
+      <button
+        type="button"
+        [class.active]="subVistaCiudades === 'ruta'"
+        (click)="subVistaCiudades = 'ruta'"
+      >
+        📍 Ruta
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         LISTADO DE CIUDADES
+    ==================================================== -->
+
+    <div *ngIf="subVistaCiudades === 'ciudades'">
+
+      <button
+        *ngIf="!mostrarFormularioCiudad"
+        type="button"
+        class="btn-add"
+        (click)="abrirFormularioCiudad()"
+      >
+        + Añadir ciudad
+      </button>
+
+
+      <!-- FORMULARIO CIUDAD -->
+
+      <div
+        class="card"
+        *ngIf="mostrarFormularioCiudad"
+      >
+
+        <h2>
+          {{
+            editandoCiudad
+              ? 'Editar ciudad'
+              : 'Nueva ciudad'
+          }}
+        </h2>
+
+
+        <div class="form-grid">
+
+          <input
+            type="text"
+            placeholder="Ciudad"
+            [(ngModel)]="nuevaCiudad.nombre"
+          >
+
+          <input
+            type="text"
+            placeholder="País"
+            [(ngModel)]="nuevaCiudad.pais"
+          >
+
+          <textarea
+            placeholder="Descripción"
+            [(ngModel)]="nuevaCiudad.descripcion"
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="btn-cancelar-form"
+            (click)="cancelarFormularioCiudad()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="btn-guardar-form"
+            (click)="agregarCiudad()"
+          >
+            {{
+              editandoCiudad
+                ? 'Guardar cambios'
+                : 'Guardar ciudad'
+            }}
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="ciudades.length === 0"
+      >
+        No hay ciudades añadidas.
+      </div>
+
+
+      <!-- CARDS CIUDADES -->
+
+      <div class="ciudades-grid">
+
+        <div
+          class="ciudad-card"
+          *ngFor="let ciudad of ciudades"
+        >
+
+          <div class="ciudad-header">
+
+            <div>
+
+              <h3>
+                {{ ciudad.nombre }}
+              </h3>
+
+              <span>
+                {{ ciudad.pais }}
+              </span>
+
+            </div>
+
+
+            <div class="ciudad-acciones">
+
+              <button
+                type="button"
+                class="btn-editar-ciudad"
+                title="Editar ciudad"
+                (click)="
+                  $event.stopPropagation();
+                  editarCiudad(ciudad)
+                "
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+              </button>
+
+              <button
+                type="button"
+                class="btn-eliminar-ciudad"
+                title="Eliminar ciudad"
+                (click)="
+                  $event.stopPropagation();
+                  eliminarCiudad(ciudad)
+                "
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <p class="ciudad-descripcion">
+            {{ ciudad.descripcion }}
+          </p>
+
+
+          <div class="ciudad-stats">
+
+            <span>
+              🏛️ {{ ciudad.lugares.length }} lugares
+            </span>
+
+            <span>
+              🍴 {{ ciudad.gastronomia.length }} sitios
+            </span>
+
+            <span>
+              💡 {{ ciudad.curiosidades.length }} curiosidades
+            </span>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn-guia"
+            (click)="abrirCiudad(ciudad)"
+          >
+            Ver guía →
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         RUTA
+    ==================================================== -->
+
+    <div *ngIf="subVistaCiudades === 'ruta'">
+
+      <button
+        *ngIf="!mostrarFormularioDia"
+        type="button"
+        class="btn-add"
+        (click)="abrirFormularioDia()"
+      >
+        + Añadir día
+      </button>
+
+
+      <!-- FORMULARIO NUEVO DIA -->
+
+      <div
+        class="card ruta-dia-form"
+        *ngIf="mostrarFormularioDia"
+      >
+
+        <h2>
+          Nuevo día
+        </h2>
+
+
+        <div class="form-grid">
+
+          <input
+            type="text"
+            placeholder="Título (Día 1)"
+            [(ngModel)]="nuevoDia.titulo"
+          >
+
+          <input
+            type="date"
+            [(ngModel)]="nuevoDia.fecha"
+          >
+
+
+          <div class="custom-select custom-select-ciudad">
+
+            <button
+              type="button"
+              class="custom-select-trigger"
+              [class.has-value]="nuevoDia.ciudadId !== null"
+              (click)="
+                dropdownCiudadRutaAbierto =
+                  !dropdownCiudadRutaAbierto
+              "
+            >
+
+              <span>
+                {{
+                  nuevoDia.ciudad ||
+                  'Selecciona ciudad'
+                }}
+              </span>
+
+              <span
+                class="custom-select-arrow"
+                [class.open]="dropdownCiudadRutaAbierto"
+              >
+                ▼
+              </span>
+
+            </button>
+
+
+            <div
+              class="custom-select-menu"
+              *ngIf="dropdownCiudadRutaAbierto"
+            >
+
+              <button
+                type="button"
+                *ngFor="let ciudad of ciudades"
+                [class.selected]="nuevoDia.ciudadId === ciudad.id"
+                (click)="
+                  nuevoDia.ciudadId = ciudad.id || null;
+                  nuevoDia.ciudad = ciudad.nombre;
+                  dropdownCiudadRutaAbierto = false
+                "
+              >
+
+                <span>
+                  {{ ciudad.nombre }}
+                </span>
+
+                <span
+                  class="check-ciudad"
+                  *ngIf="nuevoDia.ciudadId === ciudad.id"
+                >
+                  ✓
+                </span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="btn-cancelar-form"
+            (click)="cancelarFormularioDia()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="btn-guardar-form"
+            (click)="agregarDiaRuta()"
+          >
+            Guardar día
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="rutaDias.length === 0"
+      >
+        Todavía no has añadido ningún día a la ruta.
+      </div>
+
+
+      <!-- DIAS -->
+
+      <div
+        class="ruta-dia-card"
+        *ngFor="let dia of rutaDias"
+      >
+
+        <div class="ruta-dia-header">
+
+          <div>
+
+            <h3>
+              📅 {{ dia.titulo }}
+            </h3>
+
+            <span>
+              {{ dia.ciudad }}
+            </span>
+
+            <span *ngIf="dia.fecha">
+              {{ dia.fecha | date:'dd/MM/yyyy' }}
+            </span>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            title="Eliminar día"
+            (click)="eliminarDiaRuta(dia)"
+          >
+            ✖
+          </button>
+
+        </div>
+
+
+        <ng-container
+          *ngIf="obtenerCiudadPorId(dia.ciudadId) as ciudad"
+        >
+
+          <!-- LUGARES -->
+
+          <div class="ruta-bloque">
+
+            <h4>
+              🏛️ Lugares
+            </h4>
+
+            <select
+              [(ngModel)]="dia.lugarSeleccionado"
+            >
+
+              <option value="">
+                Selecciona lugar
+              </option>
+
+              <option
+                *ngFor="let lugar of ciudad.lugares"
+                [value]="lugar.nombre"
+              >
+                {{ lugar.nombre }}
+              </option>
+
+            </select>
+
+
+            <button
+              type="button"
+              class="btn-add-mini"
+              (click)="agregarLugarADia(dia)"
+            >
+              Añadir lugar
+            </button>
+
+          </div>
+
+
+          <!-- GASTRONOMIA -->
+
+          <div class="ruta-bloque">
+
+            <h4>
+              🍴 Gastronomía
+            </h4>
+
+            <select
+              [(ngModel)]="dia.gastronomiaSeleccionada"
+            >
+
+              <option value="">
+                Selecciona sitio
+              </option>
+
+              <option
+                *ngFor="let sitio of ciudad.gastronomia"
+                [value]="sitio.nombre"
+              >
+                {{ sitio.nombre }}
+              </option>
+
+            </select>
+
+
+            <button
+              type="button"
+              class="btn-add-mini"
+              (click)="agregarGastronomiaADia(dia)"
+            >
+              Añadir sitio
+            </button>
+
+          </div>
+
+        </ng-container>
+
+
+        <!-- ELEMENTOS AÑADIDOS -->
+
+        <div
+          class="ruta-elementos"
+          *ngIf="dia.elementos.length > 0"
+        >
+
+          <div
+            class="ruta-elemento"
+            *ngFor="let elemento of dia.elementos"
+          >
+
+            <button
+              type="button"
+              class="ruta-link"
+              (click)="abrirElementoRuta(elemento)"
+            >
+              {{
+                elemento.tipo === 'lugar'
+                  ? '🏛️'
+                  : '🍴'
+              }}
+
+              {{ elemento.referencia }}
+            </button>
+
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Quitar de este día"
+              (click)="eliminarElementoDia(dia, elemento)"
+            >
+              ✖
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="ruta-vacia"
+          *ngIf="dia.elementos.length === 0"
+        >
+          Todavía no has añadido lugares o sitios a este día.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL ELEMENTO RUTA
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="elementoRutaAbierto"
+    (click)="cerrarElementoRuta()"
+  >
+
+    <div
+      class="modal-ruta"
+      (click)="$event.stopPropagation()"
+    >
+
+      <button
+        type="button"
+        class="btn-cerrar"
+        (click)="cerrarElementoRuta()"
+      >
+        ✖
+      </button>
+
+
+      <h2>
+        {{ elementoRutaAbierto.nombre }}
+      </h2>
+
+
+      <div
+        class="fecha"
+        *ngIf="ciudadElementoRuta"
+      >
+        📍 {{ ciudadElementoRuta }}
+      </div>
+
+
+      <img
+        *ngIf="elementoRutaAbierto.imagen"
+        [src]="elementoRutaAbierto.imagen"
+        [alt]="elementoRutaAbierto.nombre"
+        class="lugar-imagen"
+      >
+
+
+      <p *ngIf="elementoRutaAbierto.descripcion">
+        {{ elementoRutaAbierto.descripcion }}
+      </p>
+
+
+      <div
+        class="direccion"
+        *ngIf="elementoRutaAbierto.direccion"
+      >
+        📍 {{ elementoRutaAbierto.direccion }}
+      </div>
+
+
+      <a
+        *ngIf="elementoRutaAbierto.maps"
+        [href]="elementoRutaAbierto.maps"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-maps"
+      >
+        Abrir en Maps
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL CIUDAD
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="ciudadSeleccionada"
+    (click)="cerrarCiudad()"
+  >
+
+    <div
+      class="modal-ciudad"
+      (click)="$event.stopPropagation()"
+    >
+
+      <button
+        type="button"
+        class="btn-cerrar"
+        (click)="cerrarCiudad()"
+      >
+        ✖
+      </button>
+
+
+      <h2>
+        {{ ciudadSeleccionada.nombre }}
+      </h2>
+
+
+      <p class="descripcion-ciudad">
+        {{ ciudadSeleccionada.descripcion }}
+      </p>
+
+
+      <!-- =================================================
+           LUGARES
+      ================================================== -->
+
+      <h3>
+        🏛️ Lugares
+      </h3>
+
+
+      <button
+        type="button"
+        class="btn-add-mini"
+        (click)="
+          mostrarFormularioLugar =
+            !mostrarFormularioLugar
+        "
+      >
+        {{
+          mostrarFormularioLugar
+            ? '✕ Cerrar'
+            : '+ Añadir'
+        }}
+      </button>
+
+
+      <div
+        class="card card-gastronomia"
+        *ngIf="mostrarFormularioLugar"
+      >
+
+        <input
+          type="text"
+          placeholder="Nombre"
+          [(ngModel)]="nuevoLugar.nombre"
+        >
+
+        <input
+          type="text"
+          placeholder="Dirección"
+          [(ngModel)]="nuevoLugar.direccion"
+        >
+
+        <input
+          type="text"
+          placeholder="URL de imagen"
+          [(ngModel)]="nuevoLugar.imagen"
+        >
+
+        <input
+          type="text"
+          placeholder="Google Maps"
+          [(ngModel)]="nuevoLugar.maps"
+        >
+
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevoLugar.descripcion"
+        ></textarea>
+
+
+        <button
+          type="button"
+          class="btn-add"
+          (click)="agregarLugar()"
+        >
+          {{
+            editandoLugar
+              ? 'Guardar cambios'
+              : 'Añadir lugar'
+          }}
+        </button>
+
+      </div>
+
+
+      <div
+        class="timeline-item"
+        *ngFor="let lugar of ciudadSeleccionada.lugares"
+      >
+
+        <div
+          class="timeline-header"
+          (click)="toggleItem('lugar-' + lugar.id)"
+        >
+
+          <span>
+            {{ lugar.nombre }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'lugar-' + lugar.id
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </div>
+
+
+        <div
+          class="timeline-content"
+          *ngIf="itemAbierto === 'lugar-' + lugar.id"
+        >
+
+          <img
+            *ngIf="lugar.imagen"
+            [src]="lugar.imagen"
+            [alt]="lugar.nombre"
+            class="lugar-imagen"
+          >
+
+
+          <div
+            class="direccion"
+            *ngIf="lugar.direccion"
+          >
+            📍 {{ lugar.direccion }}
+          </div>
+
+
+          <p *ngIf="lugar.descripcion">
+            {{ lugar.descripcion }}
+          </p>
+
+
+          <a
+            *ngIf="lugar.maps"
+            [href]="lugar.maps"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-maps"
+          >
+            Abrir en Maps
+          </a>
+
+
+          <div class="acciones-gastronomia">
+
+            <button
+              type="button"
+              class="btn-editar"
+              title="Editar lugar"
+              (click)="editarLugar(lugar)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Eliminar lugar"
+              (click)="eliminarLugar(lugar)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="ciudadSeleccionada.lugares.length === 0"
+      >
+        No hay lugares añadidos.
+      </div>
+
+
+      <!-- =================================================
+           GASTRONOMIA
+      ================================================== -->
+
+      <h3>
+        🍴 Gastronomía
+      </h3>
+
+
+      <button
+        type="button"
+        class="btn-add-mini"
+        (click)="
+          mostrarFormularioGastronomia =
+            !mostrarFormularioGastronomia;
+          dropdownGastronomiaAbierto = false
+        "
+      >
+        {{
+          mostrarFormularioGastronomia
+            ? '✕ Cerrar'
+            : '+ Añadir'
+        }}
+      </button>
+
+
+      <div
+        class="card card-gastronomia"
+        *ngIf="mostrarFormularioGastronomia"
+      >
+
+        <input
+          type="text"
+          placeholder="Nombre"
+          [(ngModel)]="nuevaGastronomia.nombre"
+        >
+
+
+        <div class="custom-select">
 
           <button
             type="button"
             class="custom-select-trigger"
-            [class.has-value]="nuevoDia.ciudadId !== null"
             (click)="
-              dropdownCiudadRutaAbierto =
-                !dropdownCiudadRutaAbierto
+              dropdownGastronomiaAbierto =
+                !dropdownGastronomiaAbierto
             "
           >
 
             <span>
               {{
-                nuevoDia.ciudad ||
-                'Selecciona ciudad'
+                nuevaGastronomia.tipo === 'restaurante'
+                  ? 'Restaurante'
+                  : nuevaGastronomia.tipo === 'cafeteria'
+                    ? 'Cafetería'
+                    : nuevaGastronomia.tipo === 'cerveceria'
+                      ? 'Cervecería'
+                      : 'Postres'
               }}
             </span>
 
             <span
               class="custom-select-arrow"
-              [class.open]="dropdownCiudadRutaAbierto"
+              [class.open]="dropdownGastronomiaAbierto"
             >
               ▼
             </span>
@@ -805,816 +1820,205 @@
 
           <div
             class="custom-select-menu"
-            *ngIf="dropdownCiudadRutaAbierto"
+            *ngIf="dropdownGastronomiaAbierto"
           >
 
             <button
               type="button"
-              *ngFor="let ciudad of ciudades"
-              [class.selected]="nuevoDia.ciudadId === ciudad.id"
+              [class.selected]="nuevaGastronomia.tipo === 'restaurante'"
               (click)="
-                nuevoDia.ciudadId = ciudad.id || null;
-                nuevoDia.ciudad = ciudad.nombre;
-                dropdownCiudadRutaAbierto = false
+                nuevaGastronomia.tipo = 'restaurante';
+                dropdownGastronomiaAbierto = false
               "
             >
+              Restaurante
+            </button>
 
-              <span>
-                {{ ciudad.nombre }}
-              </span>
+            <button
+              type="button"
+              [class.selected]="nuevaGastronomia.tipo === 'cafeteria'"
+              (click)="
+                nuevaGastronomia.tipo = 'cafeteria';
+                dropdownGastronomiaAbierto = false
+              "
+            >
+              Cafetería
+            </button>
 
-              <span
-                class="check-ciudad"
-                *ngIf="nuevoDia.ciudadId === ciudad.id"
-              >
-                ✓
-              </span>
+            <button
+              type="button"
+              [class.selected]="nuevaGastronomia.tipo === 'cerveceria'"
+              (click)="
+                nuevaGastronomia.tipo = 'cerveceria';
+                dropdownGastronomiaAbierto = false
+              "
+            >
+              Cervecería
+            </button>
 
+            <button
+              type="button"
+              [class.selected]="nuevaGastronomia.tipo === 'postres'"
+              (click)="
+                nuevaGastronomia.tipo = 'postres';
+                dropdownGastronomiaAbierto = false
+              "
+            >
+              Postres
             </button>
 
           </div>
 
         </div>
 
-      </div>
 
+        <input
+          type="text"
+          placeholder="Dirección"
+          [(ngModel)]="nuevaGastronomia.direccion"
+        >
 
-      <button
-        class="btn-add"
-        (click)="agregarDiaRuta()"
-      >
-        Guardar día
-      </button>
+        <input
+          type="text"
+          placeholder="URL de imagen"
+          [(ngModel)]="nuevaGastronomia.imagen"
+        >
 
-    </div>
+        <input
+          type="text"
+          placeholder="Google Maps"
+          [(ngModel)]="nuevaGastronomia.maps"
+        >
 
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevaGastronomia.descripcion"
+        ></textarea>
 
-    <!-- SIN DIAS -->
-
-    <div
-      class="empty-state"
-      *ngIf="rutaDias.length === 0"
-    >
-      Todavía no has añadido ningún día a la ruta.
-    </div>
-
-
-    <!-- =================================================
-         DIAS
-    ================================================== -->
-
-    <div
-      class="ruta-dia-card"
-      *ngFor="let dia of rutaDias"
-    >
-
-      <!-- CABECERA -->
-
-      <div class="ruta-dia-header">
-
-        <div>
-
-          <h3>
-            📅 {{ dia.titulo }}
-          </h3>
-
-          <span>
-            {{ dia.ciudad }}
-          </span>
-
-          <span *ngIf="dia.fecha">
-            {{ dia.fecha | date:'dd/MM/yyyy' }}
-          </span>
-
-        </div>
-
-
-        <!--
-          eliminarDiaRuta ya existe en ruta.ts.
-        -->
 
         <button
           type="button"
-          class="btn-eliminar"
-          title="Eliminar día"
-          (click)="eliminarDiaRuta(dia)"
+          class="btn-add"
+          (click)="agregarGastronomia()"
         >
-          ✖
-        </button>
-
-      </div>
-
-
-      <!-- ===============================================
-           DATOS DE LA CIUDAD DEL DIA
-      ================================================ -->
-
-      <ng-container
-        *ngIf="obtenerCiudadPorId(dia.ciudadId) as ciudad"
-      >
-
-        <!-- LUGARES -->
-
-        <div class="ruta-bloque">
-
-          <h4>
-            🏛️ Lugares
-          </h4>
-
-          <select
-            [(ngModel)]="dia.lugarSeleccionado"
-          >
-
-            <option value="">
-              Selecciona lugar
-            </option>
-
-            <option
-              *ngFor="let lugar of ciudad.lugares"
-              [value]="lugar.nombre"
-            >
-              {{ lugar.nombre }}
-            </option>
-
-          </select>
-
-
-          <button
-            type="button"
-            class="btn-add-mini"
-            (click)="agregarLugarADia(dia)"
-          >
-            Añadir lugar
-          </button>
-
-        </div>
-
-
-        <!-- GASTRONOMIA -->
-
-        <div class="ruta-bloque">
-
-          <h4>
-            🍴 Gastronomía
-          </h4>
-
-          <select
-            [(ngModel)]="dia.gastronomiaSeleccionada"
-          >
-
-            <option value="">
-              Selecciona sitio
-            </option>
-
-            <option
-              *ngFor="let sitio of ciudad.gastronomia"
-              [value]="sitio.nombre"
-            >
-              {{ sitio.nombre }}
-            </option>
-
-          </select>
-
-
-          <button
-            type="button"
-            class="btn-add-mini"
-            (click)="agregarGastronomiaADia(dia)"
-          >
-            Añadir sitio
-          </button>
-
-        </div>
-
-      </ng-container>
-
-
-      <!-- ===============================================
-           ELEMENTOS AÑADIDOS AL DIA
-      ================================================ -->
-
-      <div
-        class="ruta-elementos"
-        *ngIf="dia.elementos.length > 0"
-      >
-
-        <div
-          class="ruta-elemento"
-          *ngFor="let elemento of dia.elementos"
-        >
-
-          <button
-            type="button"
-            class="ruta-link"
-            (click)="abrirElementoRuta(elemento)"
-          >
-
-            {{
-              elemento.tipo === 'lugar'
-                ? '🏛️'
-                : '🍴'
-            }}
-
-            {{ elemento.referencia }}
-
-          </button>
-
-
-          <button
-            type="button"
-            class="btn-eliminar"
-            title="Quitar de este día"
-            (click)="
-              eliminarElementoDia(
-                dia,
-                elemento
-              )
-            "
-          >
-            ✖
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <!-- DIA VACIO -->
-
-      <div
-        class="ruta-vacia"
-        *ngIf="dia.elementos.length === 0"
-      >
-        Todavía no has añadido lugares o sitios a este día.
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =====================================================
-     MODAL ELEMENTO DE RUTA
-===================================================== -->
-
-<div
-  class="modal-overlay"
-  *ngIf="elementoRutaAbierto"
-  (click)="cerrarElementoRuta()"
->
-
-  <div
-    class="modal-ruta"
-    (click)="$event.stopPropagation()"
-  >
-
-    <button
-      type="button"
-      class="btn-cerrar"
-      (click)="cerrarElementoRuta()"
-    >
-      ✖
-    </button>
-
-
-    <h2>
-      {{ elementoRutaAbierto.nombre }}
-    </h2>
-
-
-    <div
-      class="fecha"
-      *ngIf="ciudadElementoRuta"
-    >
-      📍 {{ ciudadElementoRuta }}
-    </div>
-
-
-    <img
-      *ngIf="elementoRutaAbierto.imagen"
-      [src]="elementoRutaAbierto.imagen"
-      [alt]="elementoRutaAbierto.nombre"
-      class="lugar-imagen"
-    >
-
-
-    <p *ngIf="elementoRutaAbierto.descripcion">
-      {{ elementoRutaAbierto.descripcion }}
-    </p>
-
-
-    <div
-      class="direccion"
-      *ngIf="elementoRutaAbierto.direccion"
-    >
-      📍 {{ elementoRutaAbierto.direccion }}
-    </div>
-
-
-    <a
-      *ngIf="elementoRutaAbierto.maps"
-      [href]="elementoRutaAbierto.maps"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn-maps"
-    >
-      Abrir en Maps
-    </a>
-
-  </div>
-
-</div>
-
-
-<!-- =====================================================
-     MODAL CIUDAD
-===================================================== -->
-
-<div
-  class="modal-overlay"
-  *ngIf="ciudadSeleccionada"
-  (click)="cerrarCiudad()"
->
-
-  <div
-    class="modal-ciudad"
-    (click)="$event.stopPropagation()"
-  >
-
-    <button
-      type="button"
-      class="btn-cerrar"
-      (click)="cerrarCiudad()"
-    >
-      ✖
-    </button>
-
-
-    <h2>
-      {{ ciudadSeleccionada.nombre }}
-    </h2>
-
-
-    <p class="descripcion-ciudad">
-      {{ ciudadSeleccionada.descripcion }}
-    </p>
-
-
-    <!-- =================================================
-         LUGARES
-    ================================================== -->
-
-    <h3>
-      🏛️ Lugares
-    </h3>
-
-
-    <button
-      type="button"
-      class="btn-add-mini"
-      (click)="
-        mostrarFormularioLugar =
-          !mostrarFormularioLugar
-      "
-    >
-      {{
-        mostrarFormularioLugar
-          ? '✕ Cerrar'
-          : '+ Añadir'
-      }}
-    </button>
-
-
-    <!-- FORMULARIO LUGAR -->
-
-    <div
-      class="card card-gastronomia"
-      *ngIf="mostrarFormularioLugar"
-    >
-
-      <input
-        type="text"
-        placeholder="Nombre"
-        [(ngModel)]="nuevoLugar.nombre"
-      >
-
-      <input
-        type="text"
-        placeholder="Dirección"
-        [(ngModel)]="nuevoLugar.direccion"
-      >
-
-      <input
-        type="text"
-        placeholder="URL de imagen"
-        [(ngModel)]="nuevoLugar.imagen"
-      >
-
-      <input
-        type="text"
-        placeholder="Google Maps"
-        [(ngModel)]="nuevoLugar.maps"
-      >
-
-      <textarea
-        placeholder="Descripción"
-        [(ngModel)]="nuevoLugar.descripcion"
-      ></textarea>
-
-
-      <button
-        class="btn-add"
-        (click)="agregarLugar()"
-      >
-        {{
-          editandoLugar
-            ? 'Guardar cambios'
-            : 'Añadir lugar'
-        }}
-      </button>
-
-    </div>
-
-
-    <!-- LISTADO LUGARES -->
-
-    <div
-      class="timeline-item"
-      *ngFor="
-        let lugar of ciudadSeleccionada.lugares;
-        let i = index
-      "
-    >
-
-      <div
-        class="timeline-header"
-        (click)="toggleItem('lugar-' + lugar.id)"
-      >
-
-        <span>
-          {{ lugar.nombre }}
-        </span>
-
-        <span>
           {{
-            itemAbierto === 'lugar-' + lugar.id
-              ? '−'
-              : '+'
+            editandoGastronomia
+              ? 'Guardar cambios'
+              : 'Añadir'
           }}
-        </span>
-
-      </div>
-
-
-      <div
-        class="timeline-content"
-        *ngIf="itemAbierto === 'lugar-' + lugar.id"
-      >
-
-        <img
-          *ngIf="lugar.imagen"
-          [src]="lugar.imagen"
-          [alt]="lugar.nombre"
-          class="lugar-imagen"
-        >
-
-        <div
-          class="direccion"
-          *ngIf="lugar.direccion"
-        >
-          📍 {{ lugar.direccion }}
-        </div>
-
-
-        <p *ngIf="lugar.descripcion">
-          {{ lugar.descripcion }}
-        </p>
-
-
-        <a
-          *ngIf="lugar.maps"
-          [href]="lugar.maps"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn-maps"
-        >
-          Abrir en Maps
-        </a>
-
-
-        <div class="acciones-gastronomia">
-
-          <button
-            type="button"
-            class="btn-editar"
-            title="Editar lugar"
-            (click)="editarLugar(lugar)"
-          >
-            ✏️
-          </button>
-
-          <button
-            type="button"
-            class="btn-eliminar"
-            title="Eliminar lugar"
-            (click)="eliminarLugar(lugar)"
-          >
-            🗑️
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div
-      class="empty-state"
-      *ngIf="ciudadSeleccionada.lugares.length === 0"
-    >
-      No hay lugares añadidos.
-    </div>
-
-
-    <!-- =================================================
-         GASTRONOMIA
-    ================================================== -->
-
-    <h3>
-      🍴 Gastronomía
-    </h3>
-
-
-    <button
-      type="button"
-      class="btn-add-mini"
-      (click)="
-        mostrarFormularioGastronomia =
-          !mostrarFormularioGastronomia;
-        dropdownGastronomiaAbierto = false
-      "
-    >
-      {{
-        mostrarFormularioGastronomia
-          ? '✕ Cerrar'
-          : '+ Añadir'
-      }}
-    </button>
-
-
-    <!-- FORMULARIO GASTRONOMIA -->
-
-    <div
-      class="card card-gastronomia"
-      *ngIf="mostrarFormularioGastronomia"
-    >
-
-      <input
-        type="text"
-        placeholder="Nombre"
-        [(ngModel)]="nuevaGastronomia.nombre"
-      >
-
-
-      <!-- TIPO -->
-
-      <div class="custom-select">
-
-        <button
-          type="button"
-          class="custom-select-trigger"
-          (click)="
-            dropdownGastronomiaAbierto =
-              !dropdownGastronomiaAbierto
-          "
-        >
-
-          <span>
-            {{
-              nuevaGastronomia.tipo === 'restaurante'
-                ? 'Restaurante'
-                : nuevaGastronomia.tipo === 'cafeteria'
-                ? 'Cafetería'
-                : nuevaGastronomia.tipo === 'cerveceria'
-                ? 'Cervecería'
-                : 'Postres'
-            }}
-          </span>
-
-          <span
-            class="custom-select-arrow"
-            [class.open]="dropdownGastronomiaAbierto"
-          >
-            ▼
-          </span>
-
         </button>
 
-
-        <div
-          class="custom-select-menu"
-          *ngIf="dropdownGastronomiaAbierto"
-        >
-
-          <button
-            type="button"
-            [class.selected]="
-              nuevaGastronomia.tipo === 'restaurante'
-            "
-            (click)="
-              nuevaGastronomia.tipo = 'restaurante';
-              dropdownGastronomiaAbierto = false
-            "
-          >
-            Restaurante
-          </button>
-
-
-          <button
-            type="button"
-            [class.selected]="
-              nuevaGastronomia.tipo === 'cafeteria'
-            "
-            (click)="
-              nuevaGastronomia.tipo = 'cafeteria';
-              dropdownGastronomiaAbierto = false
-            "
-          >
-            Cafetería
-          </button>
-
-
-          <button
-            type="button"
-            [class.selected]="
-              nuevaGastronomia.tipo === 'cerveceria'
-            "
-            (click)="
-              nuevaGastronomia.tipo = 'cerveceria';
-              dropdownGastronomiaAbierto = false
-            "
-          >
-            Cervecería
-          </button>
-
-
-          <button
-            type="button"
-            [class.selected]="
-              nuevaGastronomia.tipo === 'postres'
-            "
-            (click)="
-              nuevaGastronomia.tipo = 'postres';
-              dropdownGastronomiaAbierto = false
-            "
-          >
-            Postres
-          </button>
-
-        </div>
-
       </div>
 
 
-      <input
-        type="text"
-        placeholder="Dirección"
-        [(ngModel)]="nuevaGastronomia.direccion"
-      >
-
-      <input
-        type="text"
-        placeholder="URL de imagen"
-        [(ngModel)]="nuevaGastronomia.imagen"
-      >
-
-      <input
-        type="text"
-        placeholder="Google Maps"
-        [(ngModel)]="nuevaGastronomia.maps"
-      >
-
-      <textarea
-        placeholder="Descripción"
-        [(ngModel)]="nuevaGastronomia.descripcion"
-      ></textarea>
-
-
-      <button
-        class="btn-add"
-        (click)="agregarGastronomia()"
-      >
-        {{
-          editandoGastronomia
-            ? 'Guardar cambios'
-            : 'Añadir'
-        }}
-      </button>
-
-    </div>
-
-
-    <!-- =================================================
-         RESTAURANTES
-    ================================================== -->
-
-    <div
-      *ngIf="
-        obtenerGastronomiaPorTipo('restaurante').length > 0
-      "
-    >
-
-      <h4 class="subtitulo-gastronomia">
-        🍽️ Restaurantes
-      </h4>
-
+      <!-- RESTAURANTES -->
 
       <div
-        class="timeline-item"
-        *ngFor="
-          let restaurante
-          of obtenerGastronomiaPorTipo('restaurante')
-        "
+        *ngIf="obtenerGastronomiaPorTipo('restaurante').length > 0"
       >
 
-        <div
-          class="timeline-header"
-          (click)="
-            toggleItem('rest-' + restaurante.id)
-          "
-        >
-
-          <span>
-            {{ restaurante.nombre }}
-          </span>
-
-          <span>
-            {{
-              itemAbierto === 'rest-' + restaurante.id
-                ? '−'
-                : '+'
-            }}
-          </span>
-
-        </div>
-
+        <h4 class="subtitulo-gastronomia">
+          🍽️ Restaurantes
+        </h4>
 
         <div
-          class="timeline-content"
-          *ngIf="
-            itemAbierto === 'rest-' + restaurante.id
-          "
+          class="timeline-item"
+          *ngFor="let restaurante of obtenerGastronomiaPorTipo('restaurante')"
         >
-
-          <img
-            *ngIf="restaurante.imagen"
-            [src]="restaurante.imagen"
-            [alt]="restaurante.nombre"
-            class="lugar-imagen"
-          >
-
-          <p *ngIf="restaurante.descripcion">
-            {{ restaurante.descripcion }}
-          </p>
 
           <div
-            class="direccion"
-            *ngIf="restaurante.direccion"
+            class="timeline-header"
+            (click)="toggleItem('rest-' + restaurante.id)"
           >
-            📍 {{ restaurante.direccion }}
+
+            <span>
+              {{ restaurante.nombre }}
+            </span>
+
+            <span>
+              {{
+                itemAbierto === 'rest-' + restaurante.id
+                  ? '−'
+                  : '+'
+              }}
+            </span>
+
           </div>
 
-          <a
-            *ngIf="restaurante.maps"
-            [href]="restaurante.maps"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-maps"
+
+          <div
+            class="timeline-content"
+            *ngIf="itemAbierto === 'rest-' + restaurante.id"
           >
-            Abrir en Maps
-          </a>
 
-
-          <div class="acciones-gastronomia">
-
-            <button
-              type="button"
-              class="btn-editar"
-              (click)="editarGastronomia(restaurante)"
+            <img
+              *ngIf="restaurante.imagen"
+              [src]="restaurante.imagen"
+              [alt]="restaurante.nombre"
+              class="lugar-imagen"
             >
-              ✏️
-            </button>
 
-            <button
-              type="button"
-              class="btn-eliminar"
-              (click)="eliminarGastronomia(restaurante)"
+            <p *ngIf="restaurante.descripcion">
+              {{ restaurante.descripcion }}
+            </p>
+
+            <div
+              class="direccion"
+              *ngIf="restaurante.direccion"
             >
-              🗑️
-            </button>
+              📍 {{ restaurante.direccion }}
+            </div>
+
+            <a
+              *ngIf="restaurante.maps"
+              [href]="restaurante.maps"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-maps"
+            >
+              Abrir en Maps
+            </a>
+
+
+            <div class="acciones-gastronomia">
+
+              <button
+                type="button"
+                class="btn-editar"
+                (click)="editarGastronomia(restaurante)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+              </button>
+
+              <button
+                type="button"
+                class="btn-eliminar"
+                (click)="eliminarGastronomia(restaurante)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+              </button>
+
+            </div>
 
           </div>
 
@@ -1622,103 +2026,115 @@
 
       </div>
 
-    </div>
 
-
-    <!-- =================================================
-         CERVECERIAS
-    ================================================== -->
-
-    <div
-      *ngIf="
-        obtenerGastronomiaPorTipo('cerveceria').length > 0
-      "
-    >
-
-      <h4 class="subtitulo-gastronomia">
-        🍺 Cervecerías
-      </h4>
-
+      <!-- CERVECERIAS -->
 
       <div
-        class="timeline-item"
-        *ngFor="
-          let cerveza
-          of obtenerGastronomiaPorTipo('cerveceria')
-        "
+        *ngIf="obtenerGastronomiaPorTipo('cerveceria').length > 0"
       >
 
-        <div
-          class="timeline-header"
-          (click)="toggleItem('cer-' + cerveza.id)"
-        >
-
-          <span>
-            {{ cerveza.nombre }}
-          </span>
-
-          <span>
-            {{
-              itemAbierto === 'cer-' + cerveza.id
-                ? '−'
-                : '+'
-            }}
-          </span>
-
-        </div>
-
+        <h4 class="subtitulo-gastronomia">
+          🍺 Cervecerías
+        </h4>
 
         <div
-          class="timeline-content"
-          *ngIf="itemAbierto === 'cer-' + cerveza.id"
+          class="timeline-item"
+          *ngFor="let cerveza of obtenerGastronomiaPorTipo('cerveceria')"
         >
-
-          <img
-            *ngIf="cerveza.imagen"
-            [src]="cerveza.imagen"
-            [alt]="cerveza.nombre"
-            class="lugar-imagen"
-          >
-
-          <p *ngIf="cerveza.descripcion">
-            {{ cerveza.descripcion }}
-          </p>
 
           <div
-            class="direccion"
-            *ngIf="cerveza.direccion"
+            class="timeline-header"
+            (click)="toggleItem('cer-' + cerveza.id)"
           >
-            📍 {{ cerveza.direccion }}
+
+            <span>
+              {{ cerveza.nombre }}
+            </span>
+
+            <span>
+              {{
+                itemAbierto === 'cer-' + cerveza.id
+                  ? '−'
+                  : '+'
+              }}
+            </span>
+
           </div>
 
-          <a
-            *ngIf="cerveza.maps"
-            [href]="cerveza.maps"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-maps"
+
+          <div
+            class="timeline-content"
+            *ngIf="itemAbierto === 'cer-' + cerveza.id"
           >
-            Abrir en Maps
-          </a>
 
-
-          <div class="acciones-gastronomia">
-
-            <button
-              type="button"
-              class="btn-editar"
-              (click)="editarGastronomia(cerveza)"
+            <img
+              *ngIf="cerveza.imagen"
+              [src]="cerveza.imagen"
+              [alt]="cerveza.nombre"
+              class="lugar-imagen"
             >
-              ✏️
-            </button>
 
-            <button
-              type="button"
-              class="btn-eliminar"
-              (click)="eliminarGastronomia(cerveza)"
+            <p *ngIf="cerveza.descripcion">
+              {{ cerveza.descripcion }}
+            </p>
+
+            <div
+              class="direccion"
+              *ngIf="cerveza.direccion"
             >
-              🗑️
-            </button>
+              📍 {{ cerveza.direccion }}
+            </div>
+
+            <a
+              *ngIf="cerveza.maps"
+              [href]="cerveza.maps"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-maps"
+            >
+              Abrir en Maps
+            </a>
+
+
+            <div class="acciones-gastronomia">
+
+              <button
+                type="button"
+                class="btn-editar"
+                (click)="editarGastronomia(cerveza)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+              </button>
+
+              <button
+                type="button"
+                class="btn-eliminar"
+                (click)="eliminarGastronomia(cerveza)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+              </button>
+
+            </div>
 
           </div>
 
@@ -1726,103 +2142,115 @@
 
       </div>
 
-    </div>
 
-
-    <!-- =================================================
-         CAFETERIAS
-    ================================================== -->
-
-    <div
-      *ngIf="
-        obtenerGastronomiaPorTipo('cafeteria').length > 0
-      "
-    >
-
-      <h4 class="subtitulo-gastronomia">
-        ☕ Cafeterías
-      </h4>
-
+      <!-- CAFETERIAS -->
 
       <div
-        class="timeline-item"
-        *ngFor="
-          let cafeteria
-          of obtenerGastronomiaPorTipo('cafeteria')
-        "
+        *ngIf="obtenerGastronomiaPorTipo('cafeteria').length > 0"
       >
 
-        <div
-          class="timeline-header"
-          (click)="toggleItem('caf-' + cafeteria.id)"
-        >
-
-          <span>
-            {{ cafeteria.nombre }}
-          </span>
-
-          <span>
-            {{
-              itemAbierto === 'caf-' + cafeteria.id
-                ? '−'
-                : '+'
-            }}
-          </span>
-
-        </div>
-
+        <h4 class="subtitulo-gastronomia">
+          ☕ Cafeterías
+        </h4>
 
         <div
-          class="timeline-content"
-          *ngIf="itemAbierto === 'caf-' + cafeteria.id"
+          class="timeline-item"
+          *ngFor="let cafeteria of obtenerGastronomiaPorTipo('cafeteria')"
         >
-
-          <img
-            *ngIf="cafeteria.imagen"
-            [src]="cafeteria.imagen"
-            [alt]="cafeteria.nombre"
-            class="lugar-imagen"
-          >
-
-          <p *ngIf="cafeteria.descripcion">
-            {{ cafeteria.descripcion }}
-          </p>
 
           <div
-            class="direccion"
-            *ngIf="cafeteria.direccion"
+            class="timeline-header"
+            (click)="toggleItem('caf-' + cafeteria.id)"
           >
-            📍 {{ cafeteria.direccion }}
+
+            <span>
+              {{ cafeteria.nombre }}
+            </span>
+
+            <span>
+              {{
+                itemAbierto === 'caf-' + cafeteria.id
+                  ? '−'
+                  : '+'
+              }}
+            </span>
+
           </div>
 
-          <a
-            *ngIf="cafeteria.maps"
-            [href]="cafeteria.maps"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-maps"
+
+          <div
+            class="timeline-content"
+            *ngIf="itemAbierto === 'caf-' + cafeteria.id"
           >
-            Abrir en Maps
-          </a>
 
-
-          <div class="acciones-gastronomia">
-
-            <button
-              type="button"
-              class="btn-editar"
-              (click)="editarGastronomia(cafeteria)"
+            <img
+              *ngIf="cafeteria.imagen"
+              [src]="cafeteria.imagen"
+              [alt]="cafeteria.nombre"
+              class="lugar-imagen"
             >
-              ✏️
-            </button>
 
-            <button
-              type="button"
-              class="btn-eliminar"
-              (click)="eliminarGastronomia(cafeteria)"
+            <p *ngIf="cafeteria.descripcion">
+              {{ cafeteria.descripcion }}
+            </p>
+
+            <div
+              class="direccion"
+              *ngIf="cafeteria.direccion"
             >
-              🗑️
-            </button>
+              📍 {{ cafeteria.direccion }}
+            </div>
+
+            <a
+              *ngIf="cafeteria.maps"
+              [href]="cafeteria.maps"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-maps"
+            >
+              Abrir en Maps
+            </a>
+
+
+            <div class="acciones-gastronomia">
+
+              <button
+                type="button"
+                class="btn-editar"
+                (click)="editarGastronomia(cafeteria)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+              </button>
+
+              <button
+                type="button"
+                class="btn-eliminar"
+                (click)="eliminarGastronomia(cafeteria)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+              </button>
+
+            </div>
 
           </div>
 
@@ -1830,103 +2258,115 @@
 
       </div>
 
-    </div>
 
-
-    <!-- =================================================
-         POSTRES
-    ================================================== -->
-
-    <div
-      *ngIf="
-        obtenerGastronomiaPorTipo('postres').length > 0
-      "
-    >
-
-      <h4 class="subtitulo-gastronomia">
-        🍰 Postres
-      </h4>
-
+      <!-- POSTRES -->
 
       <div
-        class="timeline-item"
-        *ngFor="
-          let postre
-          of obtenerGastronomiaPorTipo('postres')
-        "
+        *ngIf="obtenerGastronomiaPorTipo('postres').length > 0"
       >
 
-        <div
-          class="timeline-header"
-          (click)="toggleItem('pos-' + postre.id)"
-        >
-
-          <span>
-            {{ postre.nombre }}
-          </span>
-
-          <span>
-            {{
-              itemAbierto === 'pos-' + postre.id
-                ? '−'
-                : '+'
-            }}
-          </span>
-
-        </div>
-
+        <h4 class="subtitulo-gastronomia">
+          🍰 Postres
+        </h4>
 
         <div
-          class="timeline-content"
-          *ngIf="itemAbierto === 'pos-' + postre.id"
+          class="timeline-item"
+          *ngFor="let postre of obtenerGastronomiaPorTipo('postres')"
         >
-
-          <img
-            *ngIf="postre.imagen"
-            [src]="postre.imagen"
-            [alt]="postre.nombre"
-            class="lugar-imagen"
-          >
-
-          <p *ngIf="postre.descripcion">
-            {{ postre.descripcion }}
-          </p>
 
           <div
-            class="direccion"
-            *ngIf="postre.direccion"
+            class="timeline-header"
+            (click)="toggleItem('pos-' + postre.id)"
           >
-            📍 {{ postre.direccion }}
+
+            <span>
+              {{ postre.nombre }}
+            </span>
+
+            <span>
+              {{
+                itemAbierto === 'pos-' + postre.id
+                  ? '−'
+                  : '+'
+              }}
+            </span>
+
           </div>
 
-          <a
-            *ngIf="postre.maps"
-            [href]="postre.maps"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-maps"
+
+          <div
+            class="timeline-content"
+            *ngIf="itemAbierto === 'pos-' + postre.id"
           >
-            Abrir en Maps
-          </a>
 
-
-          <div class="acciones-gastronomia">
-
-            <button
-              type="button"
-              class="btn-editar"
-              (click)="editarGastronomia(postre)"
+            <img
+              *ngIf="postre.imagen"
+              [src]="postre.imagen"
+              [alt]="postre.nombre"
+              class="lugar-imagen"
             >
-              ✏️
-            </button>
 
-            <button
-              type="button"
-              class="btn-eliminar"
-              (click)="eliminarGastronomia(postre)"
+            <p *ngIf="postre.descripcion">
+              {{ postre.descripcion }}
+            </p>
+
+            <div
+              class="direccion"
+              *ngIf="postre.direccion"
             >
-              🗑️
-            </button>
+              📍 {{ postre.direccion }}
+            </div>
+
+            <a
+              *ngIf="postre.maps"
+              [href]="postre.maps"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-maps"
+            >
+              Abrir en Maps
+            </a>
+
+
+            <div class="acciones-gastronomia">
+
+              <button
+                type="button"
+                class="btn-editar"
+                (click)="editarGastronomia(postre)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+              </button>
+
+              <button
+                type="button"
+                class="btn-eliminar"
+                (click)="eliminarGastronomia(postre)"
+              >
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+              </button>
+
+            </div>
 
           </div>
 
@@ -1934,153 +2374,154 @@
 
       </div>
 
-    </div>
 
+      <!-- =================================================
+           CURIOSIDADES
+      ================================================== -->
 
-    <!-- =================================================
-     CURIOSIDADES DE LA CIUDAD
-    ================================================== -->
+      <h3>
+        💡 Curiosidades
+      </h3>
 
-    <h3>
-      💡 Curiosidades
-    </h3>
-
-    <button
-      type="button"
-      class="btn-add-mini"
-      (click)="
-        mostrarFormularioCuriosidad =
-          !mostrarFormularioCuriosidad
-      "
-    >
-      {{
-        mostrarFormularioCuriosidad
-          ? '✕ Cerrar'
-          : '+ Añadir'
-      }}
-    </button>
-
-
-    <!-- FORMULARIO DENTRO DE LA CIUDAD -->
-
-    <div
-      class="card card-gastronomia"
-      *ngIf="mostrarFormularioCuriosidad"
-    >
-
-      <input
-        type="text"
-        placeholder="Título"
-        [(ngModel)]="nuevaCuriosidad.titulo"
-      >
-
-      <textarea
-        placeholder="Descripción"
-        [(ngModel)]="nuevaCuriosidad.descripcion"
-      ></textarea>
 
       <button
         type="button"
-        class="btn-add"
-        (click)="agregarCuriosidad()"
+        class="btn-add-mini"
+        (click)="
+          mostrarFormularioCuriosidad =
+            !mostrarFormularioCuriosidad
+        "
       >
         {{
-          editandoCuriosidad
-            ? 'Guardar cambios'
-            : 'Añadir curiosidad'
+          mostrarFormularioCuriosidad
+            ? '✕ Cerrar'
+            : '+ Añadir'
         }}
       </button>
 
-    </div>
-
-
-    <!-- LISTADO DE CURIOSIDADES DE ESTA CIUDAD -->
-
-    <div
-      class="timeline-item"
-      *ngFor="
-        let curiosidad of ciudadSeleccionada.curiosidades;
-        let i = index
-      "
-    >
 
       <div
-        class="timeline-header"
-        (click)="toggleItem('cur-' + curiosidad.id)"
+        class="card card-gastronomia"
+        *ngIf="mostrarFormularioCuriosidad"
       >
 
-        <span>
-          {{ curiosidad.titulo }}
-        </span>
+        <input
+          type="text"
+          placeholder="Título"
+          [(ngModel)]="nuevaCuriosidad.titulo"
+        >
 
-        <span>
+        <textarea
+          placeholder="Descripción"
+          [(ngModel)]="nuevaCuriosidad.descripcion"
+        ></textarea>
+
+        <button
+          type="button"
+          class="btn-add"
+          (click)="agregarCuriosidad()"
+        >
           {{
-            itemAbierto === 'cur-' + curiosidad.id
-              ? '−'
-              : '+'
+            editandoCuriosidad
+              ? 'Guardar cambios'
+              : 'Añadir curiosidad'
           }}
-        </span>
+        </button>
 
       </div>
 
 
       <div
-        class="timeline-content"
-        *ngIf="itemAbierto === 'cur-' + curiosidad.id"
+        class="timeline-item"
+        *ngFor="let curiosidad of ciudadSeleccionada.curiosidades"
       >
 
-        <p>
-          {{ curiosidad.descripcion }}
-        </p>
+        <div
+          class="timeline-header"
+          (click)="toggleItem('cur-' + curiosidad.id)"
+        >
+
+          <span>
+            {{ curiosidad.titulo }}
+          </span>
+
+          <span>
+            {{
+              itemAbierto === 'cur-' + curiosidad.id
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </div>
 
 
-        <div class="acciones-gastronomia">
+        <div
+          class="timeline-content"
+          *ngIf="itemAbierto === 'cur-' + curiosidad.id"
+        >
 
-          <button
-            type="button"
-            class="btn-editar"
-            title="Editar curiosidad"
-            (click)="
-              $event.stopPropagation();
-              editarCuriosidad(curiosidad)
-            "
-          >
-            ✏️
-          </button>
+          <p>
+            {{ curiosidad.descripcion }}
+          </p>
 
 
-          <button
-            type="button"
-            class="btn-eliminar"
-            title="Eliminar curiosidad"
-            (click)="
-              $event.stopPropagation();
-              eliminarCuriosidad(curiosidad)
-            "
-          >
-            🗑️
-          </button>
+          <div class="acciones-gastronomia">
+
+            <button
+              type="button"
+              class="btn-editar"
+              title="Editar curiosidad"
+              (click)="editarCuriosidad(curiosidad)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              class="btn-eliminar"
+              title="Eliminar curiosidad"
+              (click)="eliminarCuriosidad(curiosidad)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                width="1.3em"
+                height="1.3em"
+              >
+                <path
+                  fill="#ef4444"
+                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
+                />
+              </svg>
+            </button>
+
+          </div>
 
         </div>
 
       </div>
 
-    </div>
 
+      <div
+        class="empty-state"
+        *ngIf="ciudadSeleccionada.curiosidades.length === 0"
+      >
+        No hay curiosidades añadidas.
+      </div>
 
-    <!-- SIN CURIOSIDADES -->
-
-    <div
-      class="empty-state"
-      *ngIf="ciudadSeleccionada.curiosidades.length === 0"
-    >
-      No hay curiosidades añadidas.
     </div>
 
   </div>
 
-</div>
-
-
-  
 </div>
