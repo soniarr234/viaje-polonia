@@ -32,7 +32,11 @@ export class Gastos implements OnInit {
   gastos: Gasto[] = [];
   editando = false;
   indiceEditando = -1;
-  dias = ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'];
+  dias = ['Antes del viaje', 'Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'];
+
+  // Propiedades añadidas para controlar el Pop-up de borrado
+  mostrarConfirmarBorradoGasto = false;
+  gastoParaBorrar: Gasto | null = null;
 
   nuevoGasto: Gasto = {
     concepto: '',
@@ -50,21 +54,17 @@ export class Gastos implements OnInit {
 
   async ngOnInit() {
     localStorage.setItem('presupuesto', this.presupuesto.toString());
-    // Controlamos el flujo inicial secuencialmente desde aquí
     this.obtenerCambio();
   }
   
   obtenerCambio() {
-    // Corregida la URL al endpoint público de ExchangeRate-API para evitar ERR_CERT_AUTHORITY_INVALID
     this.http.get<any>('https://open.er-api.com/v6/latest/EUR').subscribe({
       next: async (data) => {
         this.cambioPLN = data.rates.PLN;
-        // Cargamos gastos solo tras asegurar el valor real de las divisas
         await this.cargarGastos();
       },
       error: async (error) => {
         console.error('Error de API, usando respaldo fijo de 4.3', error);
-        // Fallback de seguridad si falla la red externa o el entorno sandbox
         await this.cargarGastos();
       },
     });
@@ -127,7 +127,6 @@ export class Gastos implements OnInit {
     }
     this.rotando = false;
     
-    // Evita mutaciones directas síncronas en el renderizado de la UI
     setTimeout(() => {
       this.cantidadOrigen = this.cantidadDestino;
       this.monedaOrigen = this.monedaOrigen === 'EUR' ? 'PLN' : 'EUR';
@@ -144,10 +143,9 @@ export class Gastos implements OnInit {
       return;
     }
   
-    // Tu columna 'importe' en Supabase es smallint (Entero), redondeamos para evitar fallos SQL
     const payloadGasto = {
       concepto: this.nuevoGasto.concepto,
-      importe: Math.round(this.nuevoGasto.importe),
+      importe: this.nuevoGasto.importe,
       moneda: this.nuevoGasto.moneda,
       categoria: this.nuevoGasto.categoria,
       dia: this.nuevoGasto.dia,
@@ -217,15 +215,37 @@ export class Gastos implements OnInit {
     this.cdr.detectChanges();
   }
 
-  async eliminarGasto(gasto: Gasto) {
-    if (!gasto.id) {
+  // Activa el Pop-up guardando los datos del gasto que se quiere quitar
+  pedirConfirmacionBorradoGasto(gasto: Gasto, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.cerrarDropdowns();
+    this.gastoParaBorrar = gasto;
+    this.mostrarConfirmarBorradoGasto = true;
+    this.cdr.detectChanges();
+  }
+
+  // Cierra visualmente la ventana emergente
+  cerrarConfirmarBorradoGasto() {
+    this.mostrarConfirmarBorradoGasto = false;
+    this.gastoParaBorrar = null;
+    this.cdr.detectChanges();
+  }
+
+  // Se ejecuta definitivamente al presionar "Sí, eliminar" dentro de la ventana emergente
+  async confirmarEliminarGasto() {
+    if (!this.gastoParaBorrar || !this.gastoParaBorrar.id) {
+      this.cerrarConfirmarBorradoGasto();
       return;
     }
+  
+    const idBorrar = this.gastoParaBorrar.id;
+    this.cerrarConfirmarBorradoGasto();
   
     const { error } = await supabase
       .from('gastos')
       .delete()
-      .eq('id', gasto.id);
+      .eq('id', idBorrar);
   
     if (error) {
       console.error(error);
@@ -233,6 +253,7 @@ export class Gastos implements OnInit {
     }
   
     await this.cargarGastos();
+    this.cdr.detectChanges();
   }
 
   get totalGastado(): number {

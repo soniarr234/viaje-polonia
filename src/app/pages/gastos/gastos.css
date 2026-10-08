@@ -389,57 +389,246 @@
 }
 
 .dia-bloque {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .dia-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: rgba(56, 189, 248, 0.1);
-  color: #38bdf8;
+  padding: 6px 4px;
+  color: #64748b; /* Gris suave neutro */
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 8px;
 }
 
+/* Fila de gasto: Limpia, sin caja contenedora pesada */
+/* Cada caja de gasto independiente */
 .gasto-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-direction: column; /* Apila fila superior y fila inferior */
+  gap: 12px; /* Espacio de separación interno entre las dos filas */
+  transition: all 0.2s ease;
+}
+
+.gasto-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(56, 189, 248, 0.12);
 }
 
 .gasto-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
-.gasto-info strong,
-.gasto-item strong {
-  color: white;
+/* Fila Superior: Concepto y Acciones */
+.gasto-fila-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.gasto-item p {
-  color: var(--text-secondary);
-  font-size: 12px;
+.gasto-concepto {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  max-width: 70%; /* Evita que pise los botones si el texto es muy largo */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.gasto-actions {
+.gasto-acciones {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
-.gasto-precio {
-  color: var(--primary);
+/* Fila Inferior: Tipo y Precio */
+.gasto-fila-inferior {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Alinea la categoría con la base del precio */
+}
+
+.gasto-categoria {
+  color: #64748b; /* Gris secundario limpio */
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   font-weight: 500;
 }
 
-.sin-gastos {
-  padding: 15px 0;
-  color: var(--text-secondary);
+/* Bloque del precio */
+.gasto-precio-bloque {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Alinea los números a la derecha */
+}
+
+.gasto-precio {
+  color: #38bdf8; /* Tu azul característico para destacar la cifra */
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.gasto-moneda {
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.gasto-conversion {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Estilos de los botones (Discretos y limpios) */
+.btn-accion {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-editar {
+  color: #94a3b8;
+}
+.btn-editar:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.btn-eliminar {
+  color: #f87171;
+}
+.btn-eliminar:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* =========================
+   POP-UP DE BORRADO DE GASTOS
+========================= */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+  backdrop-filter: blur(4px); /* Suave desenfoque del fondo trasero */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Por encima de todo el contenido de la web */
+  padding: 20px;
+}
+
+.popup-box {
+  width: 100%;
+  max-width: 400px;
+  background: #172036; /* Mismo azul oscuro corporativo de tus dropdowns */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
   text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  animation: emergenteEntrada 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes emergenteEntrada {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.popup-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: rgba(239, 68, 68, 0.12); /* Rojo muy suave */
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.popup-box h3 {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.popup-box p {
+  color: #94a3b8; /* Mismo color gris de tus estadísticas secundarias */
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.popup-box p strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.popup-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-popup-cancelar {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-popup-cancelar:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.btn-popup-eliminar {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ef4444; /* Rojo vibrante de advertencia */
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-popup-eliminar:hover {
+  background: #dc2626; /* Tono de rojo un poco más oscuro al pasar el ratón */
 }

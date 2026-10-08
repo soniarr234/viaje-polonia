@@ -229,44 +229,73 @@
 }
 
 /* =========================
-   MODAL
+   MODAL (REDISEÑADO)
 ========================= */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(4, 7, 12, 0.85); /* Fondo oscuro más denso e inmersivo */
+  backdrop-filter: blur(8px); /* Desenfoque más elegante */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
+  padding: 16px;
 }
 
 .modal {
-  width: 92%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px 20px;
+  width: 100%;
+  max-width: 400px; /* Evita que se deforme en pantallas grandes */
+  background: #1e293b; /* Color de superficie oscuro limpio */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px; /* Bordes más curvos y modernos */
+  padding: 24px 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  animation: aparecer 0.2s ease;
+  gap: 18px; /* Más aire entre campos */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+  animation: aparecer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal h2 {
   text-align: center;
-  font-size: 18px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 4px;
 }
 
-.field label {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-bottom: 5px;
+/* Etiquetas elegantes superiores */
+.field label, .categoria-label {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* Inputs Modernizados */
 .modal input {
   width: 100%;
+  background: rgba(15, 23, 42, 0.6); /* Fondo interior oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.modal input::placeholder {
+  color: #475569;
 }
 
 /* =========================
@@ -274,7 +303,7 @@
 ========================= */
 .row {
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .field {
@@ -293,106 +322,197 @@
 .categorias-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.categoria-label {
-  font-size: 14px;
-  color: var(--text-secondary);
 }
 
 .categorias {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
+/* Botones de Categorías estilo píldora/tarjeta */
 .categoria-btn {
   width: 100%;
-  background: var(--background);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .categoria-btn:hover {
-  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #f8fafc;
 }
 
+/* Estado activo con borde azul brillante y fondo translúcido */
 .categoria-btn.active {
-  color: var(--primary);
-  border-color: var(--primary);
-  background: rgba(125, 211, 252, 0.1);
+  color: #38bdf8;
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.1);
 }
 
 .categoria-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* =========================
-   BOTONES MODAL
+   BOTONES ACCIÓN INFERIOR
 ========================= */
+/* IMPORTANTE: En tu HTML veo que los botones están sueltos, 
+   asegúrate de envolver Cancelar y Guardar en un contenedor con la clase "modal-buttons" */
 .modal-buttons {
-  margin-top: 10px;
+  margin-top: 14px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .modal-buttons button {
   flex: 1;
-  padding: 10px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
+/* Botón Cancelar */
 .modal-buttons button:first-child {
   background: #334155;
-  color: white;
+  color: #cbd5e1;
 }
 
-.modal-buttons button:last-child {
-  background: var(--primary);
-  color: var(--background);
+.modal-buttons button:first-child:hover {
+  background: #475569;
+  color: #ffffff;
 }
+
+/* Botón Guardar */
+.modal-buttons button:last-child {
+  background: #38bdf8; /* Tono de azul exacto a tu barra de progreso */
+  color: #0f172a; /* Texto oscuro para legibilidad total */
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+}
+
+.modal-buttons button:last-child:hover {
+  background: #7dd3fc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+}
+
+.modal-buttons button:last-child:active {
+  transform: translateY(0);
+}
+
 
 /* =========================
-   ANIMACIONES
+   POP-UP CONFIRMACIÓN
 ========================= */
-@keyframes brillo {
-  from {
-    left: -100%;
-  }
-
-  to {
-    left: 100%;
-  }
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 12, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Por encima de todo, incluso del modal principal */
+  padding: 20px;
 }
 
-@keyframes flotar {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+.popup-box {
+  width: 100%;
+  max-width: 340px;
+  background: #1e293b; /* Fondo a juego con tu modal */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  animation: popAparecer 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes aparecer {
+.popup-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.popup-box p {
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.popup-box p strong {
+  color: #ffffff;
+}
+
+/* Botonera interna del Pop-up */
+.popup-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.popup-buttons button {
+  flex: 1;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-popup-cancelar {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.btn-popup-cancelar:hover {
+  background: #475569;
+  color: #ffffff;
+}
+
+.btn-popup-eliminar {
+  background: #ef4444; /* Rojo de advertencia */
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.btn-popup-eliminar:hover {
+  background: #f87171;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Animación de escala sutil */
+@keyframes popAparecer {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.92) translateY(10px);
   }
-
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
+
