@@ -4,6 +4,7 @@ import {
   Component,
   OnInit
 } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
 import { Transporte } from './models/transporte.model';
@@ -265,8 +266,17 @@ export class Ruta implements OnInit {
 
 
   constructor(
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {}
+
+  // 👇 Esta función limpia el enlace y evita el bloqueo de Angular
+  obtenerEnlaceMaps(direccion: string): SafeUrl {
+    if (!direccion) return '';
+    const urlConstruida = 'https://google.com/maps/' + encodeURIComponent(direccion);
+    return this.sanitizer.bypassSecurityTrustUrl(urlConstruida);
+  }
+
 
 
   /* ===================================================
@@ -2501,10 +2511,6 @@ export class Ruta implements OnInit {
       this.itemAbierto === id
         ? null
         : id;
-  }
-
-  encodeURIComponent(texto: string): string {
-    return encodeURIComponent(texto);
   }
 }
 

@@ -821,12 +821,11 @@
       </div>
 
 
-      <div
-        *ngIf="hotel.direccion"
-        class="hotel-direccion"
-      >
+      <div *ngIf="hotel.direccion" class="hotel-direccion">
+        <!-- Añadimos stopPropagation para que Angular no frene la apertura de la nueva pestaña -->
         <a 
-          [href]="'https://google.com' + encodeURIComponent(hotel.direccion)" 
+          [href]="obtenerEnlaceMaps(hotel.direccion)" 
+          (click)="$event.stopPropagation()"
           target="_blank" 
           title="Ver en Google Maps"
           class="link-maps"
@@ -837,6 +836,8 @@
           {{ hotel.direccion }}
         </a>
       </div>
+      
+
 
       <div class="hotel-resumen">
 
