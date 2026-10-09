@@ -90,9 +90,6 @@ export class Gastos implements OnInit {
 
   @HostListener('document:click', ['$event'])
   cerrarSiClickFuera(event: Event) {
-    // Si no estamos en transportes, frenamos el listener para que no bloquee los clicks de hoteles
-    if (this.vista !== 'transportes') return;
-
     const target = event.target as HTMLElement;
     if (!target.closest('.dropdown')) {
       this.cerrarDropdowns();

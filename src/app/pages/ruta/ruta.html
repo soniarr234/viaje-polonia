@@ -825,9 +825,18 @@
         *ngIf="hotel.direccion"
         class="hotel-direccion"
       >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.1em" height="1.1em"><path fill="#ef4444" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/></svg> {{ hotel.direccion }}
+        <a 
+          [href]="'https://google.com' + encodeURIComponent(hotel.direccion)" 
+          target="_blank" 
+          title="Ver en Google Maps"
+          class="link-maps"
+        >
+          <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.1em" height="1.1em">
+            <path fill="#ef4444" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/>
+          </svg> 
+          {{ hotel.direccion }}
+        </a>
       </div>
-
 
       <div class="hotel-resumen">
 

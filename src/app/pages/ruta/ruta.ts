@@ -2502,4 +2502,9 @@ export class Ruta implements OnInit {
         ? null
         : id;
   }
+
+  encodeURIComponent(texto: string): string {
+    return encodeURIComponent(texto);
+  }
 }
+
