@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
-  OnInit
+  OnInit,
+  HostListener 
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -191,6 +192,11 @@ export class Ruta implements OnInit {
 
   indiceCiudadEditando = -1;
 
+  guardandoCiudad = false;
+
+  ciudadParaBorrar: Ciudad | null = null;
+  mostrarConfirmarBorradoCiudad = false;
+
   nuevaCiudad: Ciudad = {
     nombre: '',
     pais: '',
@@ -269,6 +275,24 @@ export class Ruta implements OnInit {
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  cerrarSiClickFuera(event: Event) {
+    if (this.vista !== 'transportes') {
+      return;
+    }
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown')) {
+      this.cerrarDropdowns();
+    }
+  }
+
+  // 👇 AÑADIDO: Esta es la función que te faltaba y provocaba el error de compilación
+  cerrarDropdowns() {
+    document.querySelectorAll('details.dropdown').forEach((dropdown) => {
+      (dropdown as HTMLDetailsElement).removeAttribute('open');
+    });
+  }
 
   // 👇 Esta función limpia el enlace y evita el bloqueo de Angular
   obtenerEnlaceMaps(direccion: string): SafeUrl {
@@ -774,12 +798,11 @@ export class Ruta implements OnInit {
   }
 
 
-  /* ===================================================
+    /* ===================================================
      14. CARGAR CIUDADES
   =================================================== */
 
   async cargarCiudades() {
-
     const { data, error } = await supabase
       .from('ciudades')
       .select(`
@@ -816,111 +839,44 @@ export class Ruta implements OnInit {
           descripcion
         )
       `)
-      .order(
-        'nombre',
-        { ascending: true }
-      );
+      .order('nombre', { ascending: true });
 
     if (error) {
-      console.error(
-        'Error cargando ciudades:',
-        error
-      );
+      console.error('Error cargando ciudades:', error);
       return;
     }
 
-
-    this.ciudades =
-      (data || []).map(
-        (c: any): Ciudad => ({
-
-          id: c.id,
-
-          nombre:
-            c.nombre,
-
-          pais:
-            c.pais || '',
-
-          descripcion:
-            c.descripcion || '',
-
-
-          lugares:
-            (c.lugares || []).map(
-              (l: any): Lugar => ({
-
-                id: l.id,
-
-                ciudadId:
-                  l.ciudad_id,
-
-                nombre:
-                  l.nombre,
-
-                descripcion:
-                  l.descripcion || '',
-
-                direccion:
-                  l.direccion || '',
-
-                imagen:
-                  l.imagen || '',
-
-                maps:
-                  l.maps || ''
-              })
-            ),
-
-
-          gastronomia:
-            (c.gastronomia || []).map(
-              (g: any): Gastronomia => ({
-
-                id: g.id,
-
-                ciudadId:
-                  g.ciudad_id,
-
-                nombre:
-                  g.nombre,
-
-                tipo:
-                  g.tipo,
-
-                descripcion:
-                  g.descripcion || '',
-
-                direccion:
-                  g.direccion || '',
-
-                imagen:
-                  g.imagen || '',
-
-                maps:
-                  g.maps || ''
-              })
-            ),
-
-
-          curiosidades:
-            (c.curiosidades || []).map(
-              (cur: any): Curiosidad => ({
-
-                id: cur.id,
-
-                ciudadId:
-                  cur.ciudad_id,
-
-                titulo:
-                  cur.titulo,
-
-                descripcion:
-                  cur.descripcion || ''
-              })
-            )
-        })
-      );
+    this.ciudades = (data || []).map((c: any): Ciudad => ({
+      id: c.id,
+      nombre: c.nombre,
+      pais: c.pais || '',
+      descripcion: c.descripcion || '',
+      lugares: (c.lugares || []).map((l: any): Lugar => ({
+        id: l.id,
+        ciudadId: l.ciudad_id,
+        nombre: l.nombre,
+        descripcion: l.descripcion || '',
+        direccion: l.direccion || '',
+        imagen: l.imagen || '',
+        maps: l.maps || ''
+      })),
+      gastronomia: (c.gastronomia || []).map((g: any): Gastronomia => ({
+        id: g.id,
+        ciudadId: g.ciudad_id,
+        nombre: g.nombre,
+        tipo: g.tipo,
+        descripcion: g.descripcion || '',
+        direccion: g.direccion || '',
+        imagen: g.imagen || '',
+        maps: g.maps || ''
+      })),
+      curiosidades: (c.curiosidades || []).map((cur: any): Curiosidad => ({
+        id: cur.id,
+        ciudadId: cur.ciudad_id,
+        titulo: cur.titulo,
+        descripcion: cur.descripcion || ''
+      }))
+    }));
 
     this.cdr.detectChanges();
   }
@@ -931,170 +887,155 @@ export class Ruta implements OnInit {
   =================================================== */
 
   abrirFormularioCiudad() {
-
     this.reiniciarCiudad();
-
     this.mostrarFormularioCiudad = true;
   }
 
-
-  cancelarFormularioCiudad() {
-
+  cancelarFormularioCiudad(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     this.reiniciarCiudad();
-
     this.mostrarFormularioCiudad = false;
   }
 
+  async agregarCiudad(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-  async agregarCiudad() {
-
-    if (
-      !this.nuevaCiudad.nombre.trim()
-    ) {
+    if (!this.nuevaCiudad.nombre?.trim()) {
       return;
     }
 
+    if (this.guardandoCiudad) return;
+    this.guardandoCiudad = true;
+
     const payload = {
-
-      nombre:
-        this.nuevaCiudad.nombre.trim(),
-
-      pais:
-        this.nuevaCiudad.pais?.trim()
-        || null,
-
-      descripcion:
-        this.nuevaCiudad.descripcion?.trim()
-        || null
+      nombre: this.nuevaCiudad.nombre.trim(),
+      pais: this.nuevaCiudad.pais?.trim() || null,
+      descripcion: this.nuevaCiudad.descripcion?.trim() || null
     };
 
+    try {
+      if (this.editandoCiudad) {
+        const ciudadEditada = this.ciudades[this.indiceCiudadEditando];
 
-    if (this.editandoCiudad) {
+        if (ciudadEditada?.id == null) {
+          console.error('No se encontró el id de la ciudad');
+          return;
+        }
 
-      const ciudadEditada =
-        this.ciudades[
-          this.indiceCiudadEditando
-        ];
+        const { error } = await supabase
+          .from('ciudades')
+          .update(payload)
+          .eq('id', ciudadEditada.id);
 
-      if (ciudadEditada?.id == null) {
-        console.error(
-          'No se encontró el id de la ciudad'
-        );
-        return;
+        if (error) {
+          console.error('Error actualizando ciudad:', error);
+          return;
+        }
+        this.mensajeToast = `¡Ciudad "${payload.nombre}" actualizada con éxito!`;
+      } else {
+        const { error } = await supabase
+          .from('ciudades')
+          .insert(payload);
+
+        if (error) {
+          console.error('Error creando ciudad:', error);
+          return;
+        }
+        this.mensajeToast = `¡Ciudad "${payload.nombre}" añadida a tu viaje!`;
       }
 
-      const { error } = await supabase
-        .from('ciudades')
-        .update(payload)
-        .eq(
-          'id',
-          ciudadEditada.id
-        );
+      this.reiniciarCiudad();
+      await this.cargarCiudades();
+      await this.cargarRutaDias();
 
-      if (error) {
-        console.error(
-          'Error actualizando ciudad:',
-          error
-        );
-        return;
-      }
+      // Lanzamos la animación del Toast de éxito en pantalla
+      this.mostrarToast = true;
+      this.cdr.detectChanges();
 
-    } else {
+      // Se desvanece de manera automática tras 4 segundos exactos
+      setTimeout(() => {
+        this.mostrarToast = false;
+        this.cdr.detectChanges();
+      }, 4000);
 
-      const { error } = await supabase
-        .from('ciudades')
-        .insert(payload);
-
-      if (error) {
-        console.error(
-          'Error creando ciudad:',
-          error
-        );
-        return;
-      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.guardandoCiudad = false;
+      this.cdr.detectChanges();
     }
-
-
-    this.reiniciarCiudad();
-
-    await this.cargarCiudades();
-
-    await this.cargarRutaDias();
-
-    this.cdr.detectChanges();
   }
 
+  editarCiudad(ciudad: Ciudad, event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-  editarCiudad(
-    ciudad: Ciudad
-  ) {
-
-    this.indiceCiudadEditando =
-      this.ciudades.indexOf(ciudad);
-
+    this.indiceCiudadEditando = this.ciudades.indexOf(ciudad);
     this.editandoCiudad = true;
 
     this.nuevaCiudad = {
-
       ...ciudad,
-
-      lugares:
-        [...ciudad.lugares],
-
-      gastronomia:
-        [...ciudad.gastronomia],
-
-      curiosidades:
-        [...ciudad.curiosidades]
+      lugares: [...ciudad.lugares],
+      gastronomia: [...ciudad.gastronomia],
+      curiosidades: [...ciudad.curiosidades]
     };
 
     this.mostrarFormularioCiudad = true;
-
     this.cdr.detectChanges();
   }
 
+  pedirConfirmacionBorradoCiudad(ciudad: Ciudad, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.ciudadParaBorrar = ciudad;
+    this.mostrarConfirmarBorradoCiudad = true;
+    this.cdr.detectChanges();
+  }
 
-  async eliminarCiudad(
-    ciudad: Ciudad
-  ) {
+  cerrarConfirmarBorradoCiudad() {
+    this.mostrarConfirmarBorradoCiudad = false;
+    this.ciudadParaBorrar = null;
+    this.cdr.detectChanges();
+  }
 
-    if (ciudad.id == null) {
+  async confirmarEliminarCiudad() {
+    if (!this.ciudadParaBorrar || !this.ciudadParaBorrar.id) {
+      this.cerrarConfirmarBorradoCiudad();
       return;
     }
+
+    const idBorrar = this.ciudadParaBorrar.id;
+    this.cerrarConfirmarBorradoCiudad();
 
     const { error } = await supabase
       .from('ciudades')
       .delete()
-      .eq(
-        'id',
-        ciudad.id
-      );
+      .eq('id', idBorrar);
 
     if (error) {
-      console.error(
-        'Error eliminando ciudad:',
-        error
-      );
+      console.error('Error eliminando ciudad:', error);
       return;
     }
 
-    if (
-      this.ciudadSeleccionada?.id
-      === ciudad.id
-    ) {
+    if (this.ciudadSeleccionada?.id === idBorrar) {
       this.cerrarCiudad();
     }
 
     await this.cargarCiudades();
-
     await this.cargarRutaDias();
-
     this.cdr.detectChanges();
   }
 
-
   reiniciarCiudad() {
-
     this.nuevaCiudad = {
       nombre: '',
       pais: '',
@@ -1103,48 +1044,28 @@ export class Ruta implements OnInit {
       gastronomia: [],
       curiosidades: []
     };
-
     this.editandoCiudad = false;
-
     this.indiceCiudadEditando = -1;
-
     this.mostrarFormularioCiudad = false;
   }
 
-
-  abrirCiudad(
-    ciudad: Ciudad
-  ) {
-
+  abrirCiudad(ciudad: Ciudad) {
     this.ciudadSeleccionada = ciudad;
-
     this.itemAbierto = null;
-
     this.reiniciarLugar();
-
     this.reiniciarGastronomia();
-
     this.reiniciarCuriosidad();
-
     this.cdr.detectChanges();
   }
-
 
   cerrarCiudad() {
-
     this.ciudadSeleccionada = null;
-
     this.itemAbierto = null;
-
     this.reiniciarLugar();
-
     this.reiniciarGastronomia();
-
     this.reiniciarCuriosidad();
-
     this.cdr.detectChanges();
   }
-
 
   /* ===================================================
      16. LUGARES CRUD

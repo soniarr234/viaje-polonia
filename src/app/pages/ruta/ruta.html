@@ -1021,7 +1021,7 @@
           <button
             type="button"
             class="btn-cancelar-form"
-            (click)="cancelarFormularioCiudad()"
+            (click)="$event.preventDefault(); $event.stopPropagation(); cancelarFormularioCiudad($event)"
           >
             Cancelar
           </button>
@@ -1029,7 +1029,7 @@
           <button
             type="button"
             class="btn-guardar-form"
-            (click)="agregarCiudad()"
+            (click)="$event.preventDefault(); $event.stopPropagation(); agregarCiudad($event)"
           >
             {{
               editandoCiudad
@@ -1081,10 +1081,7 @@
                 type="button"
                 class="btn-editar-ciudad"
                 title="Editar ciudad"
-                (click)="
-                  $event.stopPropagation();
-                  editarCiudad(ciudad)
-                "
+                (click)="$event.preventDefault(); $event.stopPropagation(); editarCiudad(ciudad, $event)"
               >
                 <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -1103,10 +1100,7 @@
                 type="button"
                 class="btn-eliminar-ciudad"
                 title="Eliminar ciudad"
-                (click)="
-                  $event.stopPropagation();
-                  eliminarCiudad(ciudad)
-                "
+                (click)="$event.preventDefault(); $event.stopPropagation(); pedirConfirmacionBorradoCiudad(ciudad, $event)"
               >
                 <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -2583,6 +2577,20 @@
       <button type="button" class="btn-popup-eliminar" (click)="confirmarEliminarHotel()">
         Sí, eliminar
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- POP-UP DE CONFIRMACIÓN DE BORRADO DE CIUDAD -->
+<div class="popup-overlay" *ngIf="mostrarConfirmarBorradoCiudad" (click)="cerrarConfirmarBorradoCiudad()">
+  <div class="popup-box" (click)="$event.stopPropagation()">
+    
+    <h3>¿Eliminar ciudad?</h3>
+    <p>¿Estás seguro de que quieres quitar la ciudad "<strong>{{ ciudadParaBorrar?.nombre }}</strong>"? Esto eliminará también todos sus lugares y gastronomía asociados.</p>
+    
+    <div class="popup-buttons">
+      <button type="button" class="btn-popup-cancelar" (click)="cerrarConfirmarBorradoCiudad()">Cancelar</button>
+      <button type="button" class="btn-popup-eliminar" (click)="confirmarEliminarCiudad()">Sí, eliminar</button>
     </div>
   </div>
 </div>
