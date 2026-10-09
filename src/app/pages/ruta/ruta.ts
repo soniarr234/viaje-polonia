@@ -132,6 +132,12 @@ export class Ruta implements OnInit {
 
   guardandoTransporte = false;
 
+  mostrarConfirmarBorradoTransporte = false;
+  transporteParaBorrar: Transporte | null = null;
+
+  mostrarToast = false;
+  mensajeToast = '';
+
   nuevoTransporte: Transporte = {
     tipo: 'vuelo',
     origen: '',
@@ -150,12 +156,10 @@ export class Ruta implements OnInit {
   =================================================== */
 
   hoteles: Hotel[] = [];
-
   mostrarFormularioHotel = false;
-
   editandoHotel = false;
-
   indiceHotelEditando = -1;
+  guardandoHotel = false;
 
   nuevoHotel: Hotel = {
     nombre: '',
@@ -167,6 +171,9 @@ export class Ruta implements OnInit {
     direccion: '',
     notas: ''
   };
+
+  mostrarConfirmarBorradoHotel = false;
+  hotelParaBorrar: Hotel | null = null;
 
 
   /* ===================================================
@@ -351,6 +358,47 @@ export class Ruta implements OnInit {
     this.mostrarFormularioTransporte = false;
   }
 
+    // 👇 AÑADE ESTOS TRES MÉTODOS AQUÍ:
+
+    pedirConfirmacionBorradoTransporte(transporte: Transporte, event: Event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      this.transporteParaBorrar = transporte;
+      this.mostrarConfirmarBorradoTransporte = true;
+      this.cdr.detectChanges();
+    }
+  
+    cerrarConfirmarBorradoTransporte() {
+      this.mostrarConfirmarBorradoTransporte = false;
+      this.transporteParaBorrar = null;
+      this.cdr.detectChanges();
+    }
+  
+    async confirmarEliminarTransporte() {
+      if (!this.transporteParaBorrar || !this.transporteParaBorrar.id) {
+        this.cerrarConfirmarBorradoTransporte();
+        return;
+      }
+  
+      const idBorrar = this.transporteParaBorrar.id;
+      this.cerrarConfirmarBorradoTransporte();
+  
+      const { error } = await supabase
+        .from('transporte')
+        .delete()
+        .eq('id', idBorrar);
+  
+      if (error) {
+        console.error('Error eliminando transporte:', error);
+        return;
+      }
+  
+      await this.cargarTransportes();
+      this.cdr.detectChanges();
+    }
+  
+
 
   async agregarTransporte() {
 
@@ -383,54 +431,48 @@ export class Ruta implements OnInit {
 
 
       if (this.editando) {
-
-        if (this.indiceEditando < 0) {
-          return;
-        }
+        if (this.indiceEditando < 0) return;
 
         const { error } = await supabase
           .from('transporte')
           .update(payload)
-          .eq(
-            'id',
-            this.indiceEditando
-          );
+          .eq('id', this.indiceEditando);
 
         if (error) {
-          console.error(
-            'Error actualizando transporte:',
-            error
-          );
+          console.error('Error actualizando transporte:', error);
           return;
         }
-
+        this.mensajeToast = '¡Transporte actualizado con éxito!';
       } else {
-
         const { error } = await supabase
           .from('transporte')
           .insert(payload);
 
         if (error) {
-          console.error(
-            'Error creando transporte:',
-            error
-          );
+          console.error('Error insertando transporte:', error);
           return;
         }
+        this.mensajeToast = '¡Transporte guardado con éxito!';
       }
 
 
       await this.cargarTransportes();
-
+      this.mostrarFormularioTransporte = false;
       this.reiniciarFormulario();
 
-      this.mostrarFormularioTransporte = false;
-
+      this.mostrarToast = true;
       this.cdr.detectChanges();
 
-    } finally {
+      setTimeout(() => {
+        this.mostrarToast = false;
+        this.cdr.detectChanges();
+      }, 4000);
 
+    } catch (e) {
+      console.error(e);
+    } finally {
       this.guardandoTransporte = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -516,232 +558,199 @@ export class Ruta implements OnInit {
   }
 
 
-  /* ===================================================
+    /* ===================================================
      13. HOTELES
   =================================================== */
 
   abrirFormularioHotel() {
-
     this.reiniciarHotel();
-
     this.mostrarFormularioHotel = true;
   }
 
-
-  cancelarFormularioHotel() {
-
+  cancelarFormularioHotel(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     this.reiniciarHotel();
-
     this.mostrarFormularioHotel = false;
   }
 
-
   async cargarHoteles() {
-
     const { data, error } = await supabase
       .from('hoteles')
       .select('*')
       .order('checkin');
 
     if (error) {
-      console.error(
-        'Error cargando hoteles:',
-        error
-      );
+      console.error('Error cargando hoteles:', error);
       return;
     }
 
-    this.hoteles =
-      (data || []).map((h: any) => ({
-        id: h.id,
-        nombre: h.nombre,
-        ciudad: h.ciudad,
-        checkIn: h.checkin,
-        checkOut: h.checkout,
-        precio: h.precio,
-        pagado: h.pagado,
-        direccion: h.direccion,
-        notas: h.notas
-      }));
+    this.hoteles = (data || []).map((h: any) => ({
+      id: h.id,
+      nombre: h.nombre,
+      ciudad: h.ciudad,
+      checkIn: h.checkin,
+      checkOut: h.checkout,
+      precio: h.precio,
+      pagado: h.pagado,
+      direccion: h.direccion,
+      notas: h.notas
+    }));
 
     this.cdr.detectChanges();
   }
 
-
   get hotelesOrdenados(): Hotel[] {
-
-    return [...this.hoteles]
-      .sort((a, b) => {
-
-        const fechaA =
-          a.checkIn
-            ? new Date(a.checkIn).getTime()
-            : 0;
-
-        const fechaB =
-          b.checkIn
-            ? new Date(b.checkIn).getTime()
-            : 0;
-
-        return fechaA - fechaB;
-      });
+    return [...this.hoteles].sort((a, b) => {
+      const fechaA = a.checkIn ? new Date(a.checkIn).getTime() : 0;
+      const fechaB = b.checkIn ? new Date(b.checkIn).getTime() : 0;
+      return fechaA - fechaB;
+    });
   }
 
+  async agregarHotel(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-  async agregarHotel() {
+    if (this.guardandoHotel) return;
+    this.guardandoHotel = true;
 
-    if (
-      !this.nuevoHotel.nombre?.trim() ||
-      !this.nuevoHotel.ciudad?.trim()
-    ) {
+    if (!this.nuevoHotel.nombre?.trim() || !this.nuevoHotel.ciudad?.trim()) {
       return;
     }
+
+    if (this.guardandoHotel) return;
+    this.guardandoHotel = true;
 
     const esPrecioValido =
       this.nuevoHotel.precio !== undefined &&
       this.nuevoHotel.precio !== null &&
-      !isNaN(
-        Number(
-          this.nuevoHotel.precio
-        )
-      );
+      !isNaN(Number(this.nuevoHotel.precio));
 
     const payload = {
-
-      nombre:
-        this.nuevoHotel.nombre.trim(),
-
-      ciudad:
-        this.nuevoHotel.ciudad.trim(),
-
-      checkin:
-        this.nuevoHotel.checkIn || null,
-
-      checkout:
-        this.nuevoHotel.checkOut || null,
-
-      precio:
-        esPrecioValido
-          ? Number(this.nuevoHotel.precio)
-          : null,
-
-      pagado:
-        !!this.nuevoHotel.pagado,
-
-      direccion:
-        this.nuevoHotel.direccion?.trim()
-        || null,
-
-      notas:
-        this.nuevoHotel.notas?.trim()
-        || null
+      nombre: this.nuevoHotel.nombre.trim(),
+      ciudad: this.nuevoHotel.ciudad.trim(),
+      checkin: this.nuevoHotel.checkIn || null,
+      checkout: this.nuevoHotel.checkOut || null,
+      precio: esPrecioValido ? Number(this.nuevoHotel.precio) : null,
+      pagado: !!this.nuevoHotel.pagado,
+      direccion: this.nuevoHotel.direccion?.trim() || null,
+      notas: this.nuevoHotel.notas?.trim() || null
     };
 
+    try {
+      if (this.editandoHotel) {
+        if (this.indiceHotelEditando < 0) return;
 
-    if (this.editandoHotel) {
+        const { error } = await supabase
+          .from('hoteles')
+          .update(payload)
+          .eq('id', this.indiceHotelEditando);
 
-      if (this.indiceHotelEditando < 0) {
-        return;
+        if (error) {
+          console.error('Error actualizando hotel:', error);
+          return;
+        }
+        this.mensajeToast = `¡Hotel "${payload.nombre}" actualizado con éxito!`;
+      } else {
+        const { error } = await supabase
+          .from('hoteles')
+          .insert(payload);
+
+        if (error) {
+          console.error('Error creando hotel:', error);
+          return;
+        }
+        this.mensajeToast = `¡Hotel "${payload.nombre}" guardado con éxito!`;
       }
 
-      const { error } = await supabase
-        .from('hoteles')
-        .update(payload)
-        .eq(
-          'id',
-          this.indiceHotelEditando
-        );
+      await this.cargarHoteles();
+      this.reiniciarHotel();
+      this.mostrarFormularioHotel = false;
 
-      if (error) {
-        console.error(
-          'Error actualizando hotel:',
-          error
-        );
-        return;
-      }
+      // Lanzamos la animación del Toast de éxito en pantalla
+      this.mostrarToast = true;
+      this.cdr.detectChanges();
 
-    } else {
+      // Se desvanece de manera automática tras 4 segundos exactos
+      setTimeout(() => {
+        this.mostrarToast = false;
+        this.cdr.detectChanges();
+      }, 4000);
 
-      const { error } = await supabase
-        .from('hoteles')
-        .insert(payload);
-
-      if (error) {
-        console.error(
-          'Error creando hotel:',
-          error
-        );
-        return;
-      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.guardandoHotel = false;
+      this.cdr.detectChanges();
     }
-
-    await this.cargarHoteles();
-
-    this.reiniciarHotel();
-
-    this.mostrarFormularioHotel = false;
-
-    this.cdr.detectChanges();
   }
 
-
-  editarHotel(
-    hotel: Hotel
-  ) {
-
-    if (hotel.id == null) {
-      return;
+  editarHotel(hotel: Hotel, event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
     }
+
+    if (hotel.id == null) return;
 
     this.editandoHotel = true;
-
-    this.indiceHotelEditando =
-      hotel.id;
-
-    this.nuevoHotel = {
-      ...hotel
-    };
-
+    this.indiceHotelEditando = hotel.id;
+    this.nuevoHotel = { ...hotel };
     this.mostrarFormularioHotel = true;
+    this.cdr.detectChanges();
 
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  pedirConfirmacionBorradoHotel(hotel: Hotel, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.hotelParaBorrar = hotel;
+    this.mostrarConfirmarBorradoHotel = true;
     this.cdr.detectChanges();
   }
 
+  cerrarConfirmarBorradoHotel() {
+    this.mostrarConfirmarBorradoHotel = false;
+    this.hotelParaBorrar = null;
+    this.cdr.detectChanges();
+  }
 
-  async eliminarHotel(
-    hotel: Hotel
-  ) {
-
-    if (hotel.id == null) {
+  async confirmarEliminarHotel() {
+    if (!this.hotelParaBorrar || !this.hotelParaBorrar.id) {
+      this.cerrarConfirmarBorradoHotel();
       return;
     }
+
+    const idBorrar = this.hotelParaBorrar.id;
+    this.cerrarConfirmarBorradoHotel();
 
     const { error } = await supabase
       .from('hoteles')
       .delete()
-      .eq(
-        'id',
-        hotel.id
-      );
+      .eq('id', idBorrar);
 
     if (error) {
-      console.error(
-        'Error eliminando hotel:',
-        error
-      );
+      console.error('Error eliminando hotel:', error);
       return;
     }
 
     await this.cargarHoteles();
+    this.cdr.detectChanges();
   }
 
-
   reiniciarHotel() {
-
     this.editandoHotel = false;
-
     this.indiceHotelEditando = -1;
-
     this.nuevoHotel = {
       nombre: '',
       ciudad: '',

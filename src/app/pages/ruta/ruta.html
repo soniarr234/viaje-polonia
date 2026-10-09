@@ -339,7 +339,7 @@
               type="button"
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
+              (click)="pedirConfirmacionBorradoTransporte(transporte, $event)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -467,7 +467,7 @@
               type="button"
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
+              (click)="pedirConfirmacionBorradoTransporte(transporte, $event)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -595,7 +595,7 @@
               type="button"
               class="btn-eliminar"
               title="Eliminar transporte"
-              (click)="eliminarTransporte(transporte)"
+              (click)="pedirConfirmacionBorradoTransporte(transporte, $event)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -749,7 +749,7 @@
         <button
           type="button"
           class="btn-cancelar-form"
-          (click)="cancelarFormularioHotel()"
+          (click)="$event.preventDefault(); $event.stopPropagation(); cancelarFormularioHotel($event)"
         >
           Cancelar
         </button>
@@ -757,7 +757,7 @@
         <button
           type="button"
           class="btn-guardar-form"
-          (click)="agregarHotel()"
+          (click)="$event.preventDefault(); $event.stopPropagation(); agregarHotel($event)"
         >
           {{
             editandoHotel
@@ -863,7 +863,7 @@
             type="button"
             class="btn-editar"
             title="Editar hotel"
-            (click)="editarHotel(hotel)"
+            (click)="$event.preventDefault(); $event.stopPropagation(); editarHotel(hotel, $event)"
           >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -882,7 +882,7 @@
             type="button"
             class="btn-eliminar"
             title="Eliminar hotel"
-            (click)="eliminarHotel(hotel)"
+            (click)="$event.preventDefault(); $event.stopPropagation(); pedirConfirmacionBorradoHotel(hotel, $event)"
           >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -2540,4 +2540,52 @@
 
   </div>
 
+</div>
+
+
+<!-- POP-UP DE CONFIRMACIÓN DE BORRADO DE TRANSPORTE -->
+<div class="popup-overlay" *ngIf="mostrarConfirmarBorradoTransporte" (click)="cerrarConfirmarBorradoTransporte()">
+  <div class="popup-box" (click)="$event.stopPropagation()">    
+    <h3>¿Eliminar transporte?</h3>
+    <p>¿Estás seguro de que quieres quitar el trayecto de <strong>{{ transporteParaBorrar?.origen }}</strong> a <strong>{{ transporteParaBorrar?.destino }}</strong>?</p>
+    
+    <div class="popup-buttons">
+      <button type="button" class="btn-popup-cancelar" (click)="cerrarConfirmarBorradoTransporte()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-popup-eliminar" (click)="confirmarEliminarTransporte()">
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- POP-UP DE CONFIRMACIÓN DE BORRADO DE HOTEL -->
+<div class="popup-overlay" *ngIf="mostrarConfirmarBorradoHotel" (click)="cerrarConfirmarBorradoHotel()">
+  <div class="popup-box" (click)="$event.stopPropagation()">
+    <h3>¿Eliminar reserva?</h3>
+    <p>¿Estás seguro de que quieres quitar el hotel "<strong>{{ hotelParaBorrar?.nombre }}</strong>" de la ciudad de <strong>{{ hotelParaBorrar?.ciudad }}</strong>?</p>
+    
+    <div class="popup-buttons">
+      <button type="button" class="btn-popup-cancelar" (click)="cerrarConfirmarBorradoHotel()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-popup-eliminar" (click)="confirmarEliminarHotel()">
+        Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- TOAST DE NOTIFICACIÓN DE ÉXITO -->
+<div class="toast-notificacion" [class.mostrar]="mostrarToast">
+  <div class="toast-contenido">
+    <div class="toast-icono-wrapper">
+      <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.4em" height="1.4em">
+        <path fill="#4ade80" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10s10-4.5 10-10S17.5 2 12 2m-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8z"/>
+      </svg>
+    </div>
+    <p>{{ mensajeToast }}</p>
+  </div>
 </div>

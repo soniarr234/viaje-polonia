@@ -34,9 +34,13 @@ export class Gastos implements OnInit {
   indiceEditando = -1;
   dias = ['Antes del viaje', 'Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'];
 
-  // Propiedades añadidas para controlar el Pop-up de borrado
+  // Propiedades para controlar el Pop-up de borrado
   mostrarConfirmarBorradoGasto = false;
   gastoParaBorrar: Gasto | null = null;
+
+  // Propiedades para controlar el Toast de éxito
+  mostrarToast = false;
+  mensajeToast = '';
 
   nuevoGasto: Gasto = {
     concepto: '',
@@ -86,6 +90,9 @@ export class Gastos implements OnInit {
 
   @HostListener('document:click', ['$event'])
   cerrarSiClickFuera(event: Event) {
+    // Si no estamos en transportes, frenamos el listener para que no bloquee los clicks de hoteles
+    if (this.vista !== 'transportes') return;
+
     const target = event.target as HTMLElement;
     if (!target.closest('.dropdown')) {
       this.cerrarDropdowns();
@@ -135,7 +142,12 @@ export class Gastos implements OnInit {
     }, 0);
   }
 
-  async agregarGasto() {
+  async agregarGasto(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     if (
       !this.nuevoGasto.concepto.trim() ||
       this.nuevoGasto.importe <= 0
@@ -151,6 +163,8 @@ export class Gastos implements OnInit {
       dia: this.nuevoGasto.dia,
     };
 
+    const conceptoGuardado = this.nuevoGasto.concepto;
+
     if (this.editando) {
       const { error } = await supabase
         .from('gastos')
@@ -161,6 +175,7 @@ export class Gastos implements OnInit {
         console.error("Error al actualizar:", error);
         return;
       }
+      this.mensajeToast = `¡Gasto "${conceptoGuardado}" actualizado con éxito!`;
     } else {
       const { error } = await supabase
         .from('gastos')
@@ -170,6 +185,7 @@ export class Gastos implements OnInit {
         console.error("Error al insertar:", error);
         return;
       }
+      this.mensajeToast = `¡Gasto "${conceptoGuardado}" añadido con éxito!`;
     }
   
     await this.cargarGastos();
@@ -188,10 +204,24 @@ export class Gastos implements OnInit {
     };
   
     this.cerrarDropdowns();
+
+    // Lanzamos la animación del Toast de éxito en pantalla
+    this.mostrarToast = true;
     this.cdr.detectChanges();
+
+    // Se desvanece automáticamente tras 4 segundos exactos
+    setTimeout(() => {
+      this.mostrarToast = false;
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
-  editarGasto(gasto: Gasto) {
+  editarGasto(gasto: Gasto, event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     this.editando = true;
     this.indiceEditando = gasto.id || -1;
     this.nuevoGasto = { ...gasto };
@@ -200,9 +230,15 @@ export class Gastos implements OnInit {
       top: 0,
       behavior: 'smooth',
     });
+    this.cdr.detectChanges();
   }
 
-  cancelarEdicion() {
+  cancelarEdicion(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     this.editando = false;
     this.indiceEditando = -1;
     this.nuevoGasto = {
@@ -215,7 +251,6 @@ export class Gastos implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Activa el Pop-up guardando los datos del gasto que se quiere quitar
   pedirConfirmacionBorradoGasto(gasto: Gasto, event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -225,14 +260,12 @@ export class Gastos implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Cierra visualmente la ventana emergente
   cerrarConfirmarBorradoGasto() {
     this.mostrarConfirmarBorradoGasto = false;
     this.gastoParaBorrar = null;
     this.cdr.detectChanges();
   }
 
-  // Se ejecuta definitivamente al presionar "Sí, eliminar" dentro de la ventana emergente
   async confirmarEliminarGasto() {
     if (!this.gastoParaBorrar || !this.gastoParaBorrar.id) {
       this.cerrarConfirmarBorradoGasto();

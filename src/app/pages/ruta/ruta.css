@@ -2334,3 +2334,145 @@
   }
 
 }
+
+
+/* =========================
+   POP-UP CONFIRMACIÓN
+========================= */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 12, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Por encima de todo, incluso del modal principal */
+  padding: 20px;
+}
+
+.popup-box {
+  width: 100%;
+  max-width: 340px;
+  background: #1e293b; /* Fondo a juego con tu modal */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  animation: popAparecer 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popup-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.popup-box p {
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.popup-box p strong {
+  color: #ffffff;
+}
+
+/* Botonera interna del Pop-up */
+.popup-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.popup-buttons button {
+  flex: 1;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-popup-cancelar {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+.btn-popup-cancelar:hover {
+  background: #475569;
+  color: #ffffff;
+}
+
+.btn-popup-eliminar {
+  background: #ef4444; /* Rojo de advertencia */
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.btn-popup-eliminar:hover {
+  background: #f87171;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Animación de escala sutil */
+@keyframes popAparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+
+/* =========================
+   TOAST / NOTIFICACIONES
+========================= */
+.toast-notificacion {
+  position: fixed;
+  bottom: -100px; /* Empieza oculto debajo de la pantalla */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #22c55e; /* Un verde vivo de éxito */
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10000; /* Por encima de las modales y del fondo */
+  transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+  max-width: 90vw;
+  width: max-content;
+}
+
+/* Esta clase se activa automáticamente desde Angular */
+.toast-notificacion.mostrar {
+  bottom: 30px; /* Sube flotando de manera fluida */
+  opacity: 1;
+}
+
+.toast-contenido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-icono {
+  font-size: 18px;
+}
+
+.toast-notificacion p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}

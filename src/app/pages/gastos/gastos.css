@@ -632,3 +632,48 @@
 .btn-popup-eliminar:hover {
   background: #dc2626; /* Tono de rojo un poco más oscuro al pasar el ratón */
 }
+
+
+/* =========================
+   TOAST / NOTIFICACIONES
+========================= */
+.toast-notificacion {
+  position: fixed;
+  bottom: -100px; /* Empieza oculto debajo de la pantalla */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #22c55e; /* Un verde vivo de éxito */
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10000; /* Por encima de las modales y del fondo */
+  transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+  max-width: 90vw;
+  width: max-content;
+}
+
+/* Esta clase se activa automáticamente desde Angular */
+.toast-notificacion.mostrar {
+  bottom: 30px; /* Sube flotando de manera fluida */
+  opacity: 1;
+}
+
+.toast-contenido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-icono {
+  font-size: 18px;
+}
+
+.toast-notificacion p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}

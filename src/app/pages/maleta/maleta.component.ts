@@ -26,6 +26,10 @@ export class Maleta implements OnInit {
   mostrarConfirmarBorrado = false;
   objetoParaBorrar: ItemMaleta | null = null;
 
+  // Propiedades añadidas para controlar el Toast de notificación
+  mostrarToast = false;
+  mensajeToast = '';
+
   categorias = [
     { nombre: 'imprescindibles', titulo: 'Imprescindibles' },
     { nombre: 'ropa', titulo: 'Ropa' },
@@ -66,9 +70,21 @@ export class Maleta implements OnInit {
     this.cdr.detectChanges(); 
   }
 
+  // Modificado para que limpie el objeto de forma segura al salir
   cerrarModal() {
     this.mostrarModal = false;
+    this.limpiarFormulario();
     this.cdr.detectChanges(); 
+  }
+
+  // Método auxiliar para resetear el formulario a su estado original sin ID
+  limpiarFormulario() {
+    this.nuevoObjeto = {
+      nombre: '',
+      cantidad: 1,
+      categoria: 'ropa',
+      preparado: false,
+    };
   }
 
   async guardarObjeto() {
@@ -76,8 +92,10 @@ export class Maleta implements OnInit {
       return;
     }
   
-    if (this.nuevoObjeto.id) {
-      // MODO EDICIÓN: Actualiza el elemento existente usando su id
+    const nombreGuardado = this.nuevoObjeto.nombre;
+    const esEdicion = !!this.nuevoObjeto.id;
+
+    if (esEdicion) {
       const { error } = await supabase
         .from('maleta')
         .update({
@@ -91,8 +109,8 @@ export class Maleta implements OnInit {
         console.error('Error actualizando objeto:', error);
         return;
       }
+      this.mensajeToast = `¡"${nombreGuardado}" se ha actualizado con éxito!`;
     } else {
-      // MODO CREACIÓN: Inserta un registro completamente nuevo
       const { error } = await supabase
         .from('maleta')
         .insert({
@@ -106,24 +124,30 @@ export class Maleta implements OnInit {
         console.error('Error guardando objeto:', error);
         return;
       }
+      this.mensajeToast = `¡"${nombreGuardado}" se ha metido en la maleta!`;
     }
   
-    // Refresca la lista de la maleta
     await this.cargarObjetos();
-  
-    // Limpia el formulario para que vuelva a su estado original vacío
-    this.nuevoObjeto = {
-      nombre: '',
-      cantidad: 1,
-      categoria: 'ropa',
-      preparado: false,
-    };
-  
+    
+    // Cerramos la modal una única vez de forma limpia
     this.cerrarModal();
+
+    // Lanzamos la animación del Toast de éxito en pantalla
+    this.mostrarToast = true;
+    this.cdr.detectChanges();
+
+    // Se desvanece de manera automática tras 4 segundos exactos
+    setTimeout(() => {
+      this.mostrarToast = false;
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
-  // Intercepta el clic de la papelera para abrir tu pop-up personalizado
-  pedirConfirmacionBorrado(objeto: ItemMaleta) {
+  // Intercepta el clic de la papelera deteniendo el burbujeo de forma interna
+  pedirConfirmacionBorrado(objeto: ItemMaleta, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
     this.objetoParaBorrar = objeto;
     this.mostrarConfirmarBorrado = true;
     this.cdr.detectChanges();
@@ -145,7 +169,7 @@ export class Maleta implements OnInit {
       .eq('id', idBorrar);
 
     if (error) {
-      console.error('Error eliminando objeto:', error);
+      console.error('Error de borrado en Supabase:', error);
       return;
     }
 
@@ -158,30 +182,12 @@ export class Maleta implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Método interno directo que usa Supabase (mantenido para la edición limpia)
-  async eliminarObjetoDirecto(objeto: ItemMaleta) {
-    if (!objeto.id) {
-      return;
-    }
+  // Intercepta el clic de editar deteniendo el burbujeo de forma interna
+  editarObjeto(objeto: ItemMaleta, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
 
-    const { error } = await supabase
-      .from('maleta')
-      .delete()
-      .eq('id', objeto.id);
-
-    if (error) {
-      console.error('Error eliminando objeto:', error);
-      return;
-    }
-
-    await this.cargarObjetos();
-  }
-
-  async editarObjeto(objeto: ItemMaleta) {
-    this.nuevoObjeto = {
-      ...objeto,
-    };
-
+    this.nuevoObjeto = { ...objeto };
     this.mostrarModal = true;
     this.cdr.detectChanges(); 
   }
