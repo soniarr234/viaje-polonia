@@ -1246,10 +1246,18 @@
 
 .timeline-content p {
   margin: 0 0 12px;
-
+  white-space: pre-line;
   color: #cbd5e1;
 
   line-height: 1.6;
+}
+/* Estilo para el título interno del texto */
+::v-deep .subtitulo-lugar {
+  display: inline-block;
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #38bdf8; /* Un color llamativo (azul cielo, por ejemplo) */
+  margin-bottom: 8px;
 }
 
 

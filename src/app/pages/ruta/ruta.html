@@ -1696,7 +1696,7 @@
           </div>
 
 
-          <p *ngIf="lugar.descripcion">
+          <p *ngIf="lugar.descripcion" [innerHTML]="transformarTexto(lugar.descripcion)">
             {{ lugar.descripcion }}
           </p>
 

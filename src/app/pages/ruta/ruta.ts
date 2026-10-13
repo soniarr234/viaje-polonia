@@ -2433,5 +2433,28 @@ export class Ruta implements OnInit {
         ? null
         : id;
   }
+
+  transformarTexto(texto: string): string {
+    if (!texto) return '';
+  
+    let textoProcesado = texto;
+  
+    // 1. Separar por los primeros dos puntos ":"
+    const posicionDosPuntos = textoProcesado.indexOf(':');
+    if (posicionDosPuntos !== -1) {
+      const tituloEncontrado = textoProcesado.substring(0, posicionDosPuntos).trim();
+      const restoDelTexto = textoProcesado.substring(posicionDosPuntos + 1).trim();
+      
+      // Envolvemos el título en un bloque con clase propia y añadimos un salto de línea
+      textoProcesado = `<span class="subtitulo-lugar">${tituloEncontrado}</span><br>${restoDelTexto}`;
+    }
+  
+    // 2. Procesar tus asteriscos de las *negritas*
+    textoProcesado = textoProcesado.replace(/\*(.*?)\*/g, '<strong>\$1</strong>');
+  
+    return textoProcesado;
+  }
+  
+
 }
 
