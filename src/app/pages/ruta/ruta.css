@@ -1244,22 +1244,6 @@
     1px solid rgba(255, 255, 255, 0.05);
 }
 
-.timeline-content p {
-  margin: 0 0 12px;
-  white-space: pre-line;
-  color: #cbd5e1;
-
-  line-height: 1.6;
-}
-/* Estilo para el título interno del texto */
-::v-deep .subtitulo-lugar {
-  display: inline-block;
-  font-size: 1.1em;
-  font-weight: 700;
-  color: #38bdf8; /* Un color llamativo (azul cielo, por ejemplo) */
-  margin-bottom: 8px;
-}
-
 
 .subtitulo-gastronomia {
   display: flex;
@@ -1306,6 +1290,74 @@
   margin: 6px 0 0;
 }
 
+/* =====================================================
+   10. TEXTOS EXPANSIVOS (LEER MÁS / MENOS)
+===================================================== */
+
+.btn-leer-mas {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 6px 0;
+  margin-top: 4px;
+
+  border: none;
+  background: transparent;
+  color: #38bdf8;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn-leer-mas:hover {
+  color: #7dd3fc;
+}
+
+.btn-leer-mas:active {
+  transform: scale(0.96);
+}
+
+.btn-leer-mas svg {
+  transition: transform 0.25s ease-in-out; /* Animación suave al girar */
+  transform: rotate(0deg); /* Apunta hacia abajo por defecto */
+}
+
+.btn-leer-mas svg.rotado {
+  transform: rotate(180deg); /* Apunta hacia arriba al expandirse */
+}
+
+/* CONTENEDORES DE TEXTO DENTRO DE LOS ACORDEONES */
+
+.timeline-content div p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+
+/* SUBTÍTULOS AUTOMÁTICOS DEL PROCESADOR DE TEXTO */
+
+::v-deep .subtitulo-lugar {
+  display: block;
+
+  margin-top: 4px;
+  margin-bottom: 6px;
+
+  color: #38bdf8;
+
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
 
 /* =====================================================
    16. CUSTOM SELECT

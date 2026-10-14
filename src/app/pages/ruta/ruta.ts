@@ -117,6 +117,8 @@ export class Ruta implements OnInit {
 
   ciudadElementoRuta = '';
 
+  descripcionExpandida = false;
+  textoLargoExpandido = false;
 
   /* ===================================================
      3. TRANSPORTES
@@ -276,16 +278,23 @@ export class Ruta implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
-  @HostListener('document:click', ['$event'])
+  @HostListener('document:click', ['\$event'])
   cerrarSiClickFuera(event: Event) {
+    const target = event.target as HTMLElement;
+
+    // 🛡️ SI EL CLIC PROVIENE DEL BOTÓN "LEER MÁS" O DE LA TARJETA ABIERTA, ABORTAMOS CUALQUIER ACCIÓN DE CIERRE
+    if (target.closest('.btn-leer-mas') || target.closest('.timeline-content') || target.closest('.modal-ruta')) {
+      return;
+    }
+
     if (this.vista !== 'transportes') {
       return;
     }
-    const target = event.target as HTMLElement;
     if (!target.closest('.dropdown')) {
       this.cerrarDropdowns();
     }
   }
+
 
   // 👇 AÑADIDO: Esta es la función que te faltaba y provocaba el error de compilación
   cerrarDropdowns() {
@@ -1052,6 +1061,7 @@ export class Ruta implements OnInit {
   abrirCiudad(ciudad: Ciudad) {
     this.ciudadSeleccionada = ciudad;
     this.itemAbierto = null;
+    this.textoLargoExpandido = false;
     this.reiniciarLugar();
     this.reiniciarGastronomia();
     this.reiniciarCuriosidad();
@@ -1061,6 +1071,7 @@ export class Ruta implements OnInit {
   cerrarCiudad() {
     this.ciudadSeleccionada = null;
     this.itemAbierto = null;
+    this.textoLargoExpandido = false;
     this.reiniciarLugar();
     this.reiniciarGastronomia();
     this.reiniciarCuriosidad();
@@ -2264,6 +2275,8 @@ export class Ruta implements OnInit {
     elemento: RutaElemento
   ) {
 
+    this.descripcionExpandida = false;
+
     if (
       elemento.tipo === 'lugar'
     ) {
@@ -2391,7 +2404,6 @@ export class Ruta implements OnInit {
     return undefined;
   }
 
-
   cerrarElementoRuta() {
 
     this.elementoRutaAbierto = null;
@@ -2399,6 +2411,8 @@ export class Ruta implements OnInit {
     this.tipoElementoRuta = null;
 
     this.ciudadElementoRuta = '';
+
+    this.descripcionExpandida = false;
 
     this.cdr.detectChanges();
   }
@@ -2436,25 +2450,34 @@ export class Ruta implements OnInit {
 
   transformarTexto(texto: string): string {
     if (!texto) return '';
-  
     let textoProcesado = texto;
   
-    // 1. Separar por los primeros dos puntos ":"
+    // Buscamos si el título se separa por ":" o por un salto de línea "\n"
     const posicionDosPuntos = textoProcesado.indexOf(':');
-    if (posicionDosPuntos !== -1) {
-      const tituloEncontrado = textoProcesado.substring(0, posicionDosPuntos).trim();
-      const restoDelTexto = textoProcesado.substring(posicionDosPuntos + 1).trim();
+    const posicionSaltoLinea = textoProcesado.indexOf('\n');
+    
+    // Determinamos cuál es el primer separador que aparece en el texto
+    let posicionCorte = -1;
+    let longitudSeparador = 1;
+  
+    if (posicionDosPuntos !== -1 && (posicionSaltoLinea === -1 || posicionDosPuntos < posicionSaltoLinea)) {
+      posicionCorte = posicionDosPuntos;
+    } else if (posicionSaltoLinea !== -1) {
+      posicionCorte = posicionSaltoLinea;
+      longitudSeparador = 1;
+    }
+  
+    if (posicionCorte !== -1) {
+      const tituloEncontrado = textoProcesado.substring(0, posicionCorte).trim();
+      const restoDelTexto = textoProcesado.substring(posicionCorte + longitudSeparador).trim();
       
-      // Envolvemos el título en un bloque con clase propia y añadimos un salto de línea
+      // Convertimos el inicio en un subtítulo destacado e independiente
       textoProcesado = `<span class="subtitulo-lugar">${tituloEncontrado}</span><br>${restoDelTexto}`;
     }
   
-    // 2. Procesar tus asteriscos de las *negritas*
-    textoProcesado = textoProcesado.replace(/\*(.*?)\*/g, '<strong>\$1</strong>');
-  
-    return textoProcesado;
+    // Procesamos los asteriscos de las *negritas*
+    return textoProcesado.replace(/\*(.*?)\*/g, '<strong>\$1</strong>');
   }
-  
 
 }
 

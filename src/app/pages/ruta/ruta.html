@@ -1513,21 +1513,35 @@
       >
 
 
-      <p *ngIf="elementoRutaAbierto.descripcion">
-        {{ elementoRutaAbierto.descripcion }}
-      </p>
+      <!-- CAMBIADO: Usamos elementoRutaAbierto en vez de lugar -->
+      <div *ngIf="elementoRutaAbierto?.descripcion" (click)="$event.stopPropagation(); $event.preventDefault();">
+        
+        <p 
+          [innerHTML]="transformarTexto(
+            textoLargoExpandido
+              ? elementoRutaAbierto.descripcion 
+              : (elementoRutaAbierto.descripcion.substring(0, 150) + '...')
+          )"
+          style="white-space: pre-line; margin-bottom: 4px;"
+        ></p>
 
+        <button 
+          *ngIf="elementoRutaAbierto.descripcion.length > 150"
+          type="button" 
+          class="btn-leer-mas"
+          (click)="$event.stopPropagation(); $event.preventDefault(); textoLargoExpandido = !textoLargoExpandido"
+        >
+          <!-- Texto dinámico sin emojis planos -->
+          {{ textoLargoExpandido ? 'Leer menos' : 'Leer más' }}
 
-      <div
-        class="direccion"
-        *ngIf="elementoRutaAbierto.direccion"
-      >
-        📍 {{ elementoRutaAbierto.direccion }}
+          <!-- Tu icono SVG con clase dinámica de rotación -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" fillRule="evenodd" d="m5 8l7 8l7-8z"/></svg>
+        </button>
+
       </div>
 
-
       <a
-        *ngIf="elementoRutaAbierto.maps"
+        *ngIf="elementoRutaAbierto?.maps"
         [href]="elementoRutaAbierto.maps"
         target="_blank"
         rel="noopener noreferrer"
@@ -1535,6 +1549,7 @@
       >
         Abrir en Maps
       </a>
+
 
     </div>
 
@@ -1613,12 +1628,6 @@
 
         <input
           type="text"
-          placeholder="Dirección"
-          [(ngModel)]="nuevoLugar.direccion"
-        >
-
-        <input
-          type="text"
           placeholder="URL de imagen"
           [(ngModel)]="nuevoLugar.imagen"
         >
@@ -1687,18 +1696,29 @@
             class="lugar-imagen"
           >
 
+          <!-- Ponemos el stopPropagation para blindar el bloque -->
+          <div *ngIf="lugar.descripcion" (click)="$event.stopPropagation(); $event.preventDefault();">
+            
+            <!-- El ternario evalúa la nueva variable "textoLargoExpandido" en lugar de itemAbierto -->
+            <p 
+              [innerHTML]="transformarTexto(
+                textoLargoExpandido
+                  ? lugar.descripcion 
+                  : (lugar.descripcion.substring(0, 150) + '...')
+              )"
+              style="white-space: pre-line; margin-bottom: 4px;"
+            ></p>
 
-          <div
-            class="direccion"
-            *ngIf="lugar.direccion"
-          >
-            📍 {{ lugar.direccion }}
+            <!-- El botón simplemente conmuta la variable booleana local -->
+            <button 
+              *ngIf="lugar.descripcion.length > 150"
+              type="button" 
+              class="btn-leer-mas"
+              (click)="$event.stopPropagation(); $event.preventDefault(); textoLargoExpandido = !textoLargoExpandido"
+            >
+              {{ textoLargoExpandido ? '🔼 Leer menos' : '🔽 Leer más' }}
+            </button>
           </div>
-
-
-          <p *ngIf="lugar.descripcion" [innerHTML]="transformarTexto(lugar.descripcion)">
-            {{ lugar.descripcion }}
-          </p>
 
 
           <a
@@ -1710,7 +1730,6 @@
           >
             Abrir en Maps
           </a>
-
 
           <div class="acciones-gastronomia">
 
