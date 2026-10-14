@@ -1974,21 +1974,14 @@
 .ruta-elemento {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Empuja la X totalmente a la derecha */
   gap: 10px;
-
   min-height: 48px;
-
-  padding: 5px 7px 5px 13px;
-
+  padding: 5px 12px; /* Padding interno equilibrado */
   border: 1px solid rgba(148, 163, 184, 0.09);
   border-radius: 13px;
-
   background: rgba(255, 255, 255, 0.035);
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 
@@ -2019,38 +2012,47 @@
 
 
 .ruta-link {
-  flex: 1;
-
+  flex: 1; /* Ocupa todo el espacio sobrante de la izquierda */
   min-width: 0;
-
-  padding: 9px 4px;
-
-  overflow: hidden;
-
+  padding: 9px 0;
   border: none;
-
   background: transparent;
   color: #e2e8f0;
-
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
-
   text-align: left;
-
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   cursor: pointer;
-
-  transition:
-    color 0.15s ease;
 }
 
 .ruta-link:hover {
   color: #7dd3fc;
 }
 
+.btn-eliminar-actividad {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Impide que el botón se encoja si el texto es largo */
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 9px;
+  background: rgba(239, 68, 68, 0.05); /* Un fondo rojo muy sutil */
+  color: #64748b;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10; /* Asegura estar por encima de cualquier capa invisible */
+}
+.btn-eliminar-actividad:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
 
 .ruta-elemento .btn-eliminar {
   flex: 0 0 32px;
@@ -2574,3 +2576,14 @@
 .timeline-container.cdk-drop-list-dragging .timeline-item:not(.cdk-drag-placeholder) {
   transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
 }
+
+.aviso-popup-guia small {
+  display: block;
+  margin-top: -12px;
+  margin-bottom: 20px;
+  color: #64748b;
+  font-size: 12.5px;
+  font-style: italic;
+  letter-spacing: 0.1px;
+}
+

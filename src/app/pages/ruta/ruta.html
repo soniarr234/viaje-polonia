@@ -1445,45 +1445,34 @@
 
 
         <!-- ELEMENTOS AÑADIDOS -->
+        <!-- ELEMENTOS AÑADIDOS -->
+        <div class="ruta-elementos" *ngIf="dia.elementos.length > 0">
 
-        <div
-          class="ruta-elementos"
-          *ngIf="dia.elementos.length > 0"
-        >
-
-          <div
-            class="ruta-elemento"
-            *ngFor="let elemento of dia.elementos"
-          >
+          <div class="ruta-elemento" *ngFor="let elemento of dia.elementos">
 
             <button
               type="button"
               class="ruta-link"
               (click)="abrirElementoRuta(elemento)"
             >
-              {{
-                elemento.tipo === 'lugar'
-                  ? '🏛️'
-                  : '🍴'
-              }}
-
+              {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }}
               {{ elemento.referencia }}
             </button>
 
-
+            <!-- CAMBIADO: Ejecuta directamente eliminarElementoDia sin pasar por pop-ups confusos -->
             <button
               type="button"
               class="btn-eliminar"
               title="Quitar de este día"
-              (click)="pedirConfirmacionBorradoElementoRuta(dia, elemento, $event)"
+              (click)="$event.preventDefault(); $event.stopPropagation(); pedirConfirmacionQuitarActividad(dia, elemento, $event)"
             >
               ✖
             </button>
+          
 
           </div>
 
         </div>
-
 
         <div
           class="ruta-vacia"
@@ -1526,15 +1515,6 @@
       <h2>
         {{ elementoRutaAbierto.nombre }}
       </h2>
-
-
-      <div
-        class="fecha"
-        *ngIf="ciudadElementoRuta"
-      >
-        📍 {{ ciudadElementoRuta }}
-      </div>
-
 
       <img
         *ngIf="elementoRutaAbierto.imagen"
@@ -2673,6 +2653,27 @@
     </div>
   </div>
 </div>
+
+<!-- POP-UP DE CONFIRMACIÓN: QUITAR ELEMENTO DE UN DÍA DE LA RUTA -->
+<div class="popup-overlay" *ngIf="mostrarConfirmarQuitarActividadDia" (click)="cerrarConfirmacionQuitarActividad()">
+  <div class="popup-box" (click)="$event.stopPropagation()">
+    
+    <h3>¿Quitar de la ruta?</h3>
+    <p>¿Estás seguro de que deseas quitar "<strong>{{ actividadParaQuitar?.referencia }}</strong>" del itinerario de este día?</p>
+    <p class="aviso-popup-guia"><small>Esto no eliminará el lugar de la guía de la ciudad.</small></p>
+    
+    <div class="popup-buttons">
+      <button type="button" class="btn-popup-cancelar" (click)="cerrarConfirmacionQuitarActividad()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-popup-eliminar" (click)="confirmarQuitarActividadDeRuta()">
+        Sí, quitar
+      </button>
+    </div>
+
+  </div>
+</div>
+
 
 
 <!-- TOAST DE NOTIFICACIÓN DE ÉXITO -->

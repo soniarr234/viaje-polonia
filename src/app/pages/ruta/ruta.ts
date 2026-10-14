@@ -3,7 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  HostListener 
+  HostListener,
+  NgZone 
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -131,6 +132,10 @@ export class Ruta implements OnInit {
 
   editandoDiaRuta = false;
   idDiaRutaEditando: number | null = null;
+
+  mostrarConfirmarQuitarActividadDia = false;
+  actividadParaQuitar: RutaElemento | null = null;
+  diaDeActividadParaQuitar: DiaRuta | null = null;
 
   /* ===================================================
      3. TRANSPORTES
@@ -287,7 +292,8 @@ export class Ruta implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private zone: NgZone
   ) {}
 
   @HostListener('document:click', ['\$event'])
@@ -1754,6 +1760,7 @@ export class Ruta implements OnInit {
     this.editandoDiaRuta = false;
     this.idDiaRutaEditando = null;
     this.dropdownCiudadRutaAbierto = false;
+    this.cdr.detectChanges();
   }
 
 
@@ -1840,23 +1847,13 @@ export class Ruta implements OnInit {
                         );
 
                       return {
-
-                        id:
-                          elementoDb.id,
-
-                        tipo:
-                          'lugar',
-
-                        lugarId:
-                          elementoDb.lugar_id,
-
-                        referencia:
-                          lugar?.nombre
-                          || 'Lugar no disponible',
-
-                        lugar:
-                          lugar
+                        id: elementoDb.id,
+                        tipo: 'lugar',
+                        lugarId: elementoDb.lugar_id,
+                        referencia: lugar?.nombre || 'Lugar no disponible',
+                        lugar: lugar
                       };
+
                     }
 
 
@@ -2173,40 +2170,35 @@ export class Ruta implements OnInit {
      24. ELIMINAR ELEMENTO DIA
   =================================================== */
 
-  async eliminarElementoDia(
-    dia: DiaRuta,
-    elemento: RutaElemento
-  ) {
-
+  async eliminarElementoDia(dia: DiaRuta, elemento: RutaElemento) {
     if (elemento.id == null) {
+      console.warn('El elemento no tiene un ID relacional válido.');
       return;
     }
 
+    // 1. Borramos el registro ÚNICAMENTE en la tabla intermedia ruta_elementos
     const { error } = await supabase
       .from('ruta_elementos')
       .delete()
-      .eq(
-        'id',
-        elemento.id
-      );
+      .eq('id', elemento.id);
 
     if (error) {
-      console.error(
-        'Error eliminando elemento de ruta:',
-        error
-      );
+      console.error('Error eliminando de ruta_elementos:', error);
       return;
     }
 
-    dia.elementos =
-      dia.elementos.filter(
-        item =>
-          item.id !== elemento.id
-      );
-
-    this.cdr.detectChanges();
+    // 2. Ejecutamos la actualización limpia dentro de la zona de Angular
+    this.zone.run(async () => {
+      // Filtramos en memoria local para que desaparezca al instante sin lag visual
+      dia.elementos = dia.elementos.filter(item => item.id !== elemento.id);
+      
+      // Recargamos el listado completo para que los selects vuelvan a estar disponibles
+      await this.cargarRutaDias();
+      
+      // Forzamos al motor a pintar el cambio en la pantalla
+      this.cdr.detectChanges();
+    });
   }
-
 
   /* ===================================================
      25. ELIMINAR DIA
@@ -2482,16 +2474,29 @@ export class Ruta implements OnInit {
   =================================================== */
 
   pedirConfirmacionBorradoElementoRuta(dia: DiaRuta, elemento: RutaElemento, event: Event) {
-    event.preventDefault();
-    event.stopPropagation(); // Evita que se abran modales accidentales al hacer clic
+    console.log('--- 🎯 [PASO 1] pedirConfirmacionBorradoElementoRuta activado ---');
     
-    this.diaRutaParaBorrarElemento = dia;
-    this.elementoRutaParaBorrar = elemento;
-    this.mostrarConfirmarBorradoElementoRuta = true;
-    this.cdr.detectChanges();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation(); 
+    }
+
+    // Forzamos a Angular a ejecutar el cambio dentro de su zona de chequeo visual activa
+    this.zone.run(() => {
+      this.diaRutaParaBorrarElemento = dia;
+      this.elementoRutaParaBorrar = elemento;
+      this.mostrarConfirmarBorradoElementoRuta = true;
+      
+      console.log('Variable mutada dentro de NgZone: mostrarConfirmarBorradoElementoRuta =', this.mostrarConfirmarBorradoElementoRuta);
+      
+      // Forzamos al motor a recalcular los elementos flotantes
+      this.cdr.detectChanges();
+    });
   }
 
+
   cerrarConfirmarBorradoElementoRuta() {
+    console.log('--- ↩️ Pop-up de confirmación cerrado por el usuario ---');
     this.mostrarConfirmarBorradoElementoRuta = false;
     this.elementoRutaParaBorrar = null;
     this.diaRutaParaBorrarElemento = null;
@@ -2499,7 +2504,13 @@ export class Ruta implements OnInit {
   }
 
   async confirmarEliminarElementoRuta() {
-    if (!this.elementoRutaParaBorrar || !this.elementoRutaParaBorrar.id || !this.diaRutaParaBorrarElemento) {
+    console.log('--- ⚡ [PASO 2] confirmarEliminarElementoRuta ejecutado en el Modal ---');
+    
+    if (!this.elementoRutaParaBorrar || !this.diaRutaParaBorrarElemento) {
+      console.error('❌ Abortado: Falta el elemento o el día en memoria de la clase.', 
+        'Elemento:', this.elementoRutaParaBorrar, 
+        'Día:', this.diaRutaParaBorrarElemento
+      );
       this.cerrarConfirmarBorradoElementoRuta();
       return;
     }
@@ -2508,32 +2519,55 @@ export class Ruta implements OnInit {
     const diaAsociado = this.diaRutaParaBorrarElemento;
     this.cerrarConfirmarBorradoElementoRuta();
 
-    // 1. Borramos el elemento de la tabla en Supabase
+    console.log('🆔 ID definitivo extraído para eliminar de ruta_elementos:', idBorrar);
+
+    if (!idBorrar) {
+      console.error('❌ Abortado: El elemento no posee un ID de base de datos válido. Revisa el mapeo de cargarRutaDias().');
+      return;
+    }
+
+    console.log('📡 Conectando con Supabase... Solicitando DELETE de la fila intermedia...');
     const { error } = await supabase
       .from('ruta_elementos')
       .delete()
       .eq('id', idBorrar);
 
     if (error) {
-      console.error('Error eliminando elemento de ruta:', error);
+      console.error('❌ Error real devuelto por la API de Supabase:', error);
       return;
     }
 
-    // 2. Limpiamos la lista en la pantalla local de forma reactiva
-    diaAsociado.elementos = diaAsociado.elementos.filter(
-      item => item.id !== idBorrar
-    );
+    console.log('✅ Supabase ha eliminado la fila correctamente. Pasando a actualización reactiva de la interfaz...');
 
-    this.mensajeToast = '¡Elemento quitado del itinerario con éxito!';
-    this.mostrarToast = true;
-    this.cdr.detectChanges();
+    this.textoLargoExpandido = false;
+    this.descripcionExpandida = false;
 
-    setTimeout(() => {
-      this.mostrarToast = false;
+    this.zone.run(async () => {
+      console.log('Filtrando array en memoria local...');
+      const totalAntes = diaAsociado.elementos.length;
+      diaAsociado.elementos = diaAsociado.elementos.filter(item => item.id !== idBorrar);
+      console.log('Elementos en tarjeta local: Pasó de', totalAntes, 'a', diaAsociado.elementos.length);
+
+      console.log('Recargando listado general desde el servidor...');
+      await this.cargarRutaDias();
+      
+      console.log('Forzando ciclo de renderizado (Change Detection)...');
       this.cdr.detectChanges();
-    }, 4000);
-  }
+    });
 
+    this.zone.run(() => {
+      console.log('Lanzando Toast verde de éxito...');
+      this.mensajeToast = '¡Actividad quitada del día con éxito!';
+      this.mostrarToast = true;
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.mostrarToast = false;
+        console.log('Toast de éxito desvanecido.');
+        this.cdr.detectChanges();
+      }, 4000);
+    });
+  }
 
   cambiarVista(
     vista:
@@ -2625,6 +2659,66 @@ export class Ruta implements OnInit {
     } catch (err) {
       console.error('Error procesando el reordenamiento:', err);
     }
+  }
+
+  pedirConfirmacionQuitarActividad(dia: DiaRuta, elemento: RutaElemento, event: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.zone.run(() => {
+      this.diaDeActividadParaQuitar = dia;
+      this.actividadParaQuitar = elemento;
+      this.mostrarConfirmarQuitarActividadDia = true;
+      this.cdr.detectChanges();
+    });
+  }
+
+  cerrarConfirmacionQuitarActividad() {
+    this.mostrarConfirmarQuitarActividadDia = false;
+    this.actividadParaQuitar = null;
+    this.diaDeActividadParaQuitar = null;
+    this.cdr.detectChanges();
+  }
+
+  async confirmarQuitarActividadDeRuta() {
+    if (!this.actividadParaQuitar || !this.diaDeActividadParaQuitar) {
+      this.cerrarConfirmacionQuitarActividad();
+      return;
+    }
+
+    const idBorrar = this.actividadParaQuitar.id;
+    const diaAsociado = this.diaDeActividadParaQuitar;
+    this.cerrarConfirmacionQuitarActividad();
+
+    if (idBorrar == null) return;
+
+    const { error } = await supabase
+      .from('ruta_elementos')
+      .delete()
+      .eq('id', idBorrar);
+
+    if (error) {
+      console.error('Error desvinculando actividad de la ruta:', error);
+      return;
+    }
+
+    this.zone.run(async () => {
+      diaAsociado.elementos = diaAsociado.elementos.filter(item => item.id !== idBorrar);
+      await this.cargarRutaDias();
+      this.cdr.detectChanges();
+    });
+
+    this.zone.run(() => {
+      this.mensajeToast = '¡Actividad quitada del día con éxito!';
+      this.mostrarToast = true;
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.mostrarToast = false;
+        this.cdr.detectChanges();
+      }, 4000);
+    });
   }
 
 }
