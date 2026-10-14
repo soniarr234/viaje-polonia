@@ -1210,10 +1210,7 @@ export class Ruta implements OnInit {
   }
 
 
-  editarLugar(
-    lugar: Lugar
-  ) {
-
+  editarLugar(lugar: Lugar) {
     if (!this.ciudadSeleccionada) {
       return;
     }
@@ -1234,8 +1231,14 @@ export class Ruta implements OnInit {
     };
 
     this.mostrarFormularioLugar = true;
-
     this.cdr.detectChanges();
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 0);    
   }
 
 

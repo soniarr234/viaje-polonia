@@ -1624,22 +1624,16 @@
         🏛️ Lugares
       </h3>
 
-
       <button
         type="button"
         class="btn-add-mini"
         (click)="
-          mostrarFormularioLugar =
-            !mostrarFormularioLugar
+          !mostrarFormularioLugar ? reiniciarLugar() : null;
+          mostrarFormularioLugar = !mostrarFormularioLugar;
         "
       >
-        {{
-          mostrarFormularioLugar
-            ? '✕ Cerrar'
-            : '+ Añadir'
-        }}
+        {{ mostrarFormularioLugar ? '✕ Cerrar' : '+ Añadir' }}
       </button>
-
 
       <div
         class="card card-gastronomia"
@@ -1841,18 +1835,13 @@
         type="button"
         class="btn-add-mini"
         (click)="
-          mostrarFormularioGastronomia =
-            !mostrarFormularioGastronomia;
-          dropdownGastronomiaAbierto = false
+          !mostrarFormularioGastronomia ? reiniciarGastronomia() : null;
+          mostrarFormularioGastronomia = !mostrarFormularioGastronomia;
+          dropdownGastronomiaAbierto = false;
         "
       >
-        {{
-          mostrarFormularioGastronomia
-            ? '✕ Cerrar'
-            : '+ Añadir'
-        }}
+        {{ mostrarFormularioGastronomia ? '✕ Cerrar' : '+ Añadir' }}
       </button>
-
 
       <div
         class="card card-gastronomia"
