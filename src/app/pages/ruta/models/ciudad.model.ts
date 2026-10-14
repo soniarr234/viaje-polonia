@@ -26,7 +26,7 @@ export interface Gastronomia {
   direccion: string;
   imagen?: string;
   maps?: string;
-  posicion?: number; // 👈 ¡AÑADIDO AQUÍ!
+  posicion?: number;
 }
 
 export interface Curiosidad {

@@ -1142,8 +1142,9 @@
 .descripcion-ciudad,
 .modal-ruta p {
   color: #cbd5e1;
-
   line-height: 1.7;
+  font-size: 13.5px;
+  white-space: pre-line;
 }
 
 .descripcion-ciudad {
@@ -1806,32 +1807,31 @@
 /* =====================================================
    23. RUTA - BLOQUES LUGARES / GASTRONOMIA
 ===================================================== */
+.ruta-bloques-formulario {
+  margin: 12px 16px;
+  padding: 5px 0 16px 0;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.25); /* Un fondo negro translúcido para hundir el formulario */
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
 
 .ruta-bloque {
   position: relative;
-
-  padding: 18px 20px;
-
-  border-bottom:
-    1px solid rgba(255, 255, 255, 0.045);
+  padding: 0 0 16px 0; /* Eliminamos paddings excesivos */
 }
-
+.ruta-bloque:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
 
 .ruta-dia-card h4 {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-
-  margin: 0 0 13px;
-
-  color: #e2e8f0;
-
-  font-size: 14px;
-  font-weight: 700;
-
-  letter-spacing: 0.1px;
+  margin: 0 0 10px;
+  color: #94a3b8; /* Un tono grisáceo más discreto */
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-
 
 .ruta-bloque select {
   margin-bottom: 9px;
@@ -1963,53 +1963,66 @@
 .ruta-elementos {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-
-  padding: 18px 20px 20px;
-
-  background: rgba(2, 6, 23, 0.12);
+  gap: 10px; /* Un poco más de espacio entre actividades */
+  padding: 20px 16px 20px;
+  background: rgba(2, 6, 23, 0.4); /* Fondo diferenciado para la zona del itinerario */
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
-
 
 .ruta-elemento {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Empuja la X totalmente a la derecha */
-  gap: 10px;
-  min-height: 48px;
-  padding: 5px 12px; /* Padding interno equilibrado */
-  border: 1px solid rgba(148, 163, 184, 0.09);
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.035);
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 6px 12px 6px 14px;
+  border: 1px solid rgba(56, 189, 248, 0.08); /* Borde con un sutil toque de tu azul corporativo */
+  border-radius: 14px;
+  background: #1e293b; /* ¡CLAVE! Un gris más claro para que la tarjeta "salte" hacia el frente */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra elegante */
   transition: all 0.2s ease;
 }
 
+.ruta-elemento:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  background: #24334a; /* Se ilumina levemente */
+  transform: translateY(-2px); /* Efecto de elevación */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
 
+/* La línea indicadora de la izquierda */
 .ruta-elemento::before {
   content: "";
-
-  flex: 0 0 3px;
-
+  flex: 0 0 4px;
   align-self: stretch;
-
-  margin: 5px 2px 5px 0;
-
+  margin: 4px 6px 4px 0;
   border-radius: 999px;
-
   background: #38bdf8;
-
-  opacity: 0.65;
+  opacity: 1; /* Brillo total para marcar el recorrido */
 }
 
-
-.ruta-elemento:hover {
-  border-color: rgba(56, 189, 248, 0.19);
-
-  background: rgba(56, 189, 248, 0.055);
-
-  transform: translateX(2px);
+.ruta-elemento .div-drag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
+.ruta-elemento .tirador-arrastre {
+  display: inline-flex;
+  align-items: center;
+  color: #475569;
+  cursor: grab;
+  transition: color 0.2s ease;
+}
+
+.ruta-elemento .tirador-arrastre:hover {
+  color: #38bdf8;
+}
+
+.ruta-elemento .tirador-arrastre:active {
+  cursor: grabbing;
+}
 
 .ruta-link {
   flex: 1; /* Ocupa todo el espacio sobrante de la izquierda */

@@ -1306,7 +1306,7 @@
 
         <div>
           <h3>
-            📅 {{ dia.titulo }}
+            {{ dia.titulo }}
           </h3>
           <span>
             {{ dia.ciudad }}
@@ -1367,7 +1367,7 @@
         <ng-container
           *ngIf="obtenerCiudadPorId(dia.ciudadId) as ciudad"
         >
-
+        <div class="ruta-bloques-formulario">
           <!-- LUGARES -->
 
           <div class="ruta-bloque">
@@ -1385,7 +1385,7 @@
               </option>
 
               <option
-                *ngFor="let lugar of ciudad.lugares"
+                *ngFor="let lugar of obtenerLugaresDisponibles(dia, ciudad)"
                 [value]="lugar.nombre"
               >
                 {{ lugar.nombre }}
@@ -1422,7 +1422,7 @@
               </option>
 
               <option
-                *ngFor="let sitio of ciudad.gastronomia"
+                *ngFor="let sitio of obtenerGastronomiaDisponible(dia, ciudad)"
                 [value]="sitio.nombre"
               >
                 {{ sitio.nombre }}
@@ -1441,23 +1441,42 @@
 
           </div>
 
+        </div>
+
         </ng-container>
 
-
         <!-- ELEMENTOS AÑADIDOS -->
-        <!-- ELEMENTOS AÑADIDOS -->
-        <div class="ruta-elementos" *ngIf="dia.elementos.length > 0">
+        <div 
+          class="ruta-elementos timeline-container" 
+          *ngIf="dia.elementos.length > 0"
+          cdkDropList
+          [cdkDropListData]="dia.elementos"
+          (cdkDropListDropped)="reordenarElementosDia($event, dia)"
+        >
 
-          <div class="ruta-elemento" *ngFor="let elemento of dia.elementos">
+          <div 
+            class="ruta-elemento" 
+            *ngFor="let elemento of dia.elementos"
+            cdkDrag
+          >
 
-            <button
-              type="button"
-              class="ruta-link"
-              (click)="abrirElementoRuta(elemento)"
-            >
-              {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }}
-              {{ elemento.referencia }}
-            </button>
+            <div class="div-drag">
+              <!-- Tirador de arrastre con clase interactiva -->
+              <span class="tirador-arrastre" cdkDragHandle>
+                <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.4em" height="1.4em">
+                  <path fill="currentColor" d="M9 19.23q-.508 0-.87-.36T7.77 18t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36m6 0q-.508 0-.87-.36t-.36-.87t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36m-6-6q-.508 0-.87-.36T7.77 12t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36m6 0q-.508 0-.87-.36t-.36-.87t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36m-6-6q-.508 0-.87-.36T7.77 6t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36m6 0q-.508 0-.87-.36T13.77 6t.36-.87t.87-.36t.87.36t.36.87t-.36.87t-.87.36"/>
+                </svg>
+              </span>
+
+              <button
+                type="button"
+                class="ruta-link"
+                (click)="abrirElementoRuta(elemento)"
+              >
+                {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }}
+                {{ elemento.referencia }}
+              </button>
+            </div>
 
             <!-- CAMBIADO: Ejecuta directamente eliminarElementoDia sin pasar por pop-ups confusos -->
             <button
@@ -1468,10 +1487,7 @@
             >
               ✖
             </button>
-          
-
           </div>
-
         </div>
 
         <div

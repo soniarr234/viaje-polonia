@@ -39,6 +39,8 @@ interface RutaElemento {
 
   lugar?: Lugar;
   gastronomia?: Gastronomia;
+
+  posicion?: number;
 }
 
 
@@ -1796,10 +1798,7 @@ export class Ruta implements OnInit {
     } = await supabase
       .from('ruta_elementos')
       .select('*')
-      .order(
-        'created_at',
-        { ascending: true }
-      );
+      .order('posicion', { ascending: true });
 
     if (elementosError) {
       console.error(
@@ -1825,14 +1824,8 @@ export class Ruta implements OnInit {
 
             const elementosDia =
               (elementosData || [])
-                .filter(
-                  (elementoDb: any) =>
-                    elementoDb.ruta_dia_id
-                    === diaDb.id
-                )
-                .map(
-                  (elementoDb: any):
-                    RutaElemento => {
+              .filter((elementoDb: any) => elementoDb.ruta_dia_id === diaDb.id)
+              .map((elementoDb: any): RutaElemento => {
 
                     if (
                       elementoDb.tipo
@@ -1851,7 +1844,8 @@ export class Ruta implements OnInit {
                         tipo: 'lugar',
                         lugarId: elementoDb.lugar_id,
                         referencia: lugar?.nombre || 'Lugar no disponible',
-                        lugar: lugar
+                        lugar: lugar,
+                        posicion: elementoDb.posicion
                       };
 
                     }
@@ -1867,21 +1861,12 @@ export class Ruta implements OnInit {
 
                     return {
 
-                      id:
-                        elementoDb.id,
-
-                      tipo:
-                        'gastronomia',
-
-                      gastronomiaId:
-                        elementoDb.gastronomia_id,
-
-                      referencia:
-                        gastronomia?.nombre
-                        || 'Sitio no disponible',
-
-                      gastronomia:
-                        gastronomia
+                      id: elementoDb.id,
+                      tipo: 'gastronomia',
+                      gastronomiaId: elementoDb.gastronomia_id,
+                      referencia: gastronomia?.nombre || 'Sitio no disponible',
+                      gastronomia: gastronomia,
+                      posicion: elementoDb.posicion
                     };
                   }
                 );
@@ -1989,9 +1974,7 @@ export class Ruta implements OnInit {
      22. AÑADIR LUGAR AL DIA
   =================================================== */
 
-  async agregarLugarADia(
-    dia: DiaRuta
-  ) {
+  async agregarLugarADia(dia: DiaRuta) {
 
     if (
       dia.id == null ||
@@ -2043,18 +2026,11 @@ export class Ruta implements OnInit {
     const { error } = await supabase
       .from('ruta_elementos')
       .insert({
-
-        ruta_dia_id:
-          dia.id,
-
-        tipo:
-          'lugar',
-
-        lugar_id:
-          lugar.id,
-
-        gastronomia_id:
-          null
+        ruta_dia_id: dia.id,
+        tipo: 'lugar',
+        lugar_id: lugar.id,
+        gastronomia_id: null,
+        posicion: dia.elementos.length
       });
 
 
@@ -2132,21 +2108,15 @@ export class Ruta implements OnInit {
 
 
     const { error } = await supabase
-      .from('ruta_elementos')
-      .insert({
+    .from('ruta_elementos')
+    .insert({
+      ruta_dia_id: dia.id,
+      tipo: 'gastronomia',
+      lugar_id: null,
+      gastronomia_id: gastronomia.id,
+      posicion: dia.elementos.length
+    });
 
-        ruta_dia_id:
-          dia.id,
-
-        tipo:
-          'gastronomia',
-
-        lugar_id:
-          null,
-
-        gastronomia_id:
-          gastronomia.id
-      });
 
 
     if (error) {
@@ -2316,6 +2286,31 @@ export class Ruta implements OnInit {
         item.nombre === referencia
     );
   }
+
+    /* ===================================================
+     FILTROS DINÁMICOS PARA SELECTORES DE LA RUTA
+  =================================================== */
+
+  obtenerLugaresDisponibles(dia: DiaRuta, ciudad: Ciudad): Lugar[] {
+    if (!ciudad || !ciudad.lugares || !dia || !dia.elementos) {
+      return [];
+    }
+    // Filtramos la lista original de la ciudad quitando los que ya están en el día
+    return ciudad.lugares.filter(lugar => 
+      !dia.elementos.some(el => el.tipo === 'lugar' && el.lugarId === lugar.id)
+    );
+  }
+
+  obtenerGastronomiaDisponible(dia: DiaRuta, ciudad: Ciudad): Gastronomia[] {
+    if (!ciudad || !ciudad.gastronomia || !dia || !dia.elementos) {
+      return [];
+    }
+    // Filtramos la lista original quitando los restaurantes ya asignados al día
+    return ciudad.gastronomia.filter(sitio => 
+      !dia.elementos.some(el => el.tipo === 'gastronomia' && el.gastronomiaId === sitio.id)
+    );
+  }
+
 
 
   /* ===================================================
@@ -2597,13 +2592,14 @@ export class Ruta implements OnInit {
 
   transformarTexto(texto: string): string {
     if (!texto) return '';
-    let textoProcesado = texto;
-  
-    // Buscamos si el título se separa por ":" o por un salto de línea "\n"
-    const posicionDosPuntos = textoProcesado.indexOf(':');
-    const posicionSaltoLinea = textoProcesado.indexOf('\n');
     
-    // Determinamos cuál es el primer separador que aparece en el texto
+    // 👇 ¡CLAVE!: Convertimos todos los saltos de línea de la BBDD (\n) en saltos de línea visuales HTML (<br>)
+    let textoProcesado = texto.replace(/\n/g, '<br>');
+  
+    // Buscamos si el título se separa por ":" o por un salto de línea "<br>"
+    const posicionDosPuntos = textoProcesado.indexOf(':');
+    const posicionSaltoLinea = textoProcesado.indexOf('<br>'); // 👈 Modificado para buscar el nuevo break
+    
     let posicionCorte = -1;
     let longitudSeparador = 1;
   
@@ -2611,7 +2607,7 @@ export class Ruta implements OnInit {
       posicionCorte = posicionDosPuntos;
     } else if (posicionSaltoLinea !== -1) {
       posicionCorte = posicionSaltoLinea;
-      longitudSeparador = 1;
+      longitudSeparador = 4; // 👈 Modificado a 4 porque "<br>" tiene 4 caracteres
     }
   
     if (posicionCorte !== -1) {
@@ -2625,6 +2621,7 @@ export class Ruta implements OnInit {
     // Procesamos los asteriscos de las *negritas*
     return textoProcesado.replace(/\*(.*?)\*/g, '<strong>\$1</strong>');
   }
+
 
   async reordenarLugares(event: CdkDragDrop<Lugar[]>) {
     if (!this.ciudadSeleccionada || !this.ciudadSeleccionada.lugares) {
@@ -2720,6 +2717,43 @@ export class Ruta implements OnInit {
       }, 4000);
     });
   }
+
+    /* ===================================================
+     REORDENAR ACTIVIDADES DEL DÍA (DRAG AND DROP)
+  =================================================== */
+  async reordenarElementosDia(event: CdkDragDrop<RutaElemento[]>, dia: DiaRuta) {
+    if (!dia || !dia.elementos) return;
+
+    // 1. Reordenamos de forma instantánea en la interfaz local para evitar Lag visual
+    moveItemInArray(
+      dia.elementos,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.cdr.detectChanges();
+
+    // 2. Mapeamos las nuevas posiciones secuenciales y preparamos las promesas de guardado
+    const actualizaciones = dia.elementos.map((elemento, index) => {
+      elemento.posicion = index; // Sincronizamos el objeto local
+      return supabase
+        .from('ruta_elementos')
+        .update({ posicion: index }) // Actualizamos la columna en Supabase
+        .eq('id', elemento.id);
+    });
+
+    try {
+      // 3. Enviamos todas las mutaciones en paralelo a Supabase
+      const resultados = await Promise.all(actualizaciones);
+      const errores = resultados.filter(res => res.error);
+      
+      if (errores.length > 0) {
+        console.error('Hubo errores al persistir el orden en Supabase:', errores);
+      }
+    } catch (err) {
+      console.error('Error procesando el reordenamiento de actividades:', err);
+    }
+  }
+
 
 }
 
