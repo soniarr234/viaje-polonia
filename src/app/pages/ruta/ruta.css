@@ -1218,6 +1218,16 @@
   background: rgba(56, 189, 248, 0.06);
 }
 
+.div-drag{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.div-drag span{
+  cursor: grab;
+}
 
 .timeline-header span:first-child {
   min-width: 0;
@@ -1232,7 +1242,7 @@
 
   color: #38bdf8;
 
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -1715,7 +1725,11 @@
     transparent
   );
 }
-
+.acciones-dia {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
 .ruta-dia-header > div:first-child {
   min-width: 0;
@@ -2535,4 +2549,28 @@
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+
+/* Estilo para la tarjeta mientras el dedo la está arrastrando */
+.cdk-drag-preview {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  background: #1e293b !important; /* Mismo color de tu tarjeta oscura */
+  border-radius: 16px;
+  opacity: 0.9;
+}
+
+/* Animación suave de transición para cuando los demás lugares se apartan */
+.cdk-drop-list-placeholder {
+  transition: transform 0.2s ease;
+}
+
+/* Animación de retorno si sueltas el elemento y vuelve a su sitio */
+.cdk-drag-animating {
+  transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Animación de reajuste del resto de la lista al soltar */
+.timeline-container.cdk-drop-list-dragging .timeline-item:not(.cdk-drag-placeholder) {
+  transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
 }

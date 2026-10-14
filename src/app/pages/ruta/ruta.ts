@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { Transporte } from './models/transporte.model';
 import { Hotel } from './models/hotel.model';
@@ -67,7 +68,8 @@ interface DiaRuta {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    DragDropModule
   ],
   templateUrl: './ruta.html',
   styleUrl: './ruta.css'
@@ -119,6 +121,16 @@ export class Ruta implements OnInit {
 
   descripcionExpandida = false;
   textoLargoExpandido = false;
+
+  mostrarConfirmarBorradoElementoRuta = false;
+  elementoRutaParaBorrar: RutaElemento | null = null;
+  diaRutaParaBorrarElemento: DiaRuta | null = null;
+
+  mostrarConfirmarBorradoDiaRuta = false;
+  diaRutaParaBorrar: DiaRuta | null = null;
+
+  editandoDiaRuta = false;
+  idDiaRutaEditando: number | null = null;
 
   /* ===================================================
      3. TRANSPORTES
@@ -827,7 +839,8 @@ export class Ruta implements OnInit {
           descripcion,
           direccion,
           imagen,
-          maps
+          maps,
+          posicion
         ),
 
         gastronomia (
@@ -838,7 +851,8 @@ export class Ruta implements OnInit {
           descripcion,
           direccion,
           imagen,
-          maps
+          maps,
+          posicion
         ),
 
         curiosidades (
@@ -848,7 +862,9 @@ export class Ruta implements OnInit {
           descripcion
         )
       `)
-      .order('nombre', { ascending: true });
+      .order('nombre', { ascending: true })
+      .order('posicion', { foreignTable: 'lugares', ascending: true })
+      .order('posicion', { foreignTable: 'gastronomia', ascending: true });
 
     if (error) {
       console.error('Error cargando ciudades:', error);
@@ -867,8 +883,9 @@ export class Ruta implements OnInit {
         descripcion: l.descripcion || '',
         direccion: l.direccion || '',
         imagen: l.imagen || '',
-        maps: l.maps || ''
-      })),
+        maps: l.maps || '',
+        posicion: l.posicion || 0
+      })).sort((a: Lugar, b: Lugar) => (a.posicion || 0) - (b.posicion || 0)), // 👈 TIPADO EXPLICÍTULO AQUÍ
       gastronomia: (c.gastronomia || []).map((g: any): Gastronomia => ({
         id: g.id,
         ciudadId: g.ciudad_id,
@@ -877,8 +894,9 @@ export class Ruta implements OnInit {
         descripcion: g.descripcion || '',
         direccion: g.direccion || '',
         imagen: g.imagen || '',
-        maps: g.maps || ''
-      })),
+        maps: g.maps || '',
+        posicion: g.posicion || 0
+      })).sort((a: Gastronomia, b: Gastronomia) => (a.posicion || 0) - (b.posicion || 0)), // 👈 Y AQUÍ
       curiosidades: (c.curiosidades || []).map((cur: any): Curiosidad => ({
         id: cur.id,
         ciudadId: cur.ciudad_id,
@@ -889,7 +907,6 @@ export class Ruta implements OnInit {
 
     this.cdr.detectChanges();
   }
-
 
   /* ===================================================
      15. CIUDADES CRUD
@@ -999,6 +1016,11 @@ export class Ruta implements OnInit {
 
     this.mostrarFormularioCiudad = true;
     this.cdr.detectChanges();
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }
 
   pedirConfirmacionBorradoCiudad(ciudad: Ciudad, event: Event) {
@@ -1680,23 +1702,44 @@ export class Ruta implements OnInit {
   =================================================== */
 
   abrirFormularioDia() {
-
     this.reiniciarDia();
-
     this.mostrarFormularioDia = true;
+    this.cdr.detectChanges();
   }
 
 
   cancelarFormularioDia() {
-
     this.reiniciarDia();
-
     this.mostrarFormularioDia = false;
+    this.cdr.detectChanges();
   }
 
+  editarDiaRuta(dia: DiaRuta, event: Event) {
+    event.preventDefault();
+    event.stopPropagation(); // Evita clics raros en la tarjeta
+
+    if (dia.id == null) return;
+
+    this.editandoDiaRuta = true;
+    this.idDiaRutaEditando = dia.id;
+
+    // Cargamos los datos del día en el formulario
+    this.nuevoDia = {
+      ...dia,
+      elementos: [...dia.elementos]
+    };
+
+    this.mostrarFormularioDia = true;
+    this.cdr.detectChanges();
+
+    // Sube la pantalla suavemente al formulario de edición
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
 
   reiniciarDia() {
-
     this.nuevoDia = {
       id: null,
       titulo: '',
@@ -1708,6 +1751,8 @@ export class Ruta implements OnInit {
       gastronomiaSeleccionada: ''
     };
 
+    this.editandoDiaRuta = false;
+    this.idDiaRutaEditando = null;
     this.dropdownCiudadRutaAbierto = false;
   }
 
@@ -1881,73 +1926,67 @@ export class Ruta implements OnInit {
   =================================================== */
 
   async agregarDiaRuta() {
-
-    if (
-      !this.nuevoDia.titulo.trim() ||
-      !this.nuevoDia.ciudad.trim()
-    ) {
+    if (!this.nuevoDia.titulo.trim() || !this.nuevoDia.ciudad.trim()) {
       return;
     }
 
-    /*
-     * Preferimos ciudadId porque ya lo tenemos
-     * seleccionado en el HTML.
-     *
-     * Dejamos el nombre como respaldo.
-     */
-    const ciudad =
-      this.ciudades.find(
-        ciudad =>
-          ciudad.id === this.nuevoDia.ciudadId
-      )
-      ||
-      this.ciudades.find(
-        ciudad =>
-          ciudad.nombre === this.nuevoDia.ciudad
-      );
-
+    const ciudad = this.ciudades.find(c => c.id === this.nuevoDia.ciudadId)
+      || this.ciudades.find(c => c.nombre === this.nuevoDia.ciudad);
 
     if (ciudad?.id == null) {
-      console.error(
-        'No se encontró la ciudad seleccionada'
-      );
+      console.error('No se encontró la ciudad seleccionada');
       return;
     }
 
+    const payload = {
+      titulo: this.nuevoDia.titulo.trim(),
+      fecha: this.nuevoDia.fecha || null,
+      ciudad_id: ciudad.id
+    };
 
-    const { error } = await supabase
-      .from('ruta_dias')
-      .insert({
+    try {
+      if (this.editandoDiaRuta) {
+        // Modo Edición: Actualizamos el día existente
+        const { error } = await supabase
+          .from('ruta_dias')
+          .update(payload)
+          .eq('id', this.idDiaRutaEditando);
 
-        titulo:
-          this.nuevoDia.titulo.trim(),
+        if (error) {
+          console.error('Error actualizando día de ruta:', error);
+          return;
+        }
+        this.mensajeToast = `¡"${payload.titulo}" actualizado con éxito!`;
+      } else {
+        // Modo Creación: Insertamos un día nuevo
+        const { error } = await supabase
+          .from('ruta_dias')
+          .insert(payload);
 
-        fecha:
-          this.nuevoDia.fecha || null,
+        if (error) {
+          console.error('Error creando día de ruta:', error);
+          return;
+        }
+        this.mensajeToast = `¡"${payload.titulo}" añadido a la ruta!`;
+      }
 
-        ciudad_id:
-          ciudad.id
-      });
+      this.reiniciarDia();
+      this.mostrarFormularioDia = false;
+      await this.cargarRutaDias();
 
+      // Animación de tu Toast nativo de éxito
+      this.mostrarToast = true;
+      this.cdr.detectChanges();
 
-    if (error) {
-      console.error(
-        'Error creando día de ruta:',
-        error
-      );
-      return;
+      setTimeout(() => {
+        this.mostrarToast = false;
+        this.cdr.detectChanges();
+      }, 4000);
+
+    } catch (e) {
+      console.error(e);
     }
-
-
-    this.reiniciarDia();
-
-    this.mostrarFormularioDia = false;
-
-    await this.cargarRutaDias();
-
-    this.cdr.detectChanges();
   }
-
 
   /* ===================================================
      22. AÑADIR LUGAR AL DIA
@@ -2173,33 +2212,53 @@ export class Ruta implements OnInit {
      25. ELIMINAR DIA
   =================================================== */
 
-  async eliminarDiaRuta(
-    dia: DiaRuta
-  ) {
+  pedirConfirmacionBorradoDiaRuta(dia: DiaRuta, event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    this.diaRutaParaBorrar = dia;
+    this.mostrarConfirmarBorradoDiaRuta = true;
+    this.cdr.detectChanges();
+  }
 
-    if (dia.id == null) {
+  cerrarConfirmarBorradoDiaRuta() {
+    this.mostrarConfirmarBorradoDiaRuta = false;
+    this.diaRutaParaBorrar = null;
+    this.cdr.detectChanges();
+  }
+
+  async confirmarEliminarDiaRuta() {
+    if (!this.diaRutaParaBorrar || !this.diaRutaParaBorrar.id) {
+      this.cerrarConfirmarBorradoDiaRuta();
       return;
     }
 
+    const idBorrar = this.diaRutaParaBorrar.id;
+    this.cerrarConfirmarBorradoDiaRuta();
+
+    // 1. Borramos el día en la base de datos de Supabase
     const { error } = await supabase
       .from('ruta_dias')
       .delete()
-      .eq(
-        'id',
-        dia.id
-      );
+      .eq('id', idBorrar);
 
     if (error) {
-      console.error(
-        'Error eliminando día:',
-        error
-      );
+      console.error('Error eliminando día:', error);
       return;
     }
 
+    // 2. Refrescamos el listado local de forma automática
     await this.cargarRutaDias();
 
+    // 3. Disparamos tu Toast de notificación de éxito
+    this.mensajeToast = '¡Día de ruta eliminado con éxito!';
+    this.mostrarToast = true;
     this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.mostrarToast = false;
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
 
@@ -2422,6 +2481,60 @@ export class Ruta implements OnInit {
      28. INTERFAZ GENERAL
   =================================================== */
 
+  pedirConfirmacionBorradoElementoRuta(dia: DiaRuta, elemento: RutaElemento, event: Event) {
+    event.preventDefault();
+    event.stopPropagation(); // Evita que se abran modales accidentales al hacer clic
+    
+    this.diaRutaParaBorrarElemento = dia;
+    this.elementoRutaParaBorrar = elemento;
+    this.mostrarConfirmarBorradoElementoRuta = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarConfirmarBorradoElementoRuta() {
+    this.mostrarConfirmarBorradoElementoRuta = false;
+    this.elementoRutaParaBorrar = null;
+    this.diaRutaParaBorrarElemento = null;
+    this.cdr.detectChanges();
+  }
+
+  async confirmarEliminarElementoRuta() {
+    if (!this.elementoRutaParaBorrar || !this.elementoRutaParaBorrar.id || !this.diaRutaParaBorrarElemento) {
+      this.cerrarConfirmarBorradoElementoRuta();
+      return;
+    }
+
+    const idBorrar = this.elementoRutaParaBorrar.id;
+    const diaAsociado = this.diaRutaParaBorrarElemento;
+    this.cerrarConfirmarBorradoElementoRuta();
+
+    // 1. Borramos el elemento de la tabla en Supabase
+    const { error } = await supabase
+      .from('ruta_elementos')
+      .delete()
+      .eq('id', idBorrar);
+
+    if (error) {
+      console.error('Error eliminando elemento de ruta:', error);
+      return;
+    }
+
+    // 2. Limpiamos la lista en la pantalla local de forma reactiva
+    diaAsociado.elementos = diaAsociado.elementos.filter(
+      item => item.id !== idBorrar
+    );
+
+    this.mensajeToast = '¡Elemento quitado del itinerario con éxito!';
+    this.mostrarToast = true;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.mostrarToast = false;
+      this.cdr.detectChanges();
+    }, 4000);
+  }
+
+
   cambiarVista(
     vista:
       | 'transportes'
@@ -2477,6 +2590,41 @@ export class Ruta implements OnInit {
   
     // Procesamos los asteriscos de las *negritas*
     return textoProcesado.replace(/\*(.*?)\*/g, '<strong>\$1</strong>');
+  }
+
+  async reordenarLugares(event: CdkDragDrop<Lugar[]>) {
+    if (!this.ciudadSeleccionada || !this.ciudadSeleccionada.lugares) {
+      return;
+    }
+
+    // 1. Reordenamos de forma instantánea en memoria para que no haya Lag visual
+    moveItemInArray(
+      this.ciudadSeleccionada.lugares,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.cdr.detectChanges();
+
+    // 2. Preparamos el listado de actualizaciones de posición
+    const actualizaciones = this.ciudadSeleccionada.lugares.map((lugar, index) => {
+      lugar.posicion = index; // Asignamos el índice como su nueva posición secuencial
+      return supabase
+        .from('lugares')
+        .update({ posicion: index })
+        .eq('id', lugar.id);
+    });
+
+    try {
+      // 3. Lanzamos todas las peticiones de guardado a Supabase de golpe
+      const resultados = await Promise.all(actualizaciones);
+      
+      const errores = resultados.filter(res => res.error);
+      if (errores.length > 0) {
+        console.error('Hubo errores al guardar el orden en la base de datos:', errores);
+      }
+    } catch (err) {
+      console.error('Error procesando el reordenamiento:', err);
+    }
   }
 
 }
