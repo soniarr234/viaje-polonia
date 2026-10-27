@@ -1654,8 +1654,14 @@
 
         <input
           type="text"
-          placeholder="Google Maps"
+          placeholder="URL Google Maps"
           [(ngModel)]="nuevoLugar.maps"
+        >
+
+        <input
+          type="text"
+          placeholder="Direccion"
+          [(ngModel)]="nuevoLugar.direccion"
         >
 
         <textarea
@@ -1712,7 +1718,7 @@
         <div
           class="timeline-content"
           *ngIf="itemAbierto === 'lugar-' + lugar.id"
-          (click)="$event.stopPropagation(); $event.preventDefault();"
+          (click)="$event.stopPropagation();"
         >
 
           <img
@@ -1753,11 +1759,11 @@
               </svg>
             </button>
           </div>
-
+          <p>Maps: {{lugar.maps}}</p>
 
           <a
             *ngIf="lugar.maps"
-            [href]="lugar.maps"
+            [attr.href]="lugar.maps"
             target="_blank"
             rel="noopener noreferrer"
             class="btn-maps"

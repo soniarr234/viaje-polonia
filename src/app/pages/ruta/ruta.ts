@@ -323,14 +323,6 @@ export class Ruta implements OnInit {
     });
   }
 
-  // 👇 Esta función limpia el enlace y evita el bloqueo de Angular
-  obtenerEnlaceMaps(direccion: string): SafeUrl {
-    if (!direccion) return '';
-    const urlConstruida = 'https://google.com/maps/' + encodeURIComponent(direccion);
-    return this.sanitizer.bypassSecurityTrustUrl(urlConstruida);
-  }
-
-
 
   /* ===================================================
      10. INICIALIZACION
@@ -2759,4 +2751,3 @@ export class Ruta implements OnInit {
 
 
 }
-
