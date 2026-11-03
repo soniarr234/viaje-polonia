@@ -14,7 +14,9 @@ export type TipoGastronomia =
   | 'restaurante'
   | 'cafeteria'
   | 'cerveceria'
-  | 'postres';
+  | 'postres'
+  | 'plato_comida'
+  | 'plato_bebida';
 
 export interface Gastronomia {
   id?: number;

@@ -259,9 +259,15 @@ export class Ruta implements OnInit {
 
   dropdownGastronomiaAbierto = false;
 
+  // Pestaña del Nivel 1 ('que-comer' activa por defecto)
+  pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
+
+  // Subpestaña del Nivel 2 ('restaurante' activa por defecto)
+  subSubTipoActive: 'restaurante' | 'cerveceria' | 'cafeteria' | 'postres' = 'restaurante';
+
   nuevaGastronomia: Gastronomia = {
     nombre: '',
-    tipo: 'restaurante',
+    tipo: 'postres',
     descripcion: '',
     direccion: '',
     imagen: '',
@@ -1485,46 +1491,30 @@ export class Ruta implements OnInit {
 
 
   reiniciarGastronomia() {
-
     this.nuevaGastronomia = {
       nombre: '',
-      tipo: 'restaurante',
+      tipo: 'postres',
       descripcion: '',
       direccion: '',
       imagen: '',
       maps: ''
     };
-
     this.editandoGastronomia = false;
-
     this.indiceGastronomiaEditando = -1;
-
     this.mostrarFormularioGastronomia = false;
-
     this.dropdownGastronomiaAbierto = false;
   }
 
 
   obtenerGastronomiaPorTipo(
-    tipo:
-      | 'restaurante'
-      | 'cafeteria'
-      | 'cerveceria'
-      | 'postres'
+    tipo: 'restaurante' | 'cafeteria' | 'cerveceria' | 'postres' | 'plato_comida' | 'plato_bebida'
   ): Gastronomia[] {
-
     if (!this.ciudadSeleccionada) {
       return [];
     }
-
-    return this.ciudadSeleccionada
-      .gastronomia
-      .filter(
-        item =>
-          item.tipo === tipo
-      );
+    return this.ciudadSeleccionada.gastronomia.filter(item => item.tipo === tipo);
   }
-
+  
 
   /* ===================================================
      18. CURIOSIDADES CRUD

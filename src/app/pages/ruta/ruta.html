@@ -1825,626 +1825,185 @@
 
 
       <!-- =================================================
-           GASTRONOMIA
+          GASTRONOMIA
       ================================================== -->
 
       <h3>
         🍴 Gastronomía
       </h3>
 
-
       <button
         type="button"
         class="btn-add-mini"
         (click)="
           !mostrarFormularioGastronomia ? reiniciarGastronomia() : null;
+          nuevaGastronomia.tipo = 'plato_comida';
           mostrarFormularioGastronomia = !mostrarFormularioGastronomia;
           dropdownGastronomiaAbierto = false;
-        "
+          "
       >
         {{ mostrarFormularioGastronomia ? '✕ Cerrar' : '+ Añadir' }}
       </button>
 
+      <!-- FORMULARIO DE INSERCIÓN INTUITIVO -->
       <div
         class="card card-gastronomia"
         *ngIf="mostrarFormularioGastronomia"
-      >
-
-        <input
-          type="text"
-          placeholder="Nombre"
-          [(ngModel)]="nuevaGastronomia.nombre"
         >
+        <h4 style="margin: 0 0 10px; color: #38bdf8; font-size: 14px; text-transform: uppercase;">
+          {{ editandoGastronomia ? '✏️ Editando Elemento' : '✨ Nuevo Elemento' }}
+        </h4>
+
+        <!-- 🌟 PASO 1: Elegir el bloque principal al añadir -->
+<div class="subtabs-ciudad" style="margin-bottom: 16px;">
+  <button 
+    type="button" 
+    [class.active]="nuevaGastronomia.tipo === 'postres'" 
+    (click)="nuevaGastronomia.tipo = 'postres'; dropdownGastronomiaAbierto = false"
+  >
+    😋 Qué probar
+  </button>
+  <button 
+    type="button" 
+    [class.active]="nuevaGastronomia.tipo === 'restaurante' || nuevaGastronomia.tipo === 'cerveceria' || nuevaGastronomia.tipo === 'cafeteria'" 
+    (click)="nuevaGastronomia.tipo = 'restaurante'; dropdownGastronomiaAbierto = false"
+  >
+    📍 Dónde ir
+  </button>
+</div>
+
+<!-- 🌟 PASO 2: Micro-selector simplificado para Supabase -->
+<div class="custom-select">
+  <button
+    type="button"
+    class="custom-select-trigger"
+    (click)="dropdownGastronomiaAbierto = !dropdownGastronomiaAbierto"
+  >
+    <span>
+      Subcategoría: 
+      {{
+        nuevaGastronomia.tipo === 'postres' ? '🍲 Platos y Bebidas Tradicionales' :
+        nuevaGastronomia.tipo === 'restaurante' ? '🍽️ Restaurante' :
+        nuevaGastronomia.tipo === 'cerveceria' ? '🍺 Cervecería' : '☕ Cafetería'
+      }}
+    </span>
+    <span class="custom-select-arrow" [class.open]="dropdownGastronomiaAbierto">▼</span>
+  </button>
+
+  <div class="custom-select-menu" *ngIf="dropdownGastronomiaAbierto">
+    <ng-container *ngIf="nuevaGastronomia.tipo === 'postres'">
+      <button type="button" class="selected">🍲 Platos Tradicionales</button>
+    </ng-container>
+
+    <ng-container *ngIf="nuevaGastronomia.tipo !== 'postres'">
+      <button type="button" [class.selected]="nuevaGastronomia.tipo === 'restaurante'" (click)="nuevaGastronomia.tipo = 'restaurante'; dropdownGastronomiaAbierto = false">🍽️ Restaurante</button>
+      <button type="button" [class.selected]="nuevaGastronomia.tipo === 'cerveceria'" (click)="nuevaGastronomia.tipo = 'cerveceria'; dropdownGastronomiaAbierto = false">🍺 Cervecería</button>
+      <button type="button" [class.selected]="nuevaGastronomia.tipo === 'cafeteria'" (click)="nuevaGastronomia.tipo = 'cafeteria'; dropdownGastronomiaAbierto = false">☕ Cafetería</button>
+    </ng-container>
+  </div>
+</div>
+
+<!-- 🌟 PASO 3: Ocultar dirección si es de tipo postres -->
+<ng-container *ngIf="nuevaGastronomia.tipo !== 'postres'">
+  <input type="text" placeholder="📍 Dirección" [(ngModel)]="nuevaGastronomia.direccion">
+  <input type="text" placeholder="🗺️ URL de Google Maps" [(ngModel)]="nuevaGastronomia.maps">
+</ng-container>
 
 
-        <div class="custom-select">
-
-          <button
-            type="button"
-            class="custom-select-trigger"
-            (click)="
-              dropdownGastronomiaAbierto =
-                !dropdownGastronomiaAbierto
-            "
-          >
-
-            <span>
-              {{
-                nuevaGastronomia.tipo === 'restaurante'
-                  ? 'Restaurante'
-                  : nuevaGastronomia.tipo === 'cafeteria'
-                    ? 'Cafetería'
-                    : nuevaGastronomia.tipo === 'cerveceria'
-                      ? 'Cervecería'
-                      : 'Postres'
-              }}
-            </span>
-
-            <span
-              class="custom-select-arrow"
-              [class.open]="dropdownGastronomiaAbierto"
-            >
-              ▼
-            </span>
-
+        <!-- Botonera inferior unificada en paralelo -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancelar-form" (click)="mostrarFormularioGastronomia = false">
+            Cancelar
           </button>
-
-
-          <div
-            class="custom-select-menu"
-            *ngIf="dropdownGastronomiaAbierto"
-          >
-
-            <button
-              type="button"
-              [class.selected]="nuevaGastronomia.tipo === 'restaurante'"
-              (click)="
-                nuevaGastronomia.tipo = 'restaurante';
-                dropdownGastronomiaAbierto = false
-              "
-            >
-              Restaurante
-            </button>
-
-            <button
-              type="button"
-              [class.selected]="nuevaGastronomia.tipo === 'cafeteria'"
-              (click)="
-                nuevaGastronomia.tipo = 'cafeteria';
-                dropdownGastronomiaAbierto = false
-              "
-            >
-              Cafetería
-            </button>
-
-            <button
-              type="button"
-              [class.selected]="nuevaGastronomia.tipo === 'cerveceria'"
-              (click)="
-                nuevaGastronomia.tipo = 'cerveceria';
-                dropdownGastronomiaAbierto = false
-              "
-            >
-              Cervecería
-            </button>
-
-            <button
-              type="button"
-              [class.selected]="nuevaGastronomia.tipo === 'postres'"
-              (click)="
-                nuevaGastronomia.tipo = 'postres';
-                dropdownGastronomiaAbierto = false
-              "
-            >
-              Postres
-            </button>
-
-          </div>
-
+          <button type="button" class="btn-guardar-form" (click)="agregarGastronomia()">
+            {{ editandoGastronomia ? 'Guardar cambios' : 'Guardar en la ruta' }}
+          </button>
         </div>
+      </div>
 
 
-        <input
-          type="text"
-          placeholder="Dirección"
-          [(ngModel)]="nuevaGastronomia.direccion"
-        >
+      <!-- 🌟 VISUALIZACIÓN EN PANTALLA: DOBLE NIVEL DE PESTAÑAS (Mantenemos tu lógica limpia) -->
 
-        <input
-          type="text"
-          placeholder="URL de imagen"
-          [(ngModel)]="nuevaGastronomia.imagen"
-        >
-
-        <input
-          type="text"
-          placeholder="Google Maps"
-          [(ngModel)]="nuevaGastronomia.maps"
-        >
-
-        <textarea
-          placeholder="Descripción"
-          [(ngModel)]="nuevaGastronomia.descripcion"
-        ></textarea>
-
-
-        <button
-          type="button"
-          class="btn-add"
-          (click)="agregarGastronomia()"
-        >
-          {{
-            editandoGastronomia
-              ? 'Guardar cambios'
-              : 'Añadir'
-          }}
+      <!-- NIVEL 1: Pestaña Principal (Qué comer vs Dónde comer) -->
+      <div class="subtabs-ciudad" style="margin-top: 24px;">
+        <button type="button" [class.active]="pestanaGastroActive === 'que-comer'" (click)="pestanaGastroActive = 'que-comer'">
+          😋 Qué probar
         </button>
-
+        <button type="button" [class.active]="pestanaGastroActive === 'donde-comer'" (click)="pestanaGastroActive = 'donde-comer'">
+          📍 Dónde ir
+        </button>
       </div>
 
 
-      <!-- RESTAURANTES -->
-
-      <div
-        *ngIf="obtenerGastronomiaPorTipo('restaurante').length > 0"
-      >
-
-        <h4 class="subtitulo-gastronomia">
-          🍽️ Restaurantes
-        </h4>
-
-        <div
-          class="timeline-item"
-          *ngFor="let restaurante of obtenerGastronomiaPorTipo('restaurante')"
-        >
-
-          <div
-            class="timeline-header"
-            (click)="toggleItem('rest-' + restaurante.id)"
-          >
-
-            <span>
-              {{ restaurante.nombre }}
-            </span>
-
-            <span>
-              {{
-                itemAbierto === 'rest-' + restaurante.id
-                  ? '−'
-                  : '+'
-              }}
-            </span>
-
-          </div>
-
-
-          <div
-            class="timeline-content"
-            *ngIf="itemAbierto === 'rest-' + restaurante.id"
-          >
-
-            <img
-              *ngIf="restaurante.imagen"
-              [src]="restaurante.imagen"
-              [alt]="restaurante.nombre"
-              class="lugar-imagen"
-            >
-
-            <p *ngIf="restaurante.descripcion">
-              {{ restaurante.descripcion }}
-            </p>
-
-            <div
-              class="direccion"
-              *ngIf="restaurante.direccion"
-            >
-              📍 {{ restaurante.direccion }}
+      <!-- ========================================================
+          SECCIÓN A: QUÉ PROBAR (Platos Tradicionales)
+          ======================================================== -->
+      <div *ngIf="pestanaGastroActive === 'que-comer'">
+        
+        <div *ngIf="obtenerGastronomiaPorTipo('postres').length > 0">
+          <h4 class="subtitulo-gastronomia">🍲 Gastronomía Tradicional</h4>
+          <div class="timeline-item" *ngFor="let item of obtenerGastronomiaPorTipo('postres')">
+            <div class="timeline-header" (click)="toggleItem('gastro-' + item.id)">
+              <span>{{ item.nombre }}</span>
+              <span>{{ itemAbierto === 'gastro-' + item.id ? '−' : '+' }}</span>
             </div>
-
-            <a
-              *ngIf="restaurante.maps"
-              [href]="restaurante.maps"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-maps"
-            >
-              Abrir en Maps
-            </a>
-
-
-            <div class="acciones-gastronomia">
-
-              <button
-                type="button"
-                class="btn-editar"
-                (click)="editarGastronomia(restaurante)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="currentColor"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-              </button>
-
-              <button
-                type="button"
-                class="btn-eliminar"
-                (click)="eliminarGastronomia(restaurante)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-              </button>
-
+            <div class="timeline-content" *ngIf="itemAbierto === 'gastro-' + item.id">
+              <img *ngIf="item.imagen" [src]="item.imagen" [alt]="item.nombre" class="lugar-imagen">
+              <div class="descripcion-enriquecida" [innerHTML]="transformarTexto(item.descripcion)"></div>
+              <div class="acciones-gastronomia" style="margin-top: 14px;">
+                <button type="button" class="btn-editar" (click)="editarGastronomia(item)"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.5em" height="1.5em"><path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"/></svg></button>
+                <button type="button" class="btn-eliminar" (click)="eliminarGastronomia(item)"><svg xmlns="http://w3.org" viewBox="0 0 20 20" width="1.3em" height="1.3em"><path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"/></svg></button>
+              </div>
             </div>
-
           </div>
-
         </div>
 
+        <div class="ruta-vacia" *ngIf="obtenerGastronomiaPorTipo('postres').length === 0">
+          No hay platos ni bebidas tradicionales registrados todavía.
+        </div>
       </div>
 
 
-      <!-- CERVECERIAS -->
-
-      <div
-        *ngIf="obtenerGastronomiaPorTipo('cerveceria').length > 0"
-      >
-
-        <h4 class="subtitulo-gastronomia">
-          🍺 Cervecerías
-        </h4>
-
-        <div
-          class="timeline-item"
-          *ngFor="let cerveza of obtenerGastronomiaPorTipo('cerveceria')"
-        >
-
-          <div
-            class="timeline-header"
-            (click)="toggleItem('cer-' + cerveza.id)"
-          >
-
-            <span>
-              {{ cerveza.nombre }}
-            </span>
-
-            <span>
-              {{
-                itemAbierto === 'cer-' + cerveza.id
-                  ? '−'
-                  : '+'
-              }}
-            </span>
-
-          </div>
-
-
-          <div
-            class="timeline-content"
-            *ngIf="itemAbierto === 'cer-' + cerveza.id"
-          >
-
-            <img
-              *ngIf="cerveza.imagen"
-              [src]="cerveza.imagen"
-              [alt]="cerveza.nombre"
-              class="lugar-imagen"
-            >
-
-            <p *ngIf="cerveza.descripcion">
-              {{ cerveza.descripcion }}
-            </p>
-
-            <div
-              class="direccion"
-              *ngIf="cerveza.direccion"
-            >
-              📍 {{ cerveza.direccion }}
-            </div>
-
-            <a
-              *ngIf="cerveza.maps"
-              [href]="cerveza.maps"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-maps"
-            >
-              Abrir en Maps
-            </a>
-
-
-            <div class="acciones-gastronomia">
-
-              <button
-                type="button"
-                class="btn-editar"
-                (click)="editarGastronomia(cerveza)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="currentColor"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-              </button>
-
-              <button
-                type="button"
-                class="btn-eliminar"
-                (click)="eliminarGastronomia(cerveza)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-              </button>
-
-            </div>
-
-          </div>
-
+      <!-- ========================================================
+        SECCIÓN B: DÓNDE IR (Sub-segmentado por establecimiento)
+        ======================================================== -->
+      <div *ngIf="pestanaGastroActive === 'donde-comer'">
+        
+        <div class="ciudad-stats" style="margin-bottom: 20px;">
+          <span (click)="subSubTipoActive = 'restaurante'" [style.color]="subSubTipoActive === 'restaurante' ? '#38bdf8' : ''" style="cursor: pointer;">🍽️ Restaurantes</span>
+          <span (click)="subSubTipoActive = 'cerveceria'" [style.color]="subSubTipoActive === 'cerveceria' ? '#38bdf8' : ''" style="cursor: pointer;">🍺 Cervecerías</span>
+          <span (click)="subSubTipoActive = 'cafeteria'" [style.color]="subSubTipoActive === 'cafeteria' ? '#38bdf8' : ''" style="cursor: pointer;">☕ Cafeterías</span>
+          <span (click)="subSubTipoActive = 'postres'" [style.color]="subSubTipoActive === 'postres' ? '#38bdf8' : ''" style="cursor: pointer;">🍰 Postres</span>
         </div>
 
-      </div>
-
-
-      <!-- CAFETERIAS -->
-
-      <div
-        *ngIf="obtenerGastronomiaPorTipo('cafeteria').length > 0"
-      >
-
-        <h4 class="subtitulo-gastronomia">
-          ☕ Cafeterías
-        </h4>
-
-        <div
-          class="timeline-item"
-          *ngFor="let cafeteria of obtenerGastronomiaPorTipo('cafeteria')"
-        >
-
-          <div
-            class="timeline-header"
-            (click)="toggleItem('caf-' + cafeteria.id)"
-          >
-
-            <span>
-              {{ cafeteria.nombre }}
-            </span>
-
-            <span>
-              {{
-                itemAbierto === 'caf-' + cafeteria.id
-                  ? '−'
-                  : '+'
-              }}
-            </span>
-
-          </div>
-
-
-          <div
-            class="timeline-content"
-            *ngIf="itemAbierto === 'caf-' + cafeteria.id"
-          >
-
-            <img
-              *ngIf="cafeteria.imagen"
-              [src]="cafeteria.imagen"
-              [alt]="cafeteria.nombre"
-              class="lugar-imagen"
-            >
-
-            <p *ngIf="cafeteria.descripcion">
-              {{ cafeteria.descripcion }}
-            </p>
-
-            <div
-              class="direccion"
-              *ngIf="cafeteria.direccion"
-            >
-              📍 {{ cafeteria.direccion }}
+        <div class="timeline-container">
+          <div class="timeline-item" *ngFor="let item of obtenerGastronomiaPorTipo(subSubTipoActive)">
+            <div class="timeline-header" (click)="toggleItem('gastro-' + item.id)">
+              <span>{{ item.nombre }}</span>
+              <span>{{ itemAbierto === 'gastro-' + item.id ? '−' : '+' }}</span>
             </div>
+            
+            <div class="timeline-content" *ngIf="itemAbierto === 'gastro-' + item.id">
+              <img *ngIf="item.imagen" [src]="item.imagen" [alt]="item.nombre" class="lugar-imagen">
+              <div class="descripcion-enriquecida" [innerHTML]="transformarTexto(item.descripcion)"></div>
+              <div class="direccion" *ngIf="item.direccion">📍 {{ item.direccion }}</div>
+              
+              <a *ngIf="item.maps" [href]="item.maps" target="_blank" rel="noopener noreferrer" class="btn-maps">
+                Abrir en Maps
+              </a>
 
-            <a
-              *ngIf="cafeteria.maps"
-              [href]="cafeteria.maps"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-maps"
-            >
-              Abrir en Maps
-            </a>
-
-
-            <div class="acciones-gastronomia">
-
-              <button
-                type="button"
-                class="btn-editar"
-                (click)="editarGastronomia(cafeteria)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="currentColor"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-              </button>
-
-              <button
-                type="button"
-                class="btn-eliminar"
-                (click)="eliminarGastronomia(cafeteria)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-              </button>
-
+              <div class="acciones-gastronomia">
+                <button type="button" class="btn-editar" (click)="editarGastronomia(item)"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.5em" height="1.5em"><path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"/></svg></button>
+                <button type="button" class="btn-eliminar" (click)="eliminarGastronomia(item)"><svg xmlns="http://w3.org" viewBox="0 0 20 20" width="1.3em" height="1.3em"><path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"/></svg></button>
+              </div>
             </div>
-
           </div>
-
+          
+          <div class="ruta-vacia" *ngIf="obtenerGastronomiaPorTipo(subSubTipoActive).length === 0">
+            No hay ningún establecimiento registrado en esta categoría todavía.
+          </div>
         </div>
-
-      </div>
-
-
-      <!-- POSTRES -->
-
-      <div
-        *ngIf="obtenerGastronomiaPorTipo('postres').length > 0"
-      >
-
-        <h4 class="subtitulo-gastronomia">
-          🍰 Postres
-        </h4>
-
-        <div
-          class="timeline-item"
-          *ngFor="let postre of obtenerGastronomiaPorTipo('postres')"
-        >
-
-          <div
-            class="timeline-header"
-            (click)="toggleItem('pos-' + postre.id)"
-          >
-
-            <span>
-              {{ postre.nombre }}
-            </span>
-
-            <span>
-              {{
-                itemAbierto === 'pos-' + postre.id
-                  ? '−'
-                  : '+'
-              }}
-            </span>
-
-          </div>
-
-
-          <div
-            class="timeline-content"
-            *ngIf="itemAbierto === 'pos-' + postre.id"
-          >
-
-            <img
-              *ngIf="postre.imagen"
-              [src]="postre.imagen"
-              [alt]="postre.nombre"
-              class="lugar-imagen"
-            >
-
-            <p *ngIf="postre.descripcion">
-              {{ postre.descripcion }}
-            </p>
-
-            <div
-              class="direccion"
-              *ngIf="postre.direccion"
-            >
-              📍 {{ postre.direccion }}
-            </div>
-
-            <a
-              *ngIf="postre.maps"
-              [href]="postre.maps"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-maps"
-            >
-              Abrir en Maps
-            </a>
-
-
-            <div class="acciones-gastronomia">
-
-              <button
-                type="button"
-                class="btn-editar"
-                (click)="editarGastronomia(postre)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="1.5em"
-                height="1.5em"
-              >
-                <path
-                  fill="currentColor"
-                  d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06"
-                />
-              </svg>
-              </button>
-
-              <button
-                type="button"
-                class="btn-eliminar"
-                (click)="eliminarGastronomia(postre)"
-              >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                width="1.3em"
-                height="1.3em"
-              >
-                <path
-                  fill="#ef4444"
-                  d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"
-                />
-              </svg>
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
+</div>
 
 
       <!-- =================================================
