@@ -1151,6 +1151,34 @@
   margin-bottom: 24px;
 }
 
+/* =====================================================
+   FORMATO ENRIQUECIDO PARA GASTRONOMÍA Y CURIOSIDADES
+===================================================== */
+
+/* Colócalo al final de tu CSS para dar soporte a los estilos inyectados por tu función */
+.descripcion-enriquecida {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+.descripcion-enriquecida strong {
+  color: #ffffff !important; /* Blanco brillante para que resalten las palabras entre asteriscos */
+  font-weight: 700;
+}
+
+.descripcion-enriquecida .subtitulo-lugar {
+  display: block;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  color: #38bdf8; /* El azul celeste de tu app para el título de la curiosidad o restaurante */
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+
+
+
 .modal-ruta .direccion {
   margin-top: 14px;
 }
@@ -1300,6 +1328,48 @@
 .card-gastronomia > .btn-add {
   margin: 6px 0 0;
 }
+
+/* =====================================================
+   PERSONALIZACIÓN DEL SCROLLBAR (TEXTAREA Y MODALES)
+===================================================== */
+
+/* 1. Definimos el ancho y el fondo de la barra de scroll */
+.form-grid textarea::-webkit-scrollbar,
+.card-gastronomia textarea::-webkit-scrollbar,
+.modal-overlay::-webkit-scrollbar {
+  width: 8px;               /* Un grosor fino y elegante */
+  height: 8px;              /* Para scrolls horizontales si los hubiera */
+}
+
+/* 2. El carril por el que se mueve (el fondo del scroll) */
+.form-grid textarea::-webkit-scrollbar-track,
+.card-gastronomia textarea::-webkit-scrollbar-track,
+.modal-overlay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03); /* Casi transparente, a juego con tus inputs */
+  border-radius: 10px;
+}
+
+/* 3. El tirador (la barrita que arrastras con el dedo o ratón) */
+.form-grid textarea::-webkit-scrollbar-thumb,
+.card-gastronomia textarea::-webkit-scrollbar-thumb,
+.modal-overlay::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.25); /* Tu azul corporativo (#38bdf8) pero con opacidad suave */
+  border-radius: 10px;
+  border: 2px solid transparent;        /* Truco para dejar un margen estético */
+  background-clip: padding-box;
+  
+  transition: background-color 0.2s ease;
+}
+
+/* 4. Efecto al pasar el cursor o arrastrar el scroll */
+.form-grid textarea::-webkit-scrollbar-thumb:hover,
+.card-gastronomia textarea::-webkit-scrollbar-thumb:hover,
+.modal-overlay::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.5);  /* El azul se intensifica al interactuar */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
 
 /* =====================================================
    10. TEXTOS EXPANSIVOS (LEER MÁS / MENOS)

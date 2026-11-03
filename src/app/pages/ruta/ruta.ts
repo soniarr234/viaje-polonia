@@ -1226,11 +1226,14 @@ export class Ruta implements OnInit {
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, 0);    
+      const contenedorModal = document.querySelector('.modal-overlay');
+      if (contenedorModal) {
+        contenedorModal.scrollTo({ 
+          top: 0, 
+          behavior: 'smooth' 
+        });
+      }
+    }, 50); 
   }
 
 

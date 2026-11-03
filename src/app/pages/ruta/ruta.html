@@ -824,7 +824,7 @@
       <div *ngIf="hotel.direccion" class="hotel-direccion">
         <!-- Añadimos stopPropagation para que Angular no frene la apertura de la nueva pestaña -->
         <a 
-          [href]="obtenerEnlaceMaps(hotel.direccion)" 
+          [href]="" 
           (click)="$event.stopPropagation()"
           target="_blank" 
           title="Ver en Google Maps"
@@ -1624,15 +1624,12 @@
         🏛️ Lugares
       </h3>
 
-      <button
-        type="button"
-        class="btn-add-mini"
-        (click)="
-          !mostrarFormularioLugar ? reiniciarLugar() : null;
-          mostrarFormularioLugar = !mostrarFormularioLugar;
-        "
-      >
-        {{ mostrarFormularioLugar ? '✕ Cerrar' : '+ Añadir' }}
+      <button 
+        type="button" 
+        class="btn-add-mini" 
+        *ngIf="!mostrarFormularioLugar" 
+        (click)="mostrarFormularioLugar = true">
+        + Añadir
       </button>
 
       <div
@@ -1670,17 +1667,16 @@
         ></textarea>
 
 
-        <button
-          type="button"
-          class="btn-add"
-          (click)="agregarLugar()"
-        >
-          {{
-            editandoLugar
-              ? 'Guardar cambios'
-              : 'Añadir lugar'
-          }}
-        </button>
+        <!-- REEMPLAZA EL BOTÓN ANTERIOR POR ESTO: -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancelar-form" (click)="mostrarFormularioLugar = false">
+            Cancelar
+          </button>
+          <button type="button" class="btn-guardar-form" (click)="agregarLugar()">
+            {{ editandoLugar ? 'Guardar cambios' : 'Añadir lugar' }}
+          </button>
+        </div>
+
 
       </div>
 
@@ -2537,9 +2533,8 @@
           *ngIf="itemAbierto === 'cur-' + curiosidad.id"
         >
 
-          <p>
-            {{ curiosidad.descripcion }}
-          </p>
+          <div class="descripcion-enriquecida" [innerHTML]="transformarTexto(curiosidad.descripcion)"></div>
+
 
 
           <div class="acciones-gastronomia">
