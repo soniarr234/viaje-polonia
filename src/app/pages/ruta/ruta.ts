@@ -259,15 +259,9 @@ export class Ruta implements OnInit {
 
   dropdownGastronomiaAbierto = false;
 
-  // Pestaña del Nivel 1 ('que-comer' activa por defecto)
-  pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
-
-  // Subpestaña del Nivel 2 ('restaurante' activa por defecto)
-  subSubTipoActive: 'restaurante' | 'cerveceria' | 'cafeteria' | 'postres' = 'restaurante';
-
   nuevaGastronomia: Gastronomia = {
     nombre: '',
-    tipo: 'postres',
+    tipo: 'restaurante',
     descripcion: '',
     direccion: '',
     imagen: '',
@@ -1232,14 +1226,11 @@ export class Ruta implements OnInit {
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      const contenedorModal = document.querySelector('.modal-overlay');
-      if (contenedorModal) {
-        contenedorModal.scrollTo({ 
-          top: 0, 
-          behavior: 'smooth' 
-        });
-      }
-    }, 50); 
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 0);    
   }
 
 
@@ -1491,30 +1482,46 @@ export class Ruta implements OnInit {
 
 
   reiniciarGastronomia() {
+
     this.nuevaGastronomia = {
       nombre: '',
-      tipo: 'postres',
+      tipo: 'restaurante',
       descripcion: '',
       direccion: '',
       imagen: '',
       maps: ''
     };
+
     this.editandoGastronomia = false;
+
     this.indiceGastronomiaEditando = -1;
+
     this.mostrarFormularioGastronomia = false;
+
     this.dropdownGastronomiaAbierto = false;
   }
 
 
   obtenerGastronomiaPorTipo(
-    tipo: 'restaurante' | 'cafeteria' | 'cerveceria' | 'postres' | 'plato_comida' | 'plato_bebida'
+    tipo:
+      | 'restaurante'
+      | 'cafeteria'
+      | 'cerveceria'
+      | 'postres'
   ): Gastronomia[] {
+
     if (!this.ciudadSeleccionada) {
       return [];
     }
-    return this.ciudadSeleccionada.gastronomia.filter(item => item.tipo === tipo);
+
+    return this.ciudadSeleccionada
+      .gastronomia
+      .filter(
+        item =>
+          item.tipo === tipo
+      );
   }
-  
+
 
   /* ===================================================
      18. CURIOSIDADES CRUD
