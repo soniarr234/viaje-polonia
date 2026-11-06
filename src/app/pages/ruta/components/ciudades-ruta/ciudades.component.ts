@@ -74,7 +74,7 @@ export class CiudadesRutaComponent implements OnInit {
     indiceGastronomiaEditando = -1;
     dropdownGastronomiaAbierto = false;
     pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
-    subSubTipoActive:'restaurante' | 'cerveceria' | 'cafeteria' | 'plato' | 'bebida' | 'postre' = 'plato';
+    subSubTipoActive:'restaurante' | 'cerveceria' | 'cafeteria' = 'restaurante';
 
     nuevaGastronomia: Gastronomia = {
         nombre: '',
@@ -211,17 +211,28 @@ export class CiudadesRutaComponent implements OnInit {
     }
 
     cambiarPestanaGastro(pestana: 'que-comer' | 'donde-comer') {
+
         this.pestanaGastroActive = pestana;
-        this.nuevaGastronomia.tipo = pestana === 'que-comer' ? 'postres' : this.subSubTipoActive;
+    
+        if (pestana === 'que-comer') {
+            this.nuevaGastronomia.tipo = 'plato';
+        } else {
+            this.nuevaGastronomia.tipo = this.subSubTipoActive;
+        }
+    
         this.cdr.detectChanges();
     }
 
-    cambiarSubSubTipoGastro(subTipo: 'restaurante' | 'cerveceria' | 'cafeteria' | 'postres') {
-        this.subSubTipoActive = subTipo;
-        if (this.pestanaGastroActive === 'donde-comer') {
-            this.nuevaGastronomia.tipo = subTipo;
-        }
-        this.cdr.detectChanges();
+    cambiarSubSubTipoGastro(
+        subTipo: 'restaurante' | 'cerveceria' | 'cafeteria'
+      ) {
+          this.subSubTipoActive = subTipo;
+      
+          if (this.pestanaGastroActive === 'donde-comer') {
+              this.nuevaGastronomia.tipo = subTipo;
+          }
+      
+          this.cdr.detectChanges();
     }
 
     abrirCiudad(ciudad: Ciudad) {
@@ -440,14 +451,18 @@ export class CiudadesRutaComponent implements OnInit {
         this.nuevaGastronomia = { ...item };
     
         if (
-          item.tipo === 'postres' ||
-          (item.tipo as any) === 'plato_comida' ||
-          (item.tipo as any) === 'plato_bebida'
-        ) {
-          this.pestanaGastroActive = 'que-comer';
-        } else {
-          this.pestanaGastroActive = 'donde-comer';
-          this.subSubTipoActive = item.tipo as any;
+            item.tipo === 'plato' ||
+            item.tipo === 'bebida' ||
+            item.tipo === 'postre'
+          ) {
+          
+            this.pestanaGastroActive = 'que-comer';
+          
+          } else {
+          
+            this.pestanaGastroActive = 'donde-comer';
+            this.subSubTipoActive = item.tipo as any;
+          
         }
     
         this.mostrarFormularioGastronomia = true;

@@ -11,10 +11,12 @@ export interface Lugar {
 }
 
 export type TipoGastronomia =
+  | 'plato'
+  | 'bebida'
+  | 'postre'
   | 'restaurante'
   | 'cafeteria'
-  | 'cerveceria'
-  | 'postres';
+  | 'cerveceria';
 
 export interface Gastronomia {
   id?: number;
