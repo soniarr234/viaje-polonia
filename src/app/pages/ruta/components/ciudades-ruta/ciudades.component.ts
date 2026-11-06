@@ -361,17 +361,15 @@ export class CiudadesRutaComponent implements OnInit {
             const { error } = await supabase.from('lugares').insert(payload);
             if (error) { console.error(error); return; }
         }
+
+        const eraEdicion = this.editandoLugar;
         this.reiniciarLugar();
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
-        await this.cargarRutaDias();
-        this.mensajeToast = this.editandoLugar
+       await this.cargarRutaDias();
+        this.mensajeToast = eraEdicion
           ? 'Lugar actualizado correctamente'
           : 'Lugar añadido correctamente';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
 
         this.cdr.detectChanges();
     }
@@ -452,18 +450,15 @@ export class CiudadesRutaComponent implements OnInit {
             payload.posicion = maxPos + 1;
             await supabase.from('gastronomia').insert([payload]);
         }
+
+        const eraEdicion = this.editandoGastronomia;
         this.reiniciarGastronomia();
         await this.cargarCiudades();
-        this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
+        this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null
         await this.cargarRutaDias();
-        this.mensajeToast = this.editandoGastronomia
+        this.mensajeToast = eraEdicion
           ? 'Elemento gastronómico actualizado'
           : 'Elemento gastronómico añadido';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
-
         this.cdr.detectChanges();  
     }
 
@@ -557,15 +552,12 @@ export class CiudadesRutaComponent implements OnInit {
         } else {
             await supabase.from('curiosidades').insert(payload);
         }
+        const eraEdicion = this.editandoCuriosidad;
         this.reiniciarCuriosidad();
         await this.cargarCiudades();
-        this.mensajeToast = this.editandoCuriosidad
+        this.mensajeToast = eraEdicion
           ? 'Curiosidad actualizada'
           : 'Curiosidad añadida';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
 
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         this.cdr.detectChanges();
