@@ -139,9 +139,9 @@
               </div>
             </div>
           }
-          <div cdkDropList (cdkDropListDropped)="reordenarLugares($event)" class="timeline-container">
+          <div class="timeline-container">
             @for (lugar of ciudadSeleccionada.lugares; track lugar.id) {
-              <div cdkDrag class="lugar-card">
+              <div class="lugar-card">
 
                 <div class="lugar-imagen-container">
                   @if (lugar.imagen) {
@@ -344,7 +344,6 @@
               ) {
           
                 <div
-                  cdkDrag
                   class="timeline-item"
                   [class.gastro-plato]="gastro.tipo === 'plato'"
                   [class.gastro-bebida]="gastro.tipo === 'bebida'"
@@ -424,7 +423,6 @@
               ) {
           
                 <div
-                  cdkDrag
                   class="timeline-item"
                   [class.gastro-local]="true">
           
