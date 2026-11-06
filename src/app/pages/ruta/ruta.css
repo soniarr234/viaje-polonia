@@ -688,6 +688,7 @@
 }
 .ciudad-stats {
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
   margin-bottom: 18px;
