@@ -366,11 +366,15 @@ export class CiudadesRutaComponent implements OnInit {
         this.reiniciarLugar();
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
-       await this.cargarRutaDias();
+        await this.cargarRutaDias();
         this.mensajeToast = eraEdicion
           ? 'Lugar actualizado correctamente'
           : 'Lugar añadido correctamente';
+        this.mostrarToast = true;
 
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
         this.cdr.detectChanges();
     }
 
@@ -459,6 +463,9 @@ export class CiudadesRutaComponent implements OnInit {
         this.mensajeToast = eraEdicion
           ? 'Elemento gastronómico actualizado'
           : 'Elemento gastronómico añadido';
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
         this.cdr.detectChanges();  
     }
 
@@ -558,6 +565,9 @@ export class CiudadesRutaComponent implements OnInit {
         this.mensajeToast = eraEdicion
           ? 'Curiosidad actualizada'
           : 'Curiosidad añadida';
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
 
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         this.cdr.detectChanges();
