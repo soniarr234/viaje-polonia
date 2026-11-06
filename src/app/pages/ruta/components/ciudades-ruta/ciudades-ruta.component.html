@@ -79,161 +79,312 @@
     <div class="modal-overlay" style="position: relative; background: transparent; backdrop-filter: none; padding: 0;">
       <div class="modal-ciudad" style="margin: 10px auto; width: 100%;">
         <button class="btn-cerrar" (click)="cerrarCiudad()">✖</button>
-        <h2>{{ ciudadSeleccionada.nombre }}</h2>
-        <p class="descripcion-ciudad">{{ ciudadSeleccionada.descripcion }}</p>
+          <h2>{{ ciudadSeleccionada.nombre }}</h2>
+          <p class="descripcion-ciudad">{{ ciudadSeleccionada.descripcion }}</p>
+
+          <div class="subtabs-guia">
+
+            <button
+              [class.active]="subVistaGuia === 'lugares'"
+              (click)="subVistaGuia = 'lugares'">
+              Lugares
+            </button>
+          
+            <button
+              [class.active]="subVistaGuia === 'gastronomia'"
+              (click)="subVistaGuia = 'gastronomia'">
+              Gastronomía
+            </button>
+          
+            <button
+              [class.active]="subVistaGuia === 'curiosidades'"
+              (click)="subVistaGuia = 'curiosidades'">
+              Curiosidades
+            </button>
+          
+          </div>
     
         <!-- SECCIÓN: LUGARES (Con Drag & Drop) -->
-        <h3>🏛️ Lugares</h3>
-        @if (!mostrarFormularioLugar) {
-          <button class="btn-add-mini" (click)="mostrarFormularioLugar = true">+ Añadir Lugar</button>
+        @if (subVistaGuia === 'lugares') {
+          <h3>🏛️ Lugares</h3>
+          @if (!mostrarFormularioLugar) {
+            <button class="btn-add-mini" (click)="mostrarFormularioLugar = true">+ Añadir Lugar</button>
+          }
+          
+          @if (mostrarFormularioLugar) {
+            <div id="form-lugar" class="card form-grid">
+              <div class="input-group">
+                <label>Nombre del Monumento</label>
+                <input type="text" [(ngModel)]="nuevoLugar.nombre" placeholder="Ej. Plaza del Mercado">
+              </div>
+              <div class="input-group">
+                <label>URL de la imagen</label>
+                <input type="text" placeholder="" [(ngModel)]="nuevoLugar.imagen">
+              </div>
+              <div class="input-group">
+                <label>Dirección</label>
+                <input type="text" [(ngModel)]="nuevoLugar.direccion" placeholder="Calle, número...">
+              </div>
+              <div class="input-group">
+                <label>Enlace Google Maps</label>
+                <input type="text" [(ngModel)]="nuevoLugar.maps" placeholder="https://maps.google.com/...">
+              </div>
+              <div class="input-group">
+                <label>Descripción descriptiva</label>
+                <textarea [(ngModel)]="nuevoLugar.descripcion" placeholder="Detalles, horarios o datos históricos..."></textarea>
+              </div>
+              <div class="form-actions">
+                <button class="btn-cancelar-form" (click)="reiniciarLugar()">Cancelar</button>
+                <button class="btn-guardar-form" (click)="agregarLugar()">{{ editandoLugar ? 'Guardar cambios' : 'Añadir lugar' }}</button>
+              </div>
+            </div>
+          }
+          <div cdkDropList (cdkDropListDropped)="reordenarLugares($event)" class="timeline-container">
+            @for (lugar of ciudadSeleccionada.lugares; track lugar.id) {
+              <div cdkDrag class="lugar-card">
+
+                <div class="lugar-imagen-container">
+                  @if (lugar.imagen) {
+                    <img
+                      [src]="lugar.imagen"
+                      [alt]="lugar.nombre"
+                      class="lugar-imagen">
+                  }
+                </div>
+              
+                <div class="lugar-body">
+              
+                  <h4 class="lugar-titulo">
+                    {{ lugar.nombre }}
+                  </h4>
+              
+                  @if (itemAbierto !== 'lugar-' + lugar.id) {
+                    <div
+                      class="lugar-resumen"
+                      [innerHTML]="formatearTexto(
+                        lugar.descripcion.slice(0, 120) +
+                        (lugar.descripcion.length > 120 ? '...' : '')
+                      )">
+                    </div>
+                  }
+
+                  @if (lugar.maps) {
+                    <a
+                      [href]="lugar.maps"
+                      target="_blank"
+                      class="btn-maps">
+                      Abrir en Maps
+                    </a>
+                  }
+              
+                  <div class="lugar-footer">
+              
+                    <button
+                      class="btn-ver-detalle"
+                      (click)="toggleItem('lugar-' + lugar.id)">
+
+                      {{
+                        itemAbierto === 'lugar-' + lugar.id
+                          ? '▲ Cerrar información'
+                          : '▼ Abrir información'
+                      }}
+
+                    </button>
+              
+                    <div class="acciones-lugar">
+              
+                      <button
+                        class="btn-editar"
+                        (click)="editarLugar(lugar); $event.stopPropagation();">
+                        <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.5em" height="1.5em">
+                          <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
+                        </svg>
+                      </button>
+              
+                      <button
+                        class="btn-eliminar"
+                        (click)="eliminarLugar(lugar); $event.stopPropagation();">
+                        <svg xmlns="http://w3.org" viewBox="0 0 20 20" width="1.3em" height="1.3em">
+                          <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z"/>
+                        </svg>
+                      </button>
+              
+                    </div>
+              
+                  </div>
+              
+                </div>
+              
+                @if (itemAbierto === 'lugar-' + lugar.id) {
+
+                  <div class="lugar-detalle">
+                
+                    <div
+                      class="descripcion-enriquecida"
+                      [innerHTML]="formatearTexto(lugar.descripcion)">
+                    </div>
+                
+                    @if (lugar.direccion) {
+                      <p class="direccion">
+                        📍 {{ lugar.direccion }}
+                      </p>
+                    }
+                
+                  </div>
+                
+                }
+              
+              </div>
+            }
+          </div>
         }
         
-        @if (mostrarFormularioLugar) {
-          <div class="card form-grid">
-            <div class="input-group">
-              <label>Nombre del Monumento</label>
-              <input type="text" [(ngModel)]="nuevoLugar.nombre" placeholder="Ej. Plaza del Mercado">
-            </div>
-            <div class="input-group">
-              <label>URL de la imagen</label>
-              <input type="text" placeholder="" [(ngModel)]="nuevoLugar.imagen">
-            </div>
-            <div class="input-group">
-              <label>Dirección</label>
-              <input type="text" [(ngModel)]="nuevoLugar.direccion" placeholder="Calle, número...">
-            </div>
-            <div class="input-group">
-              <label>Enlace Google Maps</label>
-              <input type="text" [(ngModel)]="nuevoLugar.maps" placeholder="https://maps.google.com/...">
-            </div>
-            <div class="input-group">
-              <label>Descripción descriptiva</label>
-              <textarea [(ngModel)]="nuevoLugar.descripcion" placeholder="Detalles, horarios o datos históricos..."></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn-cancelar-form" (click)="reiniciarLugar()">Cancelar</button>
-              <button class="btn-guardar-form" (click)="agregarLugar()">{{ editandoLugar ? 'Guardar cambios' : 'Añadir lugar' }}</button>
-            </div>
-          </div>
-        }
-        <div cdkDropList (cdkDropListDropped)="reordenarLugares($event)" class="timeline-container">
-          @for (lugar of ciudadSeleccionada.lugares; track lugar.id) {
-            <div cdkDrag class="timeline-item">
-              <div class="timeline-header" (click)="toggleItem('lugar-' + lugar.id)">
-                <div class="div-drag">
-                  <span class="tirador-arrastre" cdkDragHandle>☰</span>
-                  <span>📍 {{ lugar.nombre }}</span>
-                </div>
-                <div class="acciones">
-                  <button class="btn-editar" (click)="editarLugar(lugar); $event.stopPropagation();"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
-                <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
-              </svg></button>
-                  <button class="btn-eliminar" (click)="eliminarLugar(lugar); $event.stopPropagation();"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
-                <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
-              </svg></button>
-                </div>
-              </div>
-              @if (itemAbierto === 'lugar-' + lugar.id) {
-                <div class="timeline-content">
-                  <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(lugar.descripcion)"></div>
-                  @if (lugar.direccion) { <p class="direccion">📍 {{ lugar.direccion }}</p> }
-                  @if (lugar.maps) { <a [href]="lugar.maps" target="_blank" class="btn-maps">Ver en Maps</a> }
-                </div>
-              }
-            </div>
-          }
-        </div>
     
         <!-- SECCIÓN: GASTRONOMÍA (Con Drag & Drop) -->
-        <h3>🍴 Gastronomía</h3>
-        @if (!mostrarFormularioGastronomia) {
-          <button class="btn-add-mini" (click)="mostrarFormularioGastronomia = true">+ Añadir Gastronomía</button>
-        }
-    
-        @if (mostrarFormularioGastronomia) {
-          <div class="card-gastronomia">
-            <div class="tabs">
-              <button (click)="cambiarPestanaGastro('que-comer')" [class.active]="pestanaGastroActive === 'que-comer'">😋 Qué probar</button>
-              <button (click)="cambiarPestanaGastro('donde-comer')" [class.active]="pestanaGastroActive === 'donde-comer'">📍 Dónde ir</button>
-            </div>
-            <div class="form-grid">
-              <input type="text" [(ngModel)]="nuevaGastronomia.nombre" placeholder="Nombre del plato o establecimiento">
-              <textarea [(ngModel)]="nuevaGastronomia.descripcion" placeholder="Descripción culinaria o especialidades..."></textarea>
+        @if (subVistaGuia === 'gastronomia') {
+          <h3>🍴 Gastronomía</h3>
+          @if (!mostrarFormularioGastronomia) {
+            <button class="btn-add-mini" (click)="mostrarFormularioGastronomia = true">+ Añadir Gastronomía</button>
+          }
+      
+          @if (mostrarFormularioGastronomia) {
+            <div id="form-gastronomia" class="card-gastronomia">
+              <div class="tabs">
+                <button (click)="cambiarPestanaGastro('que-comer')" [class.active]="pestanaGastroActive === 'que-comer'">😋 Qué probar</button>
+                <button (click)="cambiarPestanaGastro('donde-comer')" [class.active]="pestanaGastroActive === 'donde-comer'">📍 Dónde ir</button>
+              </div>
+              @if (pestanaGastroActive === 'que-comer') {
+
+                <div class="tipo-transporte">
               
-              @if (pestanaGastroActive === 'donde-comer') {
-                <div class="form-row form-row-2">
-                  <input type="text" [(ngModel)]="nuevaGastronomia.direccion" placeholder="Dirección física">
-                  <input type="text" [(ngModel)]="nuevaGastronomia.maps" placeholder="Enlace de Maps">
+                  <button
+                    type="button"
+                    (click)="nuevaGastronomia.tipo = 'plato'"
+                    [class.active]="nuevaGastronomia.tipo === 'plato'">
+              
+                    🍲 Plato
+                  </button>
+              
+                  <button
+                    type="button"
+                    (click)="nuevaGastronomia.tipo = 'bebida'"
+                    [class.active]="nuevaGastronomia.tipo === 'bebida'">
+              
+                    🍺 Bebida
+                  </button>
+              
+                  <button
+                    type="button"
+                    (click)="nuevaGastronomia.tipo = 'postre'"
+                    [class.active]="nuevaGastronomia.tipo === 'postre'">
+              
+                    🍰 Postre
+                  </button>
+              
                 </div>
               }
+              <div class="form-grid">
+                <input
+                  type="text"
+                  [(ngModel)]="nuevaGastronomia.nombre"
+                  placeholder="Nombre del plato, bebida, postre o local">
+                <textarea [(ngModel)]="nuevaGastronomia.descripcion" placeholder="Descripción culinaria o especialidades..."></textarea>
+                
+                @if (pestanaGastroActive === 'donde-comer') {
+                  <div class="form-row form-row-2">
+                    <input type="text" [(ngModel)]="nuevaGastronomia.direccion" placeholder="Dirección física">
+                    <input type="text" [(ngModel)]="nuevaGastronomia.maps" placeholder="Enlace de Maps">
+                  </div>
+                }
+                <div class="form-actions">
+                  <button class="btn-cancelar-form" (click)="reiniciarGastronomia()">Cancelar</button>
+                  <button class="btn-guardar-form" (click)="agregarGastronomia()">Guardar</button>
+                </div>
+              </div>
+            </div>
+          }
+      
+          <div cdkDropList (cdkDropListDropped)="reordenarGastronomia($event)" class="timeline-container">
+            @for (gastro of ciudadSeleccionada.gastronomia; track gastro.id) {
+              <div cdkDrag class="timeline-item">
+                <div class="timeline-header" (click)="toggleItem('gastro-' + gastro.id)">
+                  <div class="div-drag">
+                    <span class="tirador-arrastre" cdkDragHandle>☰</span>
+                    <span>
+
+                      {{
+                        gastro.tipo === 'plato'
+                          ? '🍲'
+                          : gastro.tipo === 'bebida'
+                          ? '🍺'
+                          : gastro.tipo === 'postre'
+                          ? '🍰'
+                          : gastro.tipo === 'restaurante'
+                          ? '🍽️'
+                          : gastro.tipo === 'cafeteria'
+                          ? '☕'
+                          : '🍻'
+                      }}
+                    
+                      {{ gastro.nombre }}
+                    
+                    </span>
+                  </div>
+                  <div class="acciones">
+                    <button class="btn-editar" (click)="editarGastronomia(gastro); $event.stopPropagation();"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
+                  <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
+                </svg></button>
+                    <button class="btn-eliminar" (click)="eliminarGastronomia(gastro, $event)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
+                  <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
+                </svg></button>
+                  </div>
+                </div>
+                @if (itemAbierto === 'gastro-' + gastro.id) {
+                  <div class="timeline-content">
+                    <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(gastro.descripcion)"></div>
+                    @if (gastro.direccion) { <p class="direccion"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.2em" height="1.2em"> 
+                      <path fill="#f43f5e" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/>
+                    </svg>  {{ gastro.direccion }}</p> }
+                    @if (gastro.maps) { <a [href]="gastro.maps" target="_blank" class="btn-maps">Ver en Maps</a> }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+        
+        @if (subVistaGuia === 'curiosidades') {
+          <h3>💡 Curiosidades locales</h3>
+          @if (!mostrarFormularioCuriosidad) {
+            <button class="btn-add-mini" (click)="mostrarFormularioCuriosidad = true">+ Añadir Curiosidad</button>
+          }
+          @if (mostrarFormularioCuriosidad) {
+            <div id="form-curiosidad" class="card form-grid">
+              <input type="text" [(ngModel)]="nuevaCuriosidad.titulo" placeholder="Título de la curiosidad">
+              <textarea [(ngModel)]="nuevaCuriosidad.descripcion" placeholder="Descripción histórica o leyenda urbana..."></textarea>
               <div class="form-actions">
-                <button class="btn-cancelar-form" (click)="reiniciarGastronomia()">Cancelar</button>
-                <button class="btn-guardar-form" (click)="agregarGastronomia()">Guardar</button>
+                <button class="btn-cancelar-form" (click)="reiniciarCuriosidad()">Cancelar</button>
+                <button class="btn-guardar-form" (click)="agregarCuriosidad()">Guardar</button>
               </div>
-            </div>
-          </div>
-        }
-    
-        <div cdkDropList (cdkDropListDropped)="reordenarGastronomia($event)" class="timeline-container">
-          @for (gastro of ciudadSeleccionada.gastronomia; track gastro.id) {
-            <div cdkDrag class="timeline-item">
-              <div class="timeline-header" (click)="toggleItem('gastro-' + gastro.id)">
-                <div class="div-drag">
-                  <span class="tirador-arrastre" cdkDragHandle>☰</span>
-                  <span>🍲 {{ gastro.nombre }}</span>
-                </div>
-                <div class="acciones">
-                  <button class="btn-editar" (click)="editarGastronomia(gastro); $event.stopPropagation();"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
-                <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
-              </svg></button>
-                  <button class="btn-eliminar" (click)="eliminarGastronomia(gastro, $event)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
-                <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
-              </svg></button>
-                </div>
-              </div>
-              @if (itemAbierto === 'gastro-' + gastro.id) {
-                <div class="timeline-content">
-                  <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(gastro.descripcion)"></div>
-                  @if (gastro.direccion) { <p class="direccion">📍 {{ gastro.direccion }}</p> }
-                  @if (gastro.maps) { <a [href]="gastro.maps" target="_blank" class="btn-maps">Ver en Maps</a> }
-                </div>
-              }
             </div>
           }
-        </div>
-    
-        <h3>💡 Curiosidades locales</h3>
-        @if (!mostrarFormularioCuriosidad) {
-          <button class="btn-add-mini" (click)="mostrarFormularioCuriosidad = true">+ Añadir Curiosidad</button>
+          <ul class="curiosidades">
+            @for (cur of ciudadSeleccionada.curiosidades; track cur.id) {
+              <li>
+                <strong>{{ cur.titulo }}:</strong>
+                <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(cur.descripcion)"></div>
+                <div style="display: flex; gap: 8px; margin-top: 6px;">
+                  <button class="btn-editar" style="width:30px; height:30px;" (click)="editarCuriosidad(cur)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
+                  <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
+                </svg></button>
+                  <button class="btn-eliminar" style="width:30px; height:30px;" (click)="eliminarCuriosidad(cur)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
+                  <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
+                </svg></button>
+                </div>
+              </li>
+            }
+          </ul>
         }
-    
-        @if (mostrarFormularioCuriosidad) {
-          <div class="card form-grid">
-            <input type="text" [(ngModel)]="nuevaCuriosidad.titulo" placeholder="Título de la curiosidad">
-            <textarea [(ngModel)]="nuevaCuriosidad.descripcion" placeholder="Descripción histórica o leyenda urbana..."></textarea>
-            <div class="form-actions">
-              <button class="btn-cancelar-form" (click)="reiniciarCuriosidad()">Cancelar</button>
-              <button class="btn-guardar-form" (click)="agregarCuriosidad()">Guardar</button>
-            </div>
-          </div>
-        }
-    
-        <ul class="curiosidades">
-          @for (cur of ciudadSeleccionada.curiosidades; track cur.id) {
-            <li>
-              <strong>{{ cur.titulo }}:</strong>
-              <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(cur.descripcion)"></div>
-              <div style="display: flex; gap: 8px; margin-top: 6px;">
-                <button class="btn-editar" style="width:30px; height:30px;" (click)="editarCuriosidad(cur)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
-                <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
-              </svg></button>
-                <button class="btn-eliminar" style="width:30px; height:30px;" (click)="eliminarCuriosidad(cur)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
-                <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
-              </svg></button>
-              </div>
-            </li>
-          }
-        </ul>
       </div>
     </div>
   }
@@ -273,7 +424,7 @@
         <div class="ruta-dia-header">
             <div>
               <h3>{{ dia.titulo }}</h3>
-              <span>📍 {{ dia.ciudad }}</span>
+              <span>{{ dia.ciudad }}</span>
               @if (dia.fecha) { <span>📅 {{ dia.fecha | date:'dd/MM/yyyy' }}</span> }
             </div>
             <div class="acciones-dia">
@@ -373,7 +524,9 @@
     <button class="btn-cerrar" (click)="cerrarModalDetalleRuta()">✖</button>
     <h2>{{ elementoRutaAbierto?.nombre }}</h2>
     <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(elementoRutaAbierto?.descripcion)"></div>
-    @if (elementoRutaAbierto?.direccion) { <p class="direccion">📍 {{ elementoRutaAbierto?.direccion }}</p> }
+    @if (elementoRutaAbierto?.direccion) { <p class="direccion"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.2em" height="1.2em"> 
+      <path fill="#f43f5e" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/>
+    </svg>  {{ elementoRutaAbierto?.direccion }}</p> }
     @if (elementoRutaAbierto?.maps) { <a [href]="elementoRutaAbierto?.maps" target="_blank" class="btn-maps">Abrir en Maps</a> }
   </div>
 </div>

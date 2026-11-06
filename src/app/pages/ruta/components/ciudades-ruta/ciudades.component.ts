@@ -37,6 +37,7 @@ interface DiaRuta {
 export class CiudadesRutaComponent implements OnInit {
 
     subVistaCiudades: 'ciudades' | 'ruta' = 'ciudades';
+    subVistaGuia: 'lugares' | 'gastronomia' | 'curiosidades' = 'lugares';
     ciudades: Ciudad[] = [];
     ciudadSeleccionada: Ciudad | null = null;
     mostrarFormularioCiudad = false;
@@ -73,11 +74,11 @@ export class CiudadesRutaComponent implements OnInit {
     indiceGastronomiaEditando = -1;
     dropdownGastronomiaAbierto = false;
     pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
-    subSubTipoActive: 'restaurante' | 'cerveceria' | 'cafeteria' | 'postres' = 'restaurante';
+    subSubTipoActive:'restaurante' | 'cerveceria' | 'cafeteria' | 'plato' | 'bebida' | 'postre' = 'plato';
 
     nuevaGastronomia: Gastronomia = {
         nombre: '',
-        tipo: 'postres',
+        tipo: 'plato',
         descripcion: '',
         direccion: '',
         imagen: '',
@@ -225,11 +226,15 @@ export class CiudadesRutaComponent implements OnInit {
 
     abrirCiudad(ciudad: Ciudad) {
         this.ciudadSeleccionada = ciudad;
+    
+        this.subVistaGuia = 'lugares';
+    
         this.itemAbierto = null;
         this.textoLargoExpandido = false;
         this.reiniciarLugar();
         this.reiniciarGastronomia();
         this.reiniciarCuriosidad();
+    
         this.cdr.detectChanges();
     }
 
@@ -348,12 +353,25 @@ export class CiudadesRutaComponent implements OnInit {
 
     editarLugar(lugar: Lugar) {
         if (!this.ciudadSeleccionada) return;
+    
         this.indiceLugarEditando = this.ciudadSeleccionada.lugares.indexOf(lugar);
+    
         if (this.indiceLugarEditando < 0) return;
+    
         this.editandoLugar = true;
         this.nuevoLugar = { ...lugar };
         this.mostrarFormularioLugar = true;
+    
         this.cdr.detectChanges();
+    
+        setTimeout(() => {
+            document
+              .getElementById('form-lugar')
+              ?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+        }, 100);
     }
 
     async eliminarLugar(lugar: Lugar) {
@@ -379,7 +397,10 @@ export class CiudadesRutaComponent implements OnInit {
         if (this.ciudadSeleccionada?.id == null || !this.nuevaGastronomia.nombre.trim()) return;
         const ciudadId = this.ciudadSeleccionada.id;
         
-        let tipoFinal = this.pestanaGastroActive === 'que-comer' ? 'postres' : this.subSubTipoActive;
+        let tipoFinal =
+            this.pestanaGastroActive === 'que-comer'
+                ? this.nuevaGastronomia.tipo
+                : this.subSubTipoActive;
         
         const payload: any = {
             ciudad_id: ciudadId,
@@ -409,19 +430,39 @@ export class CiudadesRutaComponent implements OnInit {
 
     editarGastronomia(item: Gastronomia) {
         if (!this.ciudadSeleccionada) return;
-        this.indiceGastronomiaEditando = this.ciudadSeleccionada.gastronomia.indexOf(item);
+    
+        this.indiceGastronomiaEditando =
+          this.ciudadSeleccionada.gastronomia.indexOf(item);
+    
         if (this.indiceGastronomiaEditando < 0) return;
+    
         this.editandoGastronomia = true;
         this.nuevaGastronomia = { ...item };
-        if (item.tipo === 'postres' || (item.tipo as any) === 'plato_comida' || (item.tipo as any) === 'plato_bebida') {
-            this.pestanaGastroActive = 'que-comer';
+    
+        if (
+          item.tipo === 'postres' ||
+          (item.tipo as any) === 'plato_comida' ||
+          (item.tipo as any) === 'plato_bebida'
+        ) {
+          this.pestanaGastroActive = 'que-comer';
         } else {
-            this.pestanaGastroActive = 'donde-comer';
-            this.subSubTipoActive = item.tipo as any;
+          this.pestanaGastroActive = 'donde-comer';
+          this.subSubTipoActive = item.tipo as any;
         }
+    
         this.mostrarFormularioGastronomia = true;
         this.dropdownGastronomiaAbierto = false;
+    
         this.cdr.detectChanges();
+    
+        setTimeout(() => {
+            document
+              .getElementById('form-gastronomia')
+              ?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+        }, 100);
     }
 
     async eliminarGastronomia(item: Gastronomia, event?: Event) {
@@ -436,7 +477,14 @@ export class CiudadesRutaComponent implements OnInit {
     }
 
     reiniciarGastronomia() {
-        this.nuevaGastronomia = { nombre: '', tipo: 'postres', descripcion: '', direccion: '', imagen: '', maps: '' };
+        this.nuevaGastronomia = {
+            nombre: '',
+            tipo: 'plato',
+            descripcion: '',
+            direccion: '',
+            imagen: '',
+            maps: ''
+        };
         this.pestanaGastroActive = 'que-comer';
         this.subSubTipoActive = 'restaurante';
         this.editandoGastronomia = false;
@@ -469,12 +517,26 @@ export class CiudadesRutaComponent implements OnInit {
 
     editarCuriosidad(curiosidad: Curiosidad) {
         if (!this.ciudadSeleccionada) return;
-        this.indiceCuriosidadEditando = this.ciudadSeleccionada.curiosidades.indexOf(curiosidad);
+    
+        this.indiceCuriosidadEditando =
+          this.ciudadSeleccionada.curiosidades.indexOf(curiosidad);
+    
         if (this.indiceCuriosidadEditando < 0) return;
+    
         this.editandoCuriosidad = true;
         this.nuevaCuriosidad = { ...curiosidad };
         this.mostrarFormularioCuriosidad = true;
+    
         this.cdr.detectChanges();
+    
+        setTimeout(() => {
+            document
+              .getElementById('form-curiosidad')
+              ?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+        }, 100);
     }
 
     async eliminarCuriosidad(curiosidad: Curiosidad) {

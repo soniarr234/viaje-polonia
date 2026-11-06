@@ -84,6 +84,60 @@
 }
 
 /* =====================================================
+   SUBTABS GUÍA (LUGARES / GASTRONOMÍA / CURIOSIDADES)
+===================================================== */
+
+.subtabs-guia {
+  display: flex;
+  gap: 6px;
+
+  padding: 4px;
+  margin: 0 0 24px;
+
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+
+  background: rgba(255,255,255,.04);
+}
+
+.subtabs-guia button {
+  flex: 1;
+
+  height: 44px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color .2s ease,
+    color .2s ease,
+    transform .2s ease;
+}
+
+.subtabs-guia button:hover {
+  color: #e2e8f0;
+}
+
+.subtabs-guia button.active {
+  background: rgba(56,189,248,.15);
+
+  color: #38bdf8;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(56,189,248,.12);
+}
+
+/* =====================================================
    BOTONES GENERALES
 ===================================================== */
 .btn-add {
@@ -765,7 +819,8 @@
 .modal-ruta {
   position: relative;
   box-sizing: border-box;
-  width: min(100%, 820px);
+  width: min(100%, 1000px);
+  max-width: 1000px;
   padding: 24px;
   margin: 30px auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -864,22 +919,35 @@
    ITEMS DENTRO DE LAS CIUDADES
 ===================================================== */
 .timeline-item {
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  overflow: hidden;
-  transition: border-color 0.2s ease;
+  border: 1px solid rgba(56,189,248,.08);
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(30,41,59,.95),
+    rgba(15,23,42,.95)
+  );
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.25);
+  margin-bottom: 10px;
 }
 .timeline-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  cursor: pointer;
-  user-select: none;
+  gap: 12px;
+  padding: 16px 18px;
 }
 .timeline-header:hover {
   background: rgba(56, 189, 248, 0.06);
+}
+.timeline-header .div-drag {
+  flex: 1;
+  min-width: 0;
+}
+.timeline-header .div-drag span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .div-drag{
   display: flex;
@@ -973,6 +1041,117 @@
   background-clip: padding-box;
 }
 
+.lugar-card {
+  overflow: hidden;
+  border-radius: 22px;
+
+  background: linear-gradient(
+    180deg,
+    #13203a,
+    #0f172a
+  );
+
+  border: 1px solid rgba(255,255,255,.05);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25);
+
+  transition: all .25s ease;
+  margin-bottom: 20px;
+}
+
+.lugar-card:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(56,189,248,.25);
+}
+
+.lugar-imagen-container {
+  position: relative;
+}
+
+.lugar-imagen {
+  display: block;
+
+  width: 100%;
+  height: 220px;
+
+  object-fit: cover;
+}
+
+.btn-menu {
+  position: absolute;
+
+  top: 12px;
+  right: 12px;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: rgba(15,23,42,.8);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.lugar-body {
+  padding: 18px;
+}
+
+.lugar-titulo {
+  margin: 0 0 10px;
+
+  color: #0ea5e9;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.lugar-resumen {
+  margin: 0;
+
+  color: #94a3b8;
+
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.lugar-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 18px;
+}
+
+.btn-ver-detalle {
+  border: none;
+
+  background: transparent;
+
+  color: #38bdf8;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.acciones-lugar {
+  display: flex;
+  gap: 6px;
+}
+
+.lugar-detalle {
+  padding: 18px;
+
+  border-top: 1px solid rgba(255,255,255,.06);
+
+  background: rgba(0,0,0,.15);
+}
 
 
 
@@ -1251,17 +1430,13 @@
    18. IMAGENES / DIRECCION / MAPS
 ===================================================== */
 
-.lugar-imagen {
-  display: block;
-
-  width: 100%;
-  height: 220px;
-
-  margin-bottom: 14px;
-
-  border-radius: 14px;
-
-  object-fit: cover;
+.lugar-imagen{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
+  margin-bottom:15px;
 }
 
 
@@ -1911,11 +2086,6 @@
     height: 34px;
   }
 
-  .lugar-imagen {
-    height: 190px;
-  }
-
-
   /* RUTA */
 
   .ruta-dia-form {
@@ -2174,4 +2344,3 @@
   font-style: italic;
   letter-spacing: 0.1px;
 }
-
