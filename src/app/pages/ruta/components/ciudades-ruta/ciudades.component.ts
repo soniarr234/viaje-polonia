@@ -322,6 +322,12 @@ export class CiudadesRutaComponent implements OnInit {
         if (this.ciudadSeleccionada?.id === idBorrar) this.cerrarCiudad();
         await this.cargarCiudades();
         await this.cargarRutaDias();
+        this.mensajeToast = 'Ciudad eliminada correctamente';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+      
         this.cdr.detectChanges();
     }
     
@@ -359,6 +365,14 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
+        this.mensajeToast = this.editandoLugar
+          ? 'Lugar actualizado correctamente'
+          : 'Lugar añadido correctamente';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.cdr.detectChanges();
     }
 
@@ -393,6 +407,12 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
+        this.mensajeToast = 'Lugar eliminado correctamente';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.cdr.detectChanges();
     }
 
@@ -436,6 +456,14 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
+        this.mensajeToast = this.editandoGastronomia
+          ? 'Elemento gastronómico actualizado'
+          : 'Elemento gastronómico añadido';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.cdr.detectChanges();  
     }
 
@@ -488,6 +516,11 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
+        this.mensajeToast = 'Elemento gastronómico eliminado';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
         this.cdr.detectChanges();
     }
 
@@ -526,6 +559,14 @@ export class CiudadesRutaComponent implements OnInit {
         }
         this.reiniciarCuriosidad();
         await this.cargarCiudades();
+        this.mensajeToast = this.editandoCuriosidad
+          ? 'Curiosidad actualizada'
+          : 'Curiosidad añadida';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         this.cdr.detectChanges();
     }
@@ -559,6 +600,12 @@ export class CiudadesRutaComponent implements OnInit {
         const ciudadId = this.ciudadSeleccionada.id;
         await supabase.from('curiosidades').delete().eq('id', curiosidad.id);
         await this.cargarCiudades();
+        this.mensajeToast = 'Curiosidad eliminada';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         this.cdr.detectChanges();
     }
