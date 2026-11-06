@@ -46,6 +46,9 @@ export class CiudadesRutaComponent implements OnInit {
     guardandoCiudad = false;
     ciudadParaBorrar: Ciudad | null = null;
     mostrarConfirmarBorradoCiudad = false;
+    mostrarConfirmarBorradoLugar = false;
+    lugarParaBorrar: Lugar | null = null;
+
 
     nuevaCiudad: Ciudad = {
         nombre: '',
@@ -400,6 +403,32 @@ export class CiudadesRutaComponent implements OnInit {
               });
         }, 100);
     }
+
+    pedirConfirmacionBorradoLugar(lugar: Lugar, event: Event({
+      event.preventDafault();
+      even.spotPropagation();
+
+      this.lugarParaBorrar = lugar;
+      this.mostrarConfirmaBorradoLugar = true;
+
+      this.cdr.deleteChanges();
+    }
+
+    cerrarConfirmarBorradoLugar(){
+      this.mostrarConfirmaBorradoLugar = false;
+      this.lugarParaBorrar = null;
+      this.cdr.detectChanges();
+    }
+
+    async confirmarEliminarLugar(){
+      if(this.lugarParaBorrar){
+        this.cerrarConfirmarBorradoLugar();
+        return;
+      }
+      await
+      this.eliminarLugar(this.lugarParaBorrar);
+      this.cerrarConfirmatBorradoLugar();
+    }       
 
     async eliminarLugar(lugar: Lugar) {
         if (this.ciudadSeleccionada?.id == null || lugar.id == null) return;
