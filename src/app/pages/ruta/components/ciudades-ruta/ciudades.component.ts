@@ -695,6 +695,12 @@ export class CiudadesRutaComponent implements OnInit {
         this.zone.run(async () => {
             diaAsociado.elementos = diaAsociado.elementos.filter(item => item.id !== idBorrar);
             await this.cargarRutaDias();
+            this.mensajeToast = 'Actividad eliminada de la ruta'
+            this.mostrarToast = true;
+            setTimeout(() => {
+              this.mostrarToast = false;
+            }, 4000);
+
             this.cdr.detectChanges();
         });
     }
@@ -798,6 +804,12 @@ export class CiudadesRutaComponent implements OnInit {
         this.cerrarConfirmarBorradoDiaRuta();
         await supabase.from('ruta_dias').delete().eq('id', idBorrar);
         await this.cargarRutaDias();
+        this.mensajeToast = 'Día eliminado correctamente';
+        this.mostrarToast = true;
+        setTimeout(() => {
+          this.mostrarToast = false;
+        }, 4000);
+
         this.cdr.detectChanges();
     }
 
