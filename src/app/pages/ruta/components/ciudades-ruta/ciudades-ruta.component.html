@@ -694,6 +694,10 @@
         <img [src]="elementoRutaAbierto.imagen" [alt]="elementoRutaAbierto.nombre" class="lugar-imagen">
       }
 
+      @if (elementoRutaAbierto?.maps) {
+        <a [href]="elementoRutaAbierto.maps" target="_blank" class="btn-maps">Abrir en Maps</a>
+      }
+
       <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(elementoRutaAbierto?.descripcion)"></div>
 
       @if (elementoRutaAbierto?.direccion) {
@@ -703,10 +707,6 @@
           </svg>
           {{ elementoRutaAbierto.direccion }}
         </p>
-      }
-
-      @if (elementoRutaAbierto?.maps) {
-        <a [href]="elementoRutaAbierto.maps" target="_blank" class="btn-maps">Abrir en Maps</a>
       }
     </div>
   </div>
