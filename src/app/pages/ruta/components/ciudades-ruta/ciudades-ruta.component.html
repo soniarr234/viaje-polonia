@@ -664,31 +664,29 @@
     <div class="modal-ruta">
       <button class="btn-cerrar" (click)="cerrarModalDetalleRuta()">✖</button>
       <h2>{{ elementoRutaAbierto?.nombre }}</h2>
-  
-      @if (elementoRutaAbierto?.imagen || elementoRutaAbierto?.foto || elementoRutaAbierto?.img) {
-        <img 
-          [src]="elementoRutaAbierto.imagen || elementoRutaAbierto.foto || elementoRutaAbierto.img" 
-          [alt]="elementoRutaAbierto.nombre" 
-          class="lugar-imagen">
-      }    
-  
+
+      @if (elementoRutaAbierto?.imagen) {
+        <img [src]="elementoRutaAbierto.imagen" [alt]="elementoRutaAbierto.nombre" class="lugar-imagen">
+      }
+
       <div class="descripcion-enriquecida" [innerHTML]="formatearTexto(elementoRutaAbierto?.descripcion)"></div>
-      
-      @if (elementoRutaAbierto?.direccion) { 
+
+      @if (elementoRutaAbierto?.direccion) {
         <p class="direccion">
-          <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.2em" height="1.2em"> 
+          <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="1.2em" height="1.2em">
             <path fill="#f43f5e" d="M19 9A7 7 0 1 0 5 9c0 1.387.409 2.677 1.105 3.765h-.008L12 22l5.903-9.235h-.007A6.97 6.97 0 0 0 19 9m-7 3a3 3 0 1 1 0-6a3 3 0 0 1 0 6"/>
           </svg>
-          {{ elementoRutaAbierto?.direccion }}
-        </p> 
+          {{ elementoRutaAbierto.direccion }}
+        </p>
       }
-      
-      @if (elementoRutaAbierto?.maps) { 
-        <a [href]="elementoRutaAbierto?.maps" target="_blank" class="btn-maps">Abrir en Maps</a> 
+
+      @if (elementoRutaAbierto?.maps) {
+        <a [href]="elementoRutaAbierto.maps" target="_blank" class="btn-maps">Abrir en Maps</a>
       }
     </div>
   </div>
-  }
+}
+
   
 
 <div class="toast-notificacion" [class.mostrar]="mostrarToast">

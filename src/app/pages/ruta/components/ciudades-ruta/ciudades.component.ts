@@ -825,14 +825,16 @@ export class CiudadesRutaComponent implements OnInit {
                 nombre: el.lugar.nombre, 
                 descripcion: el.lugar.descripcion, 
                 maps: el.lugar.maps, 
-                direccion: el.lugar.direccion 
+                direccion: el.lugar.direccion,
+                imagen: el.lugar.imagen
             };
         } else if (el.tipo === 'gastronomia' && el.gastronomia) {
             this.elementoRutaAbierto = { 
                 nombre: el.gastronomia.nombre, 
                 descripcion: el.gastronomia.descripcion, 
                 maps: el.gastronomia.maps, 
-                direccion: el.gastronomia.direccion 
+                direccion: el.gastronomia.direccion,
+                imagen: el.gastronomia.imagen
             };
         }
         
@@ -842,6 +844,7 @@ export class CiudadesRutaComponent implements OnInit {
             this.cdr.detectChanges();
         }
     }
+    
 
     cerrarModalDetalleRuta() {
         this.mostrarModalDetalleRuta = false;
