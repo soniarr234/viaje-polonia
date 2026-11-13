@@ -25,6 +25,8 @@ interface DiaRuta {
   elementos: RutaElemento[];
   lugarSeleccionado?: string;
   gastronomiaSeleccionada?: string;
+  abiertoAgregar?: boolean;
+  tipoAgregar?: 'lugar' | 'gastronomia';
 }
 
 @Component({
@@ -643,21 +645,55 @@ export class CiudadesRutaComponent implements OnInit {
         const ciudad = this.ciudades.find(c => c.id === dia.ciudadId);
         const lugar = ciudad?.lugares.find(l => l.nombre === dia.lugarSeleccionado);
         if (lugar?.id == null) return;
-        if (dia.elementos.some(el => el.tipo === 'lugar' && el.lugarId === lugar.id)) { dia.lugarSeleccionado = ''; return; }
-        await supabase.from('ruta_elementos').insert({ ruta_dia_id: dia.id, tipo: 'lugar', lugar_id: lugar.id, gastronomia_id: null, posicion: dia.elementos.length + 1 });
+      
+        if (dia.elementos.some(el => el.tipo === 'lugar' && el.lugarId === lugar.id)) {
+          dia.lugarSeleccionado = '';
+          dia.abiertoAgregar = false;
+          this.cdr.detectChanges();
+          return;
+        }
+      
+        await supabase.from('ruta_elementos').insert({
+          ruta_dia_id: dia.id,
+          tipo: 'lugar',
+          lugar_id: lugar.id,
+          gastronomia_id: null,
+          posicion: dia.elementos.length + 1
+        });
+      
         dia.lugarSeleccionado = '';
+        dia.abiertoAgregar = false;
         await this.cargarRutaDias();
+        this.cdr.detectChanges();
     }
     
     async agregarGastronomiaADia(dia: DiaRuta) {
         if (dia.id == null || dia.ciudadId == null || !dia.gastronomiaSeleccionada) return;
         const ciudad = this.ciudades.find(c => c.id === dia.ciudadId);
-        const gastro = ciudad?.gastronomia.find(item => item.id === Number(dia.gastronomiaSeleccionada) || item.nombre === dia.gastronomiaSeleccionada);
+        const gastro = ciudad?.gastronomia.find(
+          item => item.id === Number(dia.gastronomiaSeleccionada) || item.nombre === dia.gastronomiaSeleccionada
+        );
         if (gastro?.id == null) return;
-        if (dia.elementos.some(el => el.tipo === 'gastronomia' && el.gastronomiaId === gastro.id)) { dia.gastronomiaSeleccionada = ''; return; }
-        await supabase.from('ruta_elementos').insert({ ruta_dia_id: dia.id, tipo: 'gastronomia', lugar_id: null, gastronomia_id: gastro.id, posicion: dia.elementos.length + 1 });
+      
+        if (dia.elementos.some(el => el.tipo === 'gastronomia' && el.gastronomiaId === gastro.id)) {
+          dia.gastronomiaSeleccionada = '';
+          dia.abiertoAgregar = false;
+          this.cdr.detectChanges();
+          return;
+        }
+      
+        await supabase.from('ruta_elementos').insert({
+          ruta_dia_id: dia.id,
+          tipo: 'gastronomia',
+          lugar_id: null,
+          gastronomia_id: gastro.id,
+          posicion: dia.elementos.length + 1
+        });
+      
         dia.gastronomiaSeleccionada = '';
+        dia.abiertoAgregar = false;
         await this.cargarRutaDias();
+        this.cdr.detectChanges(); 
     }
         
     pedirConfirmacionQuitarActividad(dia: DiaRuta, elemento: RutaElemento, event: Event) {
@@ -677,23 +713,34 @@ export class CiudadesRutaComponent implements OnInit {
     }
         
     async confirmarQuitarActividadDeRuta() {
-        if (!this.actividadParaQuitar || !this.diaDeActividadParaQuitar || this.actividadParaQuitar.id == null) { this.cerrarConfirmacionQuitarActividad(); return; }
+        if (!this.actividadParaQuitar || !this.diaDeActividadParaQuitar || this.actividadParaQuitar.id == null) {
+          this.cerrarConfirmacionQuitarActividad();
+          return;
+        }
+      
         const idBorrar = this.actividadParaQuitar.id;
         const diaAsociado = this.diaDeActividadParaQuitar;
+      
+        // 1. Cerramos el modal y quitamos el elemento visualmente al instante
         this.cerrarConfirmacionQuitarActividad();
+        diaAsociado.elementos = diaAsociado.elementos.filter(item => item.id !== idBorrar);
+        this.cdr.detectChanges();
+      
+        // 2. Borramos en Supabase y recargamos la lista
         await supabase.from('ruta_elementos').delete().eq('id', idBorrar);
-        this.zone.run(async () => {
-            diaAsociado.elementos = diaAsociado.elementos.filter(item => item.id !== idBorrar);
-            await this.cargarRutaDias();
-            this.mensajeToast = 'Actividad eliminada de la ruta'
-            this.mostrarToast = true;
-            setTimeout(() => {
-              this.mostrarToast = false;
-            }, 4000);
-
-            this.cdr.detectChanges();
-        });
+        await this.cargarRutaDias();
+      
+        // 3. Mostramos el toast y forzamos el refresco de pantalla
+        this.mensajeToast = 'Actividad eliminada de la ruta';
+        this.mostrarToast = true;
+        this.cdr.detectChanges();
+      
+        setTimeout(() => {
+          this.mostrarToast = false;
+          this.cdr.detectChanges();
+        }, 4000);
     }
+      
     
     abrirFormularioDia() {
         this.reiniciarDia();
@@ -789,18 +836,30 @@ export class CiudadesRutaComponent implements OnInit {
     }
         
     async confirmarEliminarDiaRuta() {
-        if (!this.diaRutaParaBorrar?.id) { this.cerrarConfirmarBorradoDiaRuta(); return; }
-        const idBorrar = this.diaRutaParaBorrar.id;
-        this.cerrarConfirmarBorradoDiaRuta();
-        await supabase.from('ruta_dias').delete().eq('id', idBorrar);
-        await this.cargarRutaDias();
-        this.mensajeToast = 'Día eliminado correctamente';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
-
-        this.cdr.detectChanges();
+        if (!this.diaRutaParaBorrar || this.diaRutaParaBorrar.id == null) {
+            this.cerrarConfirmarBorradoDiaRuta();
+            return;
+          }
+        
+          const idBorrar = this.diaRutaParaBorrar.id;
+        
+          // 1. Cerramos el pop-up y lo quitamos de la vista al instante
+          this.cerrarConfirmarBorradoDiaRuta();
+          this.rutaDias = this.rutaDias.filter(d => d.id !== idBorrar);
+          this.cdr.detectChanges();
+        
+          // 2. Borramos en Supabase y actualizamos
+          await supabase.from('ruta_dias').delete().eq('id', idBorrar);
+          await this.cargarRutaDias();
+        
+          this.mensajeToast = 'Día eliminado de la ruta';
+          this.mostrarToast = true;
+          this.cdr.detectChanges();
+        
+          setTimeout(() => {
+            this.mostrarToast = false;
+            this.cdr.detectChanges();
+          }, 4000);
     }
 
     toggleItem(idUnico: string) {

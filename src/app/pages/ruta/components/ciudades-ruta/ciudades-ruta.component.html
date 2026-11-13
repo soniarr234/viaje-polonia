@@ -551,26 +551,51 @@
             </div>
         </div>
 
-        <div class="ruta-bloques-formulario">
-            <div class="ruta-bloque">
-              <h4>🏛️ Vincular Lugar de la Guía</h4>
-              <select [(ngModel)]="dia.lugarSeleccionado" (change)="agregarLugarADia(dia)">
-                <option value="">Selecciona un monumento registrado...</option>
-                @for (lug of obtenerCiudadPorId(dia.ciudadId)?.lugares; track lug.id) {
-                  <option [value]="lug.nombre">{{ lug.nombre }}</option>
-                }
-              </select>
+        <div class="ruta-agregar-compacto">
+          @if (!dia.abiertoAgregar) {
+            <button type="button" class="btn-toggle-agregar" (click)="dia.abiertoAgregar = true; dia.tipoAgregar = dia.tipoAgregar || 'lugar'">
+              + Añadir parada al itinerario
+            </button>
+          } @else {
+            <div class="panel-agregar-mini">
+              <!-- Fila superior: Selector tipo píldora + botón cerrar -->
+              <div class="panel-agregar-top">
+                <div class="pills-tipo">
+                  <button 
+                    type="button" 
+                    [class.active]="(dia.tipoAgregar || 'lugar') === 'lugar'"
+                    (click)="dia.tipoAgregar = 'lugar'">
+                    🏛️ Lugar
+                  </button>
+                  <button 
+                    type="button" 
+                    [class.active]="dia.tipoAgregar === 'gastronomia'"
+                    (click)="dia.tipoAgregar = 'gastronomia'">
+                    🍴 Comida
+                  </button>
+                </div>
+                <button type="button" class="btn-cerrar-panel" (click)="dia.abiertoAgregar = false">✕</button>
+              </div>
+        
+              <!-- Desplegable único según la pestaña elegida -->
+              @if ((dia.tipoAgregar || 'lugar') === 'lugar') {
+                <select [(ngModel)]="dia.lugarSeleccionado" (ngModelChange)="agregarLugarADia(dia)">
+                  <option value="" disabled>Selecciona un monumento...</option>
+                  @for (lug of obtenerCiudadPorId(dia.ciudadId)?.lugares; track lug.id) {
+                    <option [value]="lug.nombre">{{ lug.nombre }}</option>
+                  }
+                </select>
+              } @else {
+                <select [(ngModel)]="dia.gastronomiaSeleccionada" (ngModelChange)="agregarGastronomiaADia(dia)">
+                  <option value="" disabled>Selecciona un plato o local...</option>
+                  @for (gastro of obtenerCiudadPorId(dia.ciudadId)?.gastronomia; track gastro.id) {
+                    <option [value]="gastro.nombre">{{ gastro.nombre }}</option>
+                  }
+                </select>
+              }              
             </div>
-            <div class="ruta-bloque">
-              <h4>🍴 Vincular Restaurante / Plato</h4>
-              <select [(ngModel)]="dia.gastronomiaSeleccionada" (change)="agregarGastronomiaADia(dia)">
-                <option value="">Selecciona un plato o local...</option>
-                @for (gastro of obtenerCiudadPorId(dia.ciudadId)?.gastronomia; track gastro.id) {
-                  <option [value]="gastro.id">{{ gastro.nombre }}</option>
-                }
-              </select>
-            </div>
-        </div>
+          }
+        </div>     
 
         <div class="ruta-elementos" cdkDropList (cdkDropListDropped)="reordenarElementosDia($event, dia)">
             @for (elemento of dia.elementos; track elemento.id) {
