@@ -161,7 +161,7 @@ export class CiudadesRutaComponent implements OnInit {
             }))
         }));
 
-        //this.cdr.detectChanges();
+        this.cdr.detectChanges();
     }
 
     async cargarRutaDias() {
