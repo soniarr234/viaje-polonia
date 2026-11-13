@@ -529,7 +529,6 @@ export class CiudadesRutaComponent implements OnInit {
             maps: ''
         };
         this.pestanaGastroActive = 'que-comer';
-        this.subSubTipoActive = 'restaurante';
         this.editandoGastronomia = false;
         this.indiceGastronomiaEditando = -1;
         this.mostrarFormularioGastronomia = false;
