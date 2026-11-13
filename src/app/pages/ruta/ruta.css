@@ -222,6 +222,34 @@
   display: flex;
   align-items: center;
 }
+/* =====================================================
+   DIRECCION / MAPS
+===================================================== */
+.direccion {
+  margin-bottom: 10px;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.btn-maps {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  margin-top: 8px;
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.btn-maps:hover {
+  background: rgba(56, 189, 248, 0.25);
+  color: #7dd3fc;
+}
 
 /* ==========================================================================================================
                                                 FORMULARIOS GENERALES
@@ -702,9 +730,9 @@
   gap: 16px;
 }
 .ciudad-card {
-  padding: 20px;
+  padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
+  border-radius: 18px;
   background: linear-gradient(145deg, var(--surface), rgba(30, 41, 59, 0.7));
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   cursor: pointer;
@@ -745,7 +773,7 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 6px;
   margin-bottom: 18px;
   padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -810,7 +838,7 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  padding: 20px;
+  padding: 10px;
   overflow-y: auto;
   background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(8px);
@@ -822,10 +850,10 @@
   box-sizing: border-box;
   width: min(100%, 1000px);
   max-width: 1000px;
-  padding: 24px;
-  margin: 30px auto;
+  padding: 18px;
+  margin: 15px auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  border-radius: 20px;
   background: #0f172a;
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.4);
@@ -835,13 +863,13 @@
 }
 .btn-cerrar {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 14px;
+  right: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   border: none;
   border-radius: 10px;
@@ -861,7 +889,8 @@
 .modal-ruta h2 {
   margin: 0 50px 12px 0;
   color: #ffffff;
-  font-size: 28px;
+  font-size: 23px;
+  padding-right: 30px;
 }
 .descripcion-ciudad,
 .modal-ruta p {
@@ -977,6 +1006,7 @@
   flex-direction: column;
   gap: 10px;
   margin: 14px 0;
+  padding: 0px 18px;
 }
 .subtitulo-gastronomia {
   display: flex;
@@ -1013,174 +1043,263 @@
 /* =====================================================
    GASTRONOMÍA
 ===================================================== */
-
 .gastro-selector {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
 .gastro-option {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 6px;
-
   min-height: 52px;
-
   border: 1px solid rgba(255,255,255,.06);
   border-radius: 16px;
-
   background: rgba(255,255,255,.04);
-
   color: #94a3b8;
-
   font-family: inherit;
   font-size: 14px;
   font-weight: 700;
-
   cursor: pointer;
-
   transition: all .25s ease;
 }
-
 .gastro-option:hover {
   border-color: rgba(56,189,248,.25);
-
   background: rgba(56,189,248,.08);
-
   color: #e2e8f0;
 }
-
 .gastro-option.active {
   border-color: rgba(56,189,248,.3);
-
   background: linear-gradient(
     135deg,
     #0284c7,
     #38bdf8
   );
-
   color: white;
-
   box-shadow:
     0 8px 24px rgba(14,165,233,.25);
 }
-
 .gastro-option div:first-child {
   font-size: 24px;
 }
-
-/* ==================================== */
-
-.gastro-tipos {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-
-  margin-bottom: 18px;
-}
-
-.chip-gastro {
-  padding: 10px 16px;
-
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 999px;
-
-  background: rgba(255,255,255,.04);
-
-  color: #94a3b8;
-
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all .25s ease;
-}
-
-.chip-gastro:hover {
-  border-color: rgba(56,189,248,.25);
-
-  color: #e2e8f0;
-}
-
-.chip-gastro.active {
-  background: #38bdf8;
-
-  border-color: #38bdf8;
-
-  color: white;
-
-  box-shadow:
-    0 4px 16px rgba(56,189,248,.25);
-}
-
-/* ==================================== */
-
 .gastro-seccion-titulo {
   display: flex;
   align-items: center;
-
   gap: 10px;
-
   margin: 28px 0 15px;
-
   color: #38bdf8;
-
   font-size: 15px;
   font-weight: 800;
-
   text-transform: uppercase;
   letter-spacing: .5px;
 }
-
 .gastro-seccion-titulo::after {
   content: "";
-
   flex: 1;
-
   height: 1px;
-
   background: linear-gradient(
     to right,
     rgba(56,189,248,.45),
     transparent
   );
 }
-
 /* ==================================== */
-
-.gastro-plato {
-  border-left: 4px solid #f59e0b;
-}
-
-.gastro-bebida {
-  border-left: 4px solid #3b82f6;
-}
-
-.gastro-postre {
-  border-left: 4px solid #ec4899;
-}
-
-.gastro-local {
-  border-left: 4px solid #22c55e;
-}
-
-/* ==================================== */
-
 .gastro-imagen {
   width: 100%;
   height: 220px;
-
   object-fit: cover;
-
   border-radius: 14px;
-
   margin-bottom: 14px;
+}
+/* =====================================================
+   TARJETAS DE RESTAURANTES
+===================================================== */
+.local-card {
+  margin-bottom: 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #162238 0%, #0f172a 100%);
+  border: 1px solid rgba(56, 189, 248, 0.14);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.local-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+.local-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 170px;
+}
+.local-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.local-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+.local-body {
+  padding: 16px 18px;
+}
+.local-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.local-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.local-title-group h5 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.local-address {
+  margin: 0 0 10px;
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.local-desc {
+  margin-bottom: 12px;
+  color: #cbd5e1;
+  font-size: 13.5px;
+}
+.local-footer {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-local-maps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.btn-local-maps:hover {
+  background: #38bdf8;
+  color: #ffffff;
+}
+
+.lugar-card {
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(
+    180deg,
+    #13203a,
+    #0f172a
+  );
+  border: 1px solid rgba(255,255,255,.05);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.25);
+  transition: all .25s ease;
+  margin-bottom: 20px;
+}
+.lugar-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56,189,248,.25);
+}
+.lugar-imagen-container {
+  position: relative;
+}
+.lugar-imagen{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
+  margin-bottom:15px;
+}
+.btn-menu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(15,23,42,.8);
+  color: white;
+  cursor: pointer;
+}
+.lugar-body {
+  padding: 18px;
+}
+.lugar-titulo {
+  margin: 0 0 10px;
+  color: #0ea5e9;
+  font-size: 20px;
+  font-weight: 700;
+}
+.lugar-resumen {
+  margin: 0;
+  color: #94a3b8;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.lugar-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+.btn-ver-detalle {
+  border: none;
+  background: transparent;
+  color: #38bdf8;
+  font-weight: 700;
+  cursor: pointer;
+}
+.acciones-lugar {
+  display: flex;
+  gap: 6px;
+}
+.lugar-detalle {
+  padding: 18px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: rgba(0,0,0,.15);
+}
+/* =====================================================
+   CURIOSIDADES
+===================================================== */
+.curiosidades {
+  padding-left: 22px;
+}
+.curiosidades li {
+  margin-bottom: 10px;
+  color: #cbd5e1;
+  line-height: 1.7;
 }
 /* =====================================================
    PERSONALIZACIÓN DEL SCROLLBAR (TEXTAREA Y MODALES)
@@ -1213,211 +1332,44 @@
   border: 2px solid transparent;
   background-clip: padding-box;
 }
-
-.lugar-card {
-  overflow: hidden;
-  border-radius: 22px;
-
-  background: linear-gradient(
-    180deg,
-    #13203a,
-    #0f172a
-  );
-
-  border: 1px solid rgba(255,255,255,.05);
-
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.25);
-
-  transition: all .25s ease;
-  margin-bottom: 20px;
-}
-
-.lugar-card:hover {
-  transform: translateY(-2px);
-
-  border-color: rgba(56,189,248,.25);
-}
-
-.lugar-imagen-container {
-  position: relative;
-}
-
-.lugar-imagen {
-  display: block;
-
-  width: 100%;
-  height: 220px;
-
-  object-fit: cover;
-}
-
-.btn-menu {
-  position: absolute;
-
-  top: 12px;
-  right: 12px;
-
-  width: 40px;
-  height: 40px;
-
-  border: none;
-  border-radius: 12px;
-
-  background: rgba(15,23,42,.8);
-
-  color: white;
-
-  cursor: pointer;
-}
-
-.lugar-body {
-  padding: 18px;
-}
-
-.lugar-titulo {
-  margin: 0 0 10px;
-
-  color: #0ea5e9;
-
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.lugar-resumen {
-  margin: 0;
-
-  color: #94a3b8;
-
-  line-height: 1.6;
-  font-size: 14px;
-}
-
-.lugar-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: 18px;
-}
-
-.btn-ver-detalle {
-  border: none;
-
-  background: transparent;
-
-  color: #38bdf8;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-.acciones-lugar {
-  display: flex;
-  gap: 6px;
-}
-
-.lugar-detalle {
-  padding: 18px;
-
-  border-top: 1px solid rgba(255,255,255,.06);
-
-  background: rgba(0,0,0,.15);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* =====================================================
-   10. TEXTOS EXPANSIVOS (LEER MÁS / MENOS)
+   RUTA
 ===================================================== */
 
-.btn-leer-mas {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
 
-  padding: 6px 0;
-  margin-top: 4px;
 
-  border: none;
-  background: transparent;
-  color: #38bdf8;
 
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
 
-  cursor: pointer;
-  user-select: none;
 
-  transition:
-    color 0.2s ease,
-    transform 0.1s ease;
-}
 
-.btn-leer-mas:hover {
-  color: #7dd3fc;
-}
 
-.btn-leer-mas:active {
-  transform: scale(0.96);
-}
 
-.btn-leer-mas svg {
-  transition: transform 0.25s ease-in-out; /* Animación suave al girar */
-  transform: rotate(0deg); /* Apunta hacia abajo por defecto */
-}
 
-.btn-leer-mas svg.rotado {
-  transform: rotate(180deg); /* Apunta hacia arriba al expandirse */
-}
 
-/* CONTENEDORES DE TEXTO DENTRO DE LOS ACORDEONES */
 
-.timeline-content div p {
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #cbd5e1;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* SUBTÍTULOS AUTOMÁTICOS DEL PROCESADOR DE TEXTO */
-
 ::v-deep .subtitulo-lugar {
   display: block;
-
   margin-top: 4px;
   margin-bottom: 6px;
-
   color: #38bdf8;
-
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.1px;
@@ -1426,316 +1378,155 @@
 /* =====================================================
    16. CUSTOM SELECT
 ===================================================== */
-
 .custom-select {
   position: relative;
-
   width: 100%;
 }
-
-
 .custom-select-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   box-sizing: border-box;
-
   width: 100%;
   min-height: 48px;
-
   padding: 13px 14px;
-
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
-
   background: rgba(255, 255, 255, 0.05);
   color: #f8fafc;
-
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
-
   text-align: left;
-
   cursor: pointer;
   outline: none;
-
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
     box-shadow 0.2s ease;
 }
-
-
 .custom-select-trigger:hover {
   border-color: rgba(56, 189, 248, 0.35);
   background: rgba(255, 255, 255, 0.07);
 }
-
 .custom-select-trigger:focus {
   border-color: #38bdf8;
-
   box-shadow:
     0 0 0 3px rgba(56, 189, 248, 0.12);
 }
-
-
 .custom-select-ciudad
 .custom-select-trigger:not(.has-value) {
   color: #94a3b8;
 }
-
 .custom-select-trigger.has-value {
   color: #f8fafc;
 }
-
-
 .custom-select-arrow {
   flex-shrink: 0;
-
   margin-left: 12px;
-
   color: #38bdf8;
-
   font-size: 10px;
-
   transition:
     transform 0.2s ease;
 }
-
 .custom-select-arrow.open {
   transform: rotate(180deg);
 }
-
-
 .custom-select-menu {
   position: absolute;
-
   top: calc(100% + 7px);
   right: 0;
   left: 0;
-
   z-index: 100;
-
   overflow: hidden;
-
   padding: 6px;
-
   border: 1px solid rgba(56, 189, 248, 0.15);
   border-radius: 14px;
-
   background: #111827;
-
   box-shadow:
     0 15px 35px rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(255, 255, 255, 0.02);
 }
-
-
 .custom-select-menu button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   box-sizing: border-box;
-
   width: 100%;
-
   padding: 12px 13px;
-
   border: none;
   border-radius: 10px;
-
   background: transparent;
   color: #cbd5e1;
-
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
-
   text-align: left;
-
   cursor: pointer;
-
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
 }
-
 .custom-select-menu button:hover {
   background: rgba(56, 189, 248, 0.1);
   color: #ffffff;
 }
-
 .custom-select-menu button.selected {
   background: rgba(56, 189, 248, 0.14);
   color: #38bdf8;
-
   font-weight: 600;
-}
-
-
-.check-ciudad {
-  margin-left: 10px;
-
-  color: #38bdf8;
-
-  font-size: 15px;
-  font-weight: 700;
-}
-
-
-/* =====================================================
-   17. ACCIONES LUGAR / GASTRONOMIA / CURIOSIDAD
-===================================================== */
-
-.acciones-gastronomia {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-
-  margin-top: 16px;
-}
-
-
-/* =====================================================
-   18. IMAGENES / DIRECCION / MAPS
-===================================================== */
-
-.lugar-imagen{
-  width:100%;
-  height:190px;
-  object-fit:cover;
-  border-top-right-radius: 16px;
-  border-top-left-radius: 16px;
-  margin-bottom:15px;
-}
-
-
-.direccion {
-  margin-bottom: 10px;
-
-  color: #94a3b8;
-
-  font-size: 14px;
-
-  line-height: 1.5;
-}
-
-
-.btn-maps {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 10px 14px;
-  margin-top: 8px;
-
-  border-radius: 10px;
-
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  text-decoration: none;
-
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.btn-maps:hover {
-  background: rgba(56, 189, 248, 0.25);
-  color: #7dd3fc;
-}
-
-
-/* =====================================================
-   19. CURIOSIDADES
-===================================================== */
-
-.curiosidades {
-  padding-left: 22px;
-}
-
-.curiosidades li {
-  margin-bottom: 10px;
-
-  color: #cbd5e1;
-
-  line-height: 1.7;
 }
 
 
 /* =====================================================
    20. RUTA - FORMULARIO NUEVO DIA
 ===================================================== */
-
 .ruta-dia-form {
-  padding: 20px;
+  padding: 16px;
   margin-bottom: 24px;
-
   border: 1px solid rgba(56, 189, 248, 0.12);
   border-radius: 22px;
-
   background: linear-gradient(
     145deg,
     rgba(14, 165, 233, 0.06),
     rgba(15, 23, 42, 0.96) 42%
   );
-
   box-shadow:
     0 14px 35px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
-
 /* =====================================================
    21. RUTA - TARJETA DEL DIA
 ===================================================== */
-
 .ruta-dia-card {
   position: relative;
-
   overflow: hidden;
-
   padding: 0;
-  margin: 20px 0 26px;
-
+  margin: 20px 0px;
   border: 1px solid rgba(71, 116, 180, 0.18);
-  border-radius: 22px;
-
+  border-radius: 18px;
   background: linear-gradient(
     145deg,
     rgba(17, 27, 48, 0.98),
     rgba(19, 31, 53, 0.98)
   );
-
   box-shadow:
     0 14px 35px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.025);
-
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
-
 .ruta-dia-card::before {
   content: "";
-
   position: absolute;
-
   top: 0;
   right: 0;
   left: 0;
-
   z-index: 1;
-
   height: 3px;
-
   background: linear-gradient(
     90deg,
     #0ea5e9,
@@ -1743,32 +1534,24 @@
     rgba(56, 189, 248, 0.1)
   );
 }
-
-
 .ruta-dia-card:hover {
   border-color: rgba(56, 189, 248, 0.24);
-
   box-shadow:
     0 18px 40px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
-
 /* =====================================================
    22. RUTA - CABECERA DIA
 ===================================================== */
-
 .ruta-dia-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 15px;
-
-  padding: 22px 20px 18px;
-
+  padding: 19px 16px 16px;
   border-bottom:
     1px solid rgba(255, 255, 255, 0.055);
-
   background: linear-gradient(
     180deg,
     rgba(56, 189, 248, 0.035),
@@ -1780,75 +1563,50 @@
   align-items: center;
   gap: 4px;
 }
-
 .ruta-dia-header > div:first-child {
   min-width: 0;
 }
-
-
 .ruta-dia-header h3 {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  margin: 0 0 9px;
-
+  margin: 0 0 8px;
   color: #f8fafc;
-
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 800;
-
   letter-spacing: -0.25px;
 }
-
-
 .ruta-dia-header span {
   display: inline-flex;
   align-items: center;
-
-  margin: 0 12px 0 0;
-
+  margin: 0 9px 0 0;
   color: #38bdf8;
-
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .ruta-dia-header span + span {
   color: #94a3b8;
-
   font-weight: 600;
 }
-
-
 .ruta-dia-header > .btn-eliminar {
-  flex: 0 0 38px;
-
-  width: 38px;
-  height: 38px;
-
+  flex-basis: 34px;
+  width: 34px;
+  height: 34px;
   margin: 0;
-
   border: 1px solid rgba(239, 68, 68, 0.12);
-  border-radius: 12px;
-
+  border-radius: 10px;
   background: rgba(239, 68, 68, 0.06);
   color: #f87171;
-
   font-size: 13px;
   font-weight: 800;
-
   opacity: 0.8;
 }
-
 .ruta-dia-header > .btn-eliminar:hover {
   border-color: rgba(239, 68, 68, 0.3);
-
   background: rgba(239, 68, 68, 0.12);
   color: #fca5a5;
-
   opacity: 1;
-
   transform: none;
 }
 
@@ -1857,16 +1615,19 @@
    23. RUTA - BLOQUES LUGARES / GASTRONOMIA
 ===================================================== */
 .ruta-bloques-formulario {
-  margin: 12px 16px;
-  padding: 5px 0 16px 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 14px 16px;
+  padding: 16px;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.25); /* Un fondo negro translúcido para hundir el formulario */
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .ruta-bloque {
   position: relative;
-  padding: 0 0 16px 0; /* Eliminamos paddings excesivos */
+  padding: 16px;
 }
 .ruta-bloque:last-child {
   padding-bottom: 0;
@@ -1874,14 +1635,13 @@
 }
 
 .ruta-dia-card h4 {
-  margin: 0 0 10px;
+  margin: 0 0 11px;
   color: #94a3b8; /* Un tono grisáceo más discreto */
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
 .ruta-bloque select {
   margin-bottom: 9px;
 }
@@ -1890,34 +1650,23 @@
 /* =====================================================
    24. RUTA - SELECTS
 ===================================================== */
-
 .ruta-dia-card select {
   box-sizing: border-box;
-
   width: 100%;
-  min-height: 46px;
-
+  min-height: 44px;
   padding: 0 42px 0 14px;
-
   border: 1px solid rgba(148, 163, 184, 0.13);
   border-radius: 12px;
-
   background-color: rgba(255, 255, 255, 0.045);
   color: #e2e8f0;
-
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-
   outline: none;
-
   cursor: pointer;
-
   color-scheme: dark;
-
   appearance: none;
   -webkit-appearance: none;
-
   background-image:
     linear-gradient(
       45deg,
@@ -1929,23 +1678,18 @@
       #38bdf8 50%,
       transparent 50%
     );
-
   background-position:
     calc(100% - 18px) 51%,
     calc(100% - 13px) 51%;
-
   background-size:
     5px 5px,
     5px 5px;
-
   background-repeat: no-repeat;
-
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
     box-shadow 0.2s ease;
 }
-
 
 .ruta-dia-card select:hover {
   border-color: rgba(56, 189, 248, 0.3);
@@ -1978,7 +1722,7 @@
 
 .ruta-dia-card .btn-add-mini {
   width: 100%;
-  min-height: 40px;
+  min-height: 39px;
 
   padding: 9px 14px;
   margin: 0;
@@ -2013,7 +1757,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px; /* Un poco más de espacio entre actividades */
-  padding: 20px 16px 20px;
+  padding: 16px;
   background: rgba(2, 6, 23, 0.4); /* Fondo diferenciado para la zona del itinerario */
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -2022,7 +1766,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 52px;
+  min-height: 46px;
   padding: 6px 12px 6px 14px;
   border: 1px solid rgba(56, 189, 248, 0.08); /* Borde con un sutil toque de tu azul corporativo */
   border-radius: 14px;
@@ -2151,15 +1895,11 @@
 /* =====================================================
    27. RUTA - DIA VACIO
 ===================================================== */
-
 .ruta-vacia {
-  padding: 14px 20px 20px;
-
+  padding: 12px 16px 18px;
   color: #64748b;
-
   font-size: 12px;
   font-style: italic;
-
   line-height: 1.5;
 }
 
@@ -2184,164 +1924,27 @@
 }
 
 
-/* =====================================================
-   29. RESPONSIVE - TABLET / ESCRITORIO
-===================================================== */
-
-@media (min-width: 700px) {
-
-  .ruta-bloque {
-    padding: 20px 24px;
-  }
-
-  .ruta-dia-header {
-    padding: 24px;
-  }
-
-  .ruta-elementos {
-    padding: 20px 24px 24px;
-  }
-
-}
 
 
-/* =====================================================
-   30. RESPONSIVE - MOVIL
-===================================================== */
-
-@media (max-width: 520px) {
 
 
-  /* CIUDADES */
-
-  .ciudad-card {
-    padding: 16px;
-
-    border-radius: 18px;
-  }
-
-  .ciudad-header h3 {
-    font-size: 20px;
-  }
-
-  .ciudad-stats {
-    gap: 6px;
-  }
 
 
-  /* MODALES */
 
-  .modal-overlay {
-    padding: 10px;
-  }
 
-  .modal-ciudad,
-  .modal-ruta {
-    padding: 18px;
 
-    margin: 15px auto;
 
-    border-radius: 20px;
-  }
 
-  .modal-ciudad h2,
-  .modal-ruta h2 {
-    padding-right: 30px;
 
-    font-size: 23px;
-  }
 
-  .btn-cerrar {
-    top: 14px;
-    right: 14px;
 
-    width: 34px;
-    height: 34px;
-  }
 
-  /* RUTA */
 
-  .ruta-dia-form {
-    padding: 16px;
-  }
 
-  /*
-   * MUY IMPORTANTE:
-   * ruta-dia-card debe seguir teniendo padding 0.
-   * Si ponemos 16px aquí rompemos la cabecera y
-   * los bloques internos.
-   */
 
-  .ruta-dia-card {
-    padding: 0;
 
-    margin-bottom: 20px;
 
-    border-radius: 18px;
-  }
 
-  .ruta-dia-header {
-    padding: 19px 16px 16px;
-  }
-
-  .ruta-dia-header h3 {
-    margin-bottom: 8px;
-
-    font-size: 19px;
-  }
-
-  .ruta-dia-header span {
-    margin-right: 9px;
-
-    font-size: 12px;
-  }
-
-  .ruta-dia-header > .btn-eliminar {
-    flex-basis: 34px;
-
-    width: 34px;
-    height: 34px;
-
-    border-radius: 10px;
-  }
-
-  .ruta-bloque {
-    padding: 16px;
-  }
-
-  .ruta-dia-card h4 {
-    margin-bottom: 11px;
-
-    font-size: 14px;
-  }
-
-  .ruta-dia-card select {
-    min-height: 44px;
-
-    font-size: 13px;
-  }
-
-  .ruta-dia-card .btn-add-mini {
-    min-height: 39px;
-  }
-
-  .ruta-elementos {
-    padding: 16px;
-  }
-
-  .ruta-elemento {
-    min-height: 46px;
-  }
-
-  .ruta-link {
-    font-size: 13px;
-  }
-
-  .ruta-vacia {
-    padding: 12px 16px 18px;
-  }
-
-}
 
 /* =========================
    POP-UP CONFIRMACIÓN
@@ -2460,31 +2063,25 @@
   max-width: 90vw;
   width: max-content;
 }
-
 /* Esta clase se activa automáticamente desde Angular */
 .toast-notificacion.mostrar {
   bottom: 30px; /* Sube flotando de manera fluida */
   opacity: 1;
 }
-
 .toast-contenido {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 .toast-icono {
   font-size: 18px;
 }
-
 .toast-notificacion p {
   margin: 0;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
-
-
 /* Estilo para la tarjeta mientras el dedo la está arrastrando */
 .cdk-drag-preview {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
@@ -2492,22 +2089,18 @@
   border-radius: 16px;
   opacity: 0.9;
 }
-
 /* Animación suave de transición para cuando los demás lugares se apartan */
 .cdk-drop-list-placeholder {
   transition: transform 0.2s ease;
 }
-
 /* Animación de retorno si sueltas el elemento y vuelve a su sitio */
 .cdk-drag-animating {
   transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
 }
-
 /* Animación de reajuste del resto de la lista al soltar */
 .timeline-container.cdk-drop-list-dragging .timeline-item:not(.cdk-drag-placeholder) {
   transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
 }
-
 .aviso-popup-guia small {
   display: block;
   margin-top: -12px;
