@@ -77,11 +77,10 @@ export class CiudadesRutaComponent implements OnInit {
     indiceGastronomiaEditando = -1;
     dropdownGastronomiaAbierto = false;
     pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
-    subSubTipoActive:'restaurante' | 'cerveceria' | 'cafeteria' = 'restaurante';
 
     nuevaGastronomia: Gastronomia = {
         nombre: '',
-        tipo: 'plato',
+        tipo: 'comida',
         descripcion: '',
         direccion: '',
         imagen: '',
@@ -162,7 +161,7 @@ export class CiudadesRutaComponent implements OnInit {
             }))
         }));
 
-        this.cdr.detectChanges();
+        //this.cdr.detectChanges();
     }
 
     async cargarRutaDias() {
@@ -186,7 +185,7 @@ export class CiudadesRutaComponent implements OnInit {
                 });
             return { id: diaDb.id, titulo: diaDb.titulo, ciudadId: diaDb.ciudad_id, ciudad: ciudad?.nombre || '', fecha: diaDb.fecha || '', elementos: elementosDia, lugarSeleccionado: '', gastronomiaSeleccionada: '' };
         });
-        this.cdr.detectChanges();
+        //this.cdr.detectChanges();
     }
 
     formatearTexto(texto: string | null): string {
@@ -218,24 +217,12 @@ export class CiudadesRutaComponent implements OnInit {
         this.pestanaGastroActive = pestana;
     
         if (pestana === 'que-comer') {
-            this.nuevaGastronomia.tipo = 'plato';
+            this.nuevaGastronomia.tipo = 'comida';
         } else {
-            this.nuevaGastronomia.tipo = this.subSubTipoActive;
+            this.nuevaGastronomia.tipo = 'local';
         }
     
         this.cdr.detectChanges();
-    }
-
-    cambiarSubSubTipoGastro(
-        subTipo: 'restaurante' | 'cerveceria' | 'cafeteria'
-      ) {
-          this.subSubTipoActive = subTipo;
-      
-          if (this.pestanaGastroActive === 'donde-comer') {
-              this.nuevaGastronomia.tipo = subTipo;
-          }
-      
-          this.cdr.detectChanges();
     }
 
     abrirCiudad(ciudad: Ciudad) {
@@ -287,8 +274,8 @@ export class CiudadesRutaComponent implements OnInit {
             this.reiniciarCiudad();
             await this.cargarCiudades();
             await this.cargarRutaDias();
-            this.mostrarToast = true;
-            setTimeout(() => this.mostrarToast = false, 4000);
+
+            this.lanzarToast();
         } catch (e) { console.error(e); } finally { this.guardandoCiudad = false; this.cdr.detectChanges(); }
     }
 
@@ -326,10 +313,7 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         await this.cargarRutaDias();
         this.mensajeToast = 'Ciudad eliminada correctamente';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
+        this.lanzarToast();
       
         this.cdr.detectChanges();
     }
@@ -370,14 +354,8 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
-        this.mensajeToast = eraEdicion
-          ? 'Lugar actualizado correctamente'
-          : 'Lugar añadido correctamente';
-        this.mostrarToast = true;
-
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
+        this.mensajeToast = 'Lugar actualizado correctamente';
+        this.lanzarToast();
         this.cdr.detectChanges();
     }
 
@@ -404,31 +382,34 @@ export class CiudadesRutaComponent implements OnInit {
         }, 100);
     }
 
-    pedirConfirmacionBorradoLugar(lugar: Lugar, event: Event({
-      event.preventDafault();
-      even.spotPropagation();
-
-      this.lugarParaBorrar = lugar;
-      this.mostrarConfirmaBorradoLugar = true;
-
-      this.cdr.deleteChanges();
+    pedirConfirmacionBorradoLugar(lugar: Lugar, event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
+      
+        this.lugarParaBorrar = lugar;
+        this.mostrarConfirmarBorradoLugar = true;
+      
+        this.cdr.detectChanges();
+    }
+      
+    cerrarConfirmarBorradoLugar() {
+        this.mostrarConfirmarBorradoLugar = false;
+        this.lugarParaBorrar = null;
+      
+        this.cdr.detectChanges();
     }
 
-    cerrarConfirmarBorradoLugar(){
-      this.mostrarConfirmaBorradoLugar = false;
-      this.lugarParaBorrar = null;
-      this.cdr.detectChanges();
-    }
+    async confirmarEliminarLugar() {
 
-    async confirmarEliminarLugar(){
-      if(this.lugarParaBorrar){
+        if (!this.lugarParaBorrar) {
+          this.cerrarConfirmarBorradoLugar();
+          return;
+        }
+      
+        await this.eliminarLugar(this.lugarParaBorrar);
+      
         this.cerrarConfirmarBorradoLugar();
-        return;
-      }
-      await
-      this.eliminarLugar(this.lugarParaBorrar);
-      this.cerrarConfirmatBorradoLugar();
-    }       
+    }      
 
     async eliminarLugar(lugar: Lugar) {
         if (this.ciudadSeleccionada?.id == null || lugar.id == null) return;
@@ -439,10 +420,7 @@ export class CiudadesRutaComponent implements OnInit {
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         await this.cargarRutaDias();
         this.mensajeToast = 'Lugar eliminado correctamente';
-        this.mostrarToast = true;
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
+        this.lanzarToast();
 
         this.cdr.detectChanges();
     }
@@ -461,8 +439,8 @@ export class CiudadesRutaComponent implements OnInit {
         
         let tipoFinal =
             this.pestanaGastroActive === 'que-comer'
-                ? this.nuevaGastronomia.tipo
-                : this.subSubTipoActive;
+                ? 'comida'
+                : 'local';
         
         const payload: any = {
             ciudad_id: ciudadId,
@@ -489,13 +467,8 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarCiudades();
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null
         await this.cargarRutaDias();
-        this.mensajeToast = eraEdicion
-          ? 'Elemento gastronómico actualizado'
-          : 'Elemento gastronómico añadido';
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
-        this.cdr.detectChanges();  
+        this.mensajeToast = 'Elemento gastronómico eliminado';
+        this.lanzarToast();
     }
 
     editarGastronomia(item: Gastronomia) {
@@ -509,19 +482,10 @@ export class CiudadesRutaComponent implements OnInit {
         this.editandoGastronomia = true;
         this.nuevaGastronomia = { ...item };
     
-        if (
-            item.tipo === 'plato' ||
-            item.tipo === 'bebida' ||
-            item.tipo === 'postre'
-          ) {
-          
+        if (item.tipo === 'comida') {
             this.pestanaGastroActive = 'que-comer';
-          
-          } else {
-          
+        } else {
             this.pestanaGastroActive = 'donde-comer';
-            this.subSubTipoActive = item.tipo as any;
-          
         }
     
         this.mostrarFormularioGastronomia = true;
@@ -558,7 +522,7 @@ export class CiudadesRutaComponent implements OnInit {
     reiniciarGastronomia() {
         this.nuevaGastronomia = {
             nombre: '',
-            tipo: 'plato',
+            tipo: 'comida',
             descripcion: '',
             direccion: '',
             imagen: '',
@@ -591,12 +555,8 @@ export class CiudadesRutaComponent implements OnInit {
         const eraEdicion = this.editandoCuriosidad;
         this.reiniciarCuriosidad();
         await this.cargarCiudades();
-        this.mensajeToast = eraEdicion
-          ? 'Curiosidad actualizada'
-          : 'Curiosidad añadida';
-        setTimeout(() => {
-          this.mostrarToast = false;
-        }, 4000);
+        this.mensajeToast = 'Curiosidad añadida';
+        this.lanzarToast();
 
         this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
         this.cdr.detectChanges();
@@ -771,7 +731,7 @@ export class CiudadesRutaComponent implements OnInit {
             await this.cargarRutaDias();
             
             this.mostrarToast = true;
-            setTimeout(() => this.mostrarToast = false, 4000);
+            this.lanzarToast();
         } catch (error) {
             console.error('Error al guardar el día de ruta:', error);
         } finally {
@@ -897,4 +857,15 @@ export class CiudadesRutaComponent implements OnInit {
         this.dropdownCiudadRutaAbierto = false;
         this.cdr.detectChanges();
     }
+
+    lanzarToast() {
+        this.mostrarToast = true;
+        this.cdr.detectChanges();
+      
+        setTimeout(() => {
+          console.log('OCULTANDO TOAST');
+          this.mostrarToast = false;
+          this.cdr.detectChanges();
+        }, 4000);
+      }
 }

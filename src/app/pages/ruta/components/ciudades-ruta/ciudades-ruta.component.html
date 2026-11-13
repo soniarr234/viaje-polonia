@@ -269,59 +269,61 @@
                 </button>
               
               </div>
-              @if (pestanaGastroActive === 'que-comer') {
-
-                <div class="tipo-transporte">
               
-                  <button
-                    type="button"
-                    class="chip-gastro"
-                    (click)="nuevaGastronomia.tipo = 'plato'"
-                    [class.active]="nuevaGastronomia.tipo === 'plato'">
-
-                    🍲 Plato típico
-
-                  </button>
-
-                  <button
-                    type="button"
-                    class="chip-gastro"
-                    (click)="nuevaGastronomia.tipo = 'bebida'"
-                    [class.active]="nuevaGastronomia.tipo === 'bebida'">
-
-                    🍺 Bebida típica
-
-                  </button>
-
-                  <button
-                    type="button"
-                    class="chip-gastro"
-                    (click)="nuevaGastronomia.tipo = 'postre'"
-                    [class.active]="nuevaGastronomia.tipo === 'postre'">
-
-                    🍰 Postre típico
-
-                  </button>
-              
-                </div>
-              }
               <div class="form-grid">
+
                 <input
                   type="text"
                   [(ngModel)]="nuevaGastronomia.nombre"
-                  placeholder="Nombre del plato, bebida, postre o local">
-                <textarea [(ngModel)]="nuevaGastronomia.descripcion" placeholder="Descripción culinaria o especialidades..."></textarea>
-                
-                @if (pestanaGastroActive === 'donde-comer') {
-                  <div class="form-row form-row-2">
-                    <input type="text" [(ngModel)]="nuevaGastronomia.direccion" placeholder="Dirección física">
-                    <input type="text" [(ngModel)]="nuevaGastronomia.maps" placeholder="Enlace de Maps">
-                  </div>
+                  [placeholder]="
+                    pestanaGastroActive === 'que-comer'
+                      ? 'Nombre del plato típico'
+                      : 'Nombre del restaurante o local'
+                  ">
+              
+                @if (pestanaGastroActive === 'que-comer') {
+              
+                  <input
+                    type="text"
+                    [(ngModel)]="nuevaGastronomia.imagen"
+                    placeholder="URL de la imagen">
+              
                 }
+              
+                @if (pestanaGastroActive === 'donde-comer') {
+              
+                  <input
+                    type="text"
+                    [(ngModel)]="nuevaGastronomia.maps"
+                    placeholder="URL de Google Maps">
+              
+                }
+              
+                <textarea
+                  [(ngModel)]="nuevaGastronomia.descripcion"
+                  placeholder="Descripción">
+                </textarea>
+              
                 <div class="form-actions">
-                  <button class="btn-cancelar-form" (click)="reiniciarGastronomia()">Cancelar</button>
-                  <button class="btn-guardar-form" (click)="agregarGastronomia()">Guardar</button>
+              
+                  <button
+                    class="btn-cancelar-form"
+                    (click)="reiniciarGastronomia()">
+              
+                    Cancelar
+              
+                  </button>
+              
+                  <button
+                    class="btn-guardar-form"
+                    (click)="agregarGastronomia()">
+              
+                    Guardar
+              
+                  </button>
+              
                 </div>
+              
               </div>
             </div>
           }
@@ -334,17 +336,17 @@
           
             @for (gastro of ciudadSeleccionada.gastronomia; track gastro.id) {
           
-              @if (
-                gastro.tipo === 'plato' ||
-                gastro.tipo === 'bebida' ||
-                gastro.tipo === 'postre'
-              ) {
-          
-                <div
-                  class="timeline-item"
-                  [class.gastro-plato]="gastro.tipo === 'plato'"
-                  [class.gastro-bebida]="gastro.tipo === 'bebida'"
-                  [class.gastro-postre]="gastro.tipo === 'postre'">
+              @if (gastro.tipo === 'comida') {
+                
+                <div class="timeline-item">
+                  @if (gastro.imagen) {
+
+                    <img
+                      [src]="gastro.imagen"
+                      [alt]="gastro.nombre"
+                      class="gastro-imagen">
+                  
+                  }  
           
                   <div class="timeline-header" (click)="toggleItem('gastro-' + gastro.id)">
           
@@ -355,17 +357,7 @@
                       </span>
           
                       <span>
-          
-                        {{
-                          gastro.tipo === 'plato'
-                            ? '🍲'
-                            : gastro.tipo === 'bebida'
-                            ? '🍺'
-                            : '🍰'
-                        }}
-          
-                        {{ gastro.nombre }}
-          
+                        🍲 {{ gastro.nombre }}          
                       </span>
           
                     </div>
@@ -413,11 +405,7 @@
           
             @for (gastro of ciudadSeleccionada.gastronomia; track gastro.id) {
           
-              @if (
-                gastro.tipo === 'restaurante' ||
-                gastro.tipo === 'cafeteria' ||
-                gastro.tipo === 'cerveceria'
-              ) {
+              @if (gastro.tipo === 'local') {
           
                 <div
                   class="timeline-item"
@@ -433,15 +421,7 @@
           
                       <span>
           
-                        {{
-                          gastro.tipo === 'restaurante'
-                            ? '🍽️'
-                            : gastro.tipo === 'cafeteria'
-                            ? '☕'
-                            : '🍺'
-                        }}
-          
-                        {{ gastro.nombre }}
+                        📍 {{ gastro.nombre }}
           
                       </span>
           
@@ -647,6 +627,33 @@
 </div>
 }
 
+@if (mostrarConfirmarBorradoLugar) {
+  <div class="popup-overlay">
+    <div class="popup-box">
+      <h3>¿Eliminar lugar?</h3>
+  
+      <p>
+        ¿Estás seguro de que quieres eliminar
+        "<strong>{{ lugarParaBorrar?.nombre }}</strong>"?
+      </p>
+  
+      <div class="popup-buttons">
+        <button
+          class="btn-popup-cancelar"
+          (click)="cerrarConfirmarBorradoLugar()">
+          Cancelar
+        </button>
+  
+        <button
+          class="btn-popup-eliminar"
+          (click)="confirmarEliminarLugar()">
+          Sí, eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 @if (mostrarConfirmarBorradoDiaRuta) {
 <div class="popup-overlay">
   <div class="popup-box">
@@ -688,7 +695,7 @@
 }
 
 <div class="toast-notificacion" [class.mostrar]="mostrarToast">
-<div class="toast-contenido">
-  <p>{{ mensajeToast }}</p>
-</div>
+  <div class="toast-contenido">
+    <p>{{ mensajeToast }}</p>
+  </div>
 </div>

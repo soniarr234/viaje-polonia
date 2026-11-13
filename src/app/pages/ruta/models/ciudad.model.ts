@@ -18,18 +18,21 @@ export type TipoGastronomia =
   | 'cafeteria'
   | 'cerveceria';
 
-export interface Gastronomia {
-  id?: number;
-  ciudadId?: number;
-
-  nombre: string;
-  tipo: TipoGastronomia;
-  descripcion: string;
-  direccion: string;
-  imagen?: string;
-  maps?: string;
-  posicion?: number;
-}
+  export interface Gastronomia {
+    id?: number;
+    ciudadId?: number;
+  
+    nombre: string;
+    descripcion: string;
+  
+    imagen?: string;
+    maps?: string;
+    direccion?: string;
+  
+    tipo: 'comida' | 'local';
+  
+    posicion?: number;
+  }
 
 export interface Curiosidad {
   id?: number;
