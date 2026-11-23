@@ -136,28 +136,28 @@ export class CiudadesRutaComponent implements OnInit {
         .select(`
             id, nombre, pais, descripcion,
             lugares (id, ciudad_id, nombre, descripcion, direccion, imagen, maps, posicion),
-            gastronomia (id, ciudad_id, nombre, tipo, descripcion, direccion, imagen, maps, posicion),
+            gastronomia (id, ciudad_id, nombre, tipo, descripcion, direccion, imagen, maps, posicion, probado),
             curiosidades (id, ciudad_id, titulo, descripcion)
         `)
         .order('nombre', { ascending: true })
         .order('posicion', { foreignTable: 'lugares', ascending: true })
         .order('posicion', { foreignTable: 'gastronomia', ascending: true });
-
+    
         if (error) {
             console.error('Error cargando ciudades:', error);
             return;
         }
-
+    
         const { data: comidasData, error: comidasError } = await supabase
         .from('gastronomia')
-        .select('id, ciudad_id, nombre, tipo, descripcion, direccion, imagen, maps, posicion')
+        .select('id, ciudad_id, nombre, tipo, descripcion, direccion, imagen, maps, posicion, probado')
         .is('ciudad_id', null)
         .order('posicion', { ascending: true });
-
+    
         if (comidasError) {
             console.error('Error cargando comidas típicas:', comidasError);
         }
-
+    
         this.comidasTipicasGlobales = (comidasData || []).map((g: any): Gastronomia => ({
             id: g.id,
             ciudadId: g.ciudad_id,
@@ -167,10 +167,10 @@ export class CiudadesRutaComponent implements OnInit {
             direccion: g.direccion || '',
             imagen: g.imagen || '',
             maps: g.maps || '',
-            posicion: g.posicion || 0
+            posicion: g.posicion || 0,
+            probado: !!g.probado
         }));
-
-
+    
         this.ciudades = (data || []).map((c: any): Ciudad => ({
             id: c.id,
             nombre: c.nombre,
@@ -182,15 +182,16 @@ export class CiudadesRutaComponent implements OnInit {
             })).sort((a: Lugar, b: Lugar) => (a.posicion || 0) - (b.posicion || 0)),
             gastronomia: (c.gastronomia || []).map((g: any): Gastronomia => ({
                 id: g.id, ciudadId: g.ciudad_id, nombre: g.nombre, tipo: g.tipo, descripcion: g.descripcion || '',
-                direccion: g.direccion || '', imagen: g.imagen || '', maps: g.maps || '', posicion: g.posicion || 0
+                direccion: g.direccion || '', imagen: g.imagen || '', maps: g.maps || '', posicion: g.posicion || 0,
+                probado: !!g.probado
             })).sort((a: Gastronomia, b: Gastronomia) => (a.posicion || 0) - (b.posicion || 0)),
             curiosidades: (c.curiosidades || []).map((cur: any): Curiosidad => ({
                 id: cur.id, ciudadId: cur.ciudad_id, titulo: cur.titulo, descripcion: cur.descripcion || ''
             }))
         }));
-
+    
         this.cdr.detectChanges();
-    }
+    }    
 
     async cargarRutaDias() {
         const { data: diasData, error: diasError } = await supabase.from('ruta_dias').select('*').order('fecha', { ascending: true });
@@ -591,6 +592,29 @@ export class CiudadesRutaComponent implements OnInit {
         this.cdr.detectChanges();
     }
 
+    async toggleProbado(gastro: Gastronomia) {
+        if (gastro.id == null) return;
+      
+        const nuevoEstado = !gastro.probado;
+        
+        // Actualización optimista en la vista
+        gastro.probado = nuevoEstado;
+        this.cdr.detectChanges();
+      
+        const { error } = await supabase
+          .from('gastronomia')
+          .update({ probado: nuevoEstado })
+          .eq('id', gastro.id);
+      
+        if (error) {
+          console.error('Error al actualizar el estado:', error);
+          // Revertimos si falla en Supabase
+          gastro.probado = !nuevoEstado;
+          this.cdr.detectChanges();
+        }
+    }
+      
+
     reiniciarGastronomia() {
         this.nuevaGastronomia = {
             nombre: '',
@@ -598,7 +622,8 @@ export class CiudadesRutaComponent implements OnInit {
             descripcion: '',
             direccion: '',
             imagen: '',
-            maps: ''
+            maps: '',
+            probado: false
         };
         this.pestanaGastroActive = 'que-comer';
         this.editandoGastronomia = false;

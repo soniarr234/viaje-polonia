@@ -950,23 +950,19 @@
    ITEMS DENTRO DE LAS CIUDADES
 ===================================================== */
 .timeline-item {
-  border: 1px solid rgba(56,189,248,.08);
-  border-radius: 18px;
-  background: linear-gradient(
-    180deg,
-    rgba(30,41,59,.95),
-    rgba(15,23,42,.95)
-  );
-  box-shadow:
-    0 8px 25px rgba(0,0,0,.25);
-  margin-bottom: 10px;
+  background-color: #132035; /* Fondo ligeramente más claro que el fondo general */
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 14px;
+  overflow: hidden; /* Para que la imagen respete los bordes redondeados */
+  margin-bottom: 12px;
+  transition: all 0.25s ease;
 }
 .timeline-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px 18px;
+  padding: 12px 14px;
+  gap: 10px;
 }
 .timeline-header:hover {
   background: rgba(56, 189, 248, 0.06);
@@ -991,6 +987,65 @@
 .div-drag span{
   cursor: grab;
 }
+
+.check-comida {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 6px;
+  border: 1px solid #38bdf8; /* Azul a juego con tus textos */
+  background-color: rgba(15, 23, 42, 0.6); /* Fondo oscuro translúcido */
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.check-comida:hover {
+  border-color: #60a5fa;
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Estado marcado */
+.check-comida:checked {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+}
+
+/* El icono del tick blanco */
+.check-comida::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  transform: scale(0);
+  transition: transform 0.15s ease-in-out;
+  box-shadow: inset 1em 1em #ffffff;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.check-comida:checked::before {
+  transform: scale(1);
+}
+
+/* Efecto cuando el plato ya está probado */
+.timeline-item.comido {
+  opacity: 0.6;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.timeline-item.comido .gastro-imagen {
+  filter: grayscale(40%); /* Apaga un poco el color de la foto */
+}
+
+.timeline-item.comido .div-drag span {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+
 .timeline-header span:first-child {
   min-width: 0;
   color: #ffffff;
@@ -1109,10 +1164,9 @@
 /* ==================================== */
 .gastro-imagen {
   width: 100%;
-  height: 220px;
+  height: 145px;
   object-fit: cover;
-  border-radius: 14px;
-  margin-bottom: 14px;
+  display: block;
 }
 /* =====================================================
    TARJETAS DE RESTAURANTES

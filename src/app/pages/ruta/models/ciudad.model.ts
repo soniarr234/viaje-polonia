@@ -7,7 +7,7 @@ export interface Lugar {
   direccion: string;
   imagen?: string;
   maps?: string;
-  posicion?: number; // 👈 ¡AÑADIDO AQUÍ!
+  posicion?: number;
 }
 
 export type TipoGastronomia =
@@ -32,6 +32,8 @@ export type TipoGastronomia =
     tipo: 'comida' | 'local';
   
     posicion?: number;
+
+    probado?: boolean;
   }
 
 export interface Curiosidad {
