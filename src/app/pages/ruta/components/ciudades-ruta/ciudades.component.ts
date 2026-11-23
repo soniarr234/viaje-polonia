@@ -7,9 +7,10 @@ import { Ciudad, Lugar, Gastronomia, Curiosidad } from '../../models/ciudad.mode
 
 interface RutaElemento {
   id: number;
-  tipo: 'lugar' | 'gastronomia';
+  tipo: 'lugar' | 'gastronomia' | 'nota';
   lugarId?: number;
   gastronomiaId?: number;
+  nota?: string;
   referencia: string;
   lugar?: Lugar;
   gastronomia?: Gastronomia;
@@ -25,8 +26,9 @@ interface DiaRuta {
   elementos: RutaElemento[];
   lugarSeleccionado?: string;
   gastronomiaSeleccionada?: string;
+  nuevaNotaTexto?: string; 
   abiertoAgregar?: boolean;
-  tipoAgregar?: 'lugar' | 'gastronomia';
+  tipoAgregar?: 'lugar' | 'gastronomia' | 'nota';
 }
 
 @Component({
@@ -198,7 +200,7 @@ export class CiudadesRutaComponent implements OnInit {
         if (diasError) return;
         const { data: elementosData, error: elementosError } = await supabase.from('ruta_elementos').select('*').order('posicion', { ascending: true });
         if (elementosError) return;
-
+    
         this.rutaDias = (diasData || []).map((diaDb: any): DiaRuta => {
             const ciudad = this.ciudades.find(c => c.id === diaDb.ciudad_id);
             const elementosDia = (elementosData || [])
@@ -207,17 +209,29 @@ export class CiudadesRutaComponent implements OnInit {
                     if (el.tipo === 'lugar') {
                         const lug = ciudad?.lugares.find(l => l.id === el.lugar_id);
                         return { id: el.id, tipo: 'lugar', lugarId: el.lugar_id, referencia: lug?.nombre || 'Lugar no disponible', lugar: lug, posicion: el.posicion };
-                    } else {
+                    } else if (el.tipo === 'gastronomia') {
                         const gastro =
                             ciudad?.gastronomia.find(g => g.id === el.gastronomia_id) ||
                             this.comidasTipicasGlobales.find(g => g.id === el.gastronomia_id);
                         return { id: el.id, tipo: 'gastronomia', gastronomiaId: el.gastronomia_id, referencia: gastro?.nombre || 'Sitio no disponible', gastronomia: gastro, posicion: el.posicion };
+                    } else {
+                        return { id: el.id, tipo: 'nota', nota: el.nota || '', referencia: el.nota || 'Nota', posicion: el.posicion };
                     }
                 });
-            return { id: diaDb.id, titulo: diaDb.titulo, ciudadId: diaDb.ciudad_id, ciudad: ciudad?.nombre || '', fecha: diaDb.fecha || '', elementos: elementosDia, lugarSeleccionado: '', gastronomiaSeleccionada: '' };
+            return { 
+                id: diaDb.id, 
+                titulo: diaDb.titulo, 
+                ciudadId: diaDb.ciudad_id, 
+                ciudad: ciudad?.nombre || '', 
+                fecha: diaDb.fecha || '', 
+                elementos: elementosDia, 
+                lugarSeleccionado: '', 
+                gastronomiaSeleccionada: '',
+                nuevaNotaTexto: ''
+            };
         });
-        //this.cdr.detectChanges();
-    }
+        this.cdr.detectChanges();
+    }    
 
     formatearTexto(texto: string | null): string {
         if (!texto) return '';
@@ -794,6 +808,72 @@ export class CiudadesRutaComponent implements OnInit {
         await this.cargarRutaDias();
         this.cdr.detectChanges();
     }
+
+    async agregarNotaADia(dia: DiaRuta) {
+        console.log('Intentando guardar nota:', dia.id, dia.nuevaNotaTexto);
+      
+        const texto = dia.nuevaNotaTexto?.trim();
+        if (dia.id == null || !texto) {
+          console.warn('Falta dia.id o el texto está vacío');
+          return;
+        }
+      
+        const { data, error } = await supabase
+          .from('ruta_elementos')
+          .insert({
+            ruta_dia_id: dia.id,
+            tipo: 'nota',
+            lugar_id: null,
+            gastronomia_id: null,
+            nota: texto,
+            posicion: dia.elementos.length + 1
+          })
+          .select();
+      
+        if (error) {
+          console.error('Error de Supabase al guardar nota:', error);
+          this.mensajeToast = 'Error: ' + error.message;
+          this.lanzarToast();
+          return;
+        }
+      
+        dia.nuevaNotaTexto = '';
+        dia.abiertoAgregar = false;
+        await this.cargarRutaDias();
+        this.mensajeToast = 'Nota añadida';
+        this.lanzarToast();
+        this.cdr.detectChanges();
+    }
+      
+    
+    // Para editar una nota rápida directamente en su sitio
+    notaEditandoId: number | null = null;
+    textoNotaEditando = '';
+    
+    iniciarEdicionNota(elemento: RutaElemento, event: Event) {
+        event.stopPropagation();
+        this.notaEditandoId = elemento.id;
+        this.textoNotaEditando = elemento.nota || '';
+        this.cdr.detectChanges();
+    }
+    
+    async guardarEdicionNota(elemento: RutaElemento) {
+        const nuevoTexto = this.textoNotaEditando.trim();
+        if (!nuevoTexto) {
+            this.notaEditandoId = null;
+            return;
+        }
+    
+        elemento.nota = nuevoTexto;
+        elemento.referencia = nuevoTexto;
+        this.notaEditandoId = null;
+        this.cdr.detectChanges();
+    
+        await supabase
+            .from('ruta_elementos')
+            .update({ nota: nuevoTexto })
+            .eq('id', elemento.id);
+    }    
         
     pedirConfirmacionQuitarActividad(dia: DiaRuta, elemento: RutaElemento, event: Event) {
         event.preventDefault(); event.stopPropagation();

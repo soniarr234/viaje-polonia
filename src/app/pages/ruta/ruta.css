@@ -1884,146 +1884,201 @@
 
 
 /* =====================================================
-   26. RUTA - ELEMENTOS AÑADIDOS
+   26. RUTA - LÍNEA DE TIEMPO Y ELEMENTOS AÑADIDOS
 ===================================================== */
-
 .ruta-elementos {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Un poco más de espacio entre actividades */
-  padding: 16px;
-  background: rgba(2, 6, 23, 0.4); /* Fondo diferenciado para la zona del itinerario */
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 10px;
+  padding: 16px 16px 16px 34px; /* Espacio a la izquierda para la línea vertical */
+  background: rgba(2, 6, 23, 0.35);
 }
 
+/* Línea vertical continua que une paradas y notas */
+.ruta-elementos::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    #38bdf8,
+    rgba(56, 189, 248, 0.15)
+  );
+  border-radius: 2px;
+}
+
+/* --- PARADAS (LUGARES Y GASTRONOMÍA) --- */
 .ruta-elemento {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 46px;
-  padding: 6px 12px 6px 14px;
-  border: 1px solid rgba(56, 189, 248, 0.08); /* Borde con un sutil toque de tu azul corporativo */
+  padding: 6px 10px 6px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.12);
   border-radius: 14px;
-  background: #1e293b; /* ¡CLAVE! Un gris más claro para que la tarjeta "salte" hacia el frente */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra elegante */
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   transition: all 0.2s ease;
+}
+
+/* Nodo circular sobre la línea de tiempo (Azul para Lugar) */
+.ruta-elemento::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 0 3px #0f172a;
+}
+
+/* Nodo naranja/ámbar si es Gastronomía */
+.ruta-elemento.es-gastro {
+  border-color: rgba(245, 158, 11, 0.18);
+}
+.ruta-elemento.es-gastro::before {
+  background: #f59e0b;
 }
 
 .ruta-elemento:hover {
-  border-color: rgba(56, 189, 248, 0.3);
-  background: #24334a; /* Se ilumina levemente */
-  transform: translateY(-2px); /* Efecto de elevación */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  border-color: rgba(56, 189, 248, 0.35);
+  background: #24334a;
+  transform: translateY(-1px);
 }
 
-/* La línea indicadora de la izquierda */
-.ruta-elemento::before {
-  content: "";
-  flex: 0 0 4px;
-  align-self: stretch;
-  margin: 4px 6px 4px 0;
-  border-radius: 999px;
-  background: #38bdf8;
-  opacity: 1; /* Brillo total para marcar el recorrido */
-}
-
-.ruta-elemento .div-drag {
+/* --- NOTAS LIBRES EN LA RUTA --- */
+.ruta-nota-card {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-radius: 12px;
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px dashed rgba(56, 189, 248, 0.28);
+  transition: all 0.2s ease;
+}
+
+/* Nodo hueco sobre la línea para las notas */
+.ruta-nota-card::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid #64748b;
+}
+
+.ruta-nota-texto {
   flex: 1;
-  min-width: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+  cursor: pointer;
+  white-space: normal; /* Permite que las notas largas ocupen varias líneas */
 }
 
-.ruta-elemento .tirador-arrastre {
-  display: inline-flex;
-  align-items: center;
-  color: #475569;
-  cursor: grab;
-  transition: color 0.2s ease;
-}
-.tirador-arrastre {
-  color: #475569;
-  cursor: grab;
-  font-size: 16px;
-  transition: color 0.2s;
+.ruta-nota-texto:hover {
+  color: #ffffff;
 }
 
-.ruta-elemento .tirador-arrastre:hover {
-  color: #38bdf8;
+/* Input rápido para añadir o editar nota */
+.ruta-nota-input-row {
+  display: flex;
+  gap: 8px;
 }
 
-.ruta-elemento .tirador-arrastre:active {
-  cursor: grabbing;
-}
-
-.ruta-link {
-  flex: 1; /* Ocupa todo el espacio sobrante de la izquierda */
-  min-width: 0;
-  padding: 9px 0;
-  border: none;
-  background: transparent;
-  color: #e2e8f0;
+.input-nota-rapida,
+.input-editar-nota {
+  flex: 1;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #f8fafc;
   font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
+  outline: none;
 }
 
-.ruta-link:hover {
-  color: #7dd3fc;
+.input-nota-rapida:focus,
+.input-editar-nota:focus {
+  border-color: #38bdf8;
 }
 
-.btn-eliminar-actividad {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0; /* Impide que el botón se encoja si el texto es largo */
-  width: 32px;
-  height: 32px;
+.btn-guardar-nota-mini {
+  padding: 0 14px;
   border: none;
-  border-radius: 9px;
-  background: rgba(239, 68, 68, 0.05); /* Un fondo rojo muy sutil */
-  color: #64748b;
-  font-size: 12px;
-  font-weight: bold;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 10; /* Asegura estar por encima de cualquier capa invisible */
-}
-.btn-eliminar-actividad:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  transition: background-color 0.2s ease;
 }
 
-.ruta-elemento .btn-eliminar {
-  flex: 0 0 32px;
-
-  width: 32px;
-  height: 32px;
-
-  border-radius: 9px;
-
-  background: transparent;
-  color: #64748b;
-
-  font-size: 11px;
-
-  opacity: 0.7;
+.btn-guardar-nota-mini:hover {
+  background: #38bdf8;
 }
 
-.ruta-elemento .btn-eliminar:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-
-  opacity: 1;
-
-  transform: none;
+/* Ajustes del botón agregar abajo */
+.ruta-agregar-compacto {
+  padding: 12px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: none;
 }
+
+/* Asegurar que los puntos queden por encima de la línea vertical */
+.ruta-elementos::before {
+  z-index: 1;
+}
+
+.ruta-elemento::before,
+.ruta-nota-card::before {
+  z-index: 2;
+}
+
+/* Limpiar cualquier fondo heredado en el botón del nombre */
+.ruta-elemento .ruta-link {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 6px 0;
+  box-shadow: none !important;
+}
+
+.ruta-elemento .ruta-link:hover {
+  color: #38bdf8 !important;
+}
+
+/* Limpiar el botón de quitar actividad */
+.ruta-elemento .btn-eliminar-actividad,
+.ruta-nota-card .btn-eliminar-actividad {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #94a3b8 !important;
+}
+
+.ruta-elemento .btn-eliminar-actividad:hover,
+.ruta-nota-card .btn-eliminar-actividad:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171 !important;
+}
+
 
 
 /* =====================================================

@@ -506,7 +506,7 @@
 
   @if (subVistaCiudades === 'ruta' && !ciudadSeleccionada) {
     <button class="btn-add" (click)="abrirFormularioDia()">+ Añadir día a la ruta</button>
-
+  
     @if (mostrarFormularioDia) {
       <div class="card form-grid ruta-dia-form">
         <h2>{{ editandoDiaRuta ? 'Editar día de ruta' : 'Nuevo día' }}</h2>
@@ -526,40 +526,88 @@
             </div>
           }
         </div>
-
+  
         <div class="form-actions">
           <button class="btn-cancelar-form" (click)="reiniciarDia(); mostrarFormularioDia = false;">Cancelar</button>
           <button class="btn-guardar-form" (click)="guardarDiaRuta()">Guardar día</button>
         </div>
       </div>
     }
-
+  
     @for (dia of rutaDias; track dia.id) {
       <div class="ruta-dia-card">
         <div class="ruta-dia-header">
-            <div>
-              <h3>{{ dia.titulo }}</h3>
-              <span>{{ dia.ciudad }}</span>
-              @if (dia.fecha) { <span>📅 {{ dia.fecha | date:'dd/MM/yyyy' }}</span> }
-            </div>
-            <div class="acciones-dia">
-              <button class="btn-editar" (click)="editarDiaRuta(dia, $event)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
+          <div>
+            <h3>{{ dia.titulo }}</h3>
+            <span>{{ dia.ciudad }}</span>
+            @if (dia.fecha) { <span>📅 {{ dia.fecha | date:'dd/MM/yyyy' }}</span> }
+          </div>
+          <div class="acciones-dia">
+            <button class="btn-editar" (click)="editarDiaRuta(dia, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.5em" height="1.5em">
                 <path fill="currentColor" d="M3.548 20.938h16.9a.5.5 0 0 0 0-1h-16.9a.5.5 0 0 0 0 1M9.71 17.18a2.6 2.6 0 0 0 1.12-.65l9.54-9.54a1.75 1.75 0 0 0 0-2.47l-.94-.93a1.79 1.79 0 0 0-2.47 0l-9.54 9.53a2.5 2.5 0 0 0-.64 1.12L6.04 17a.74.74 0 0 0 .19.72a.77.77 0 0 0 .53.22Zm.41-1.36a1.47 1.47 0 0 1-.67.39l-.97.26l-1-1l.26-.97a1.5 1.5 0 0 1 .39-.67l.38-.37l1.99 1.99Zm1.09-1.08l-1.99-1.99l6.73-6.73l1.99 1.99Zm8.45-8.45L18.65 7.3l-1.99-1.99l1.01-1.02a.75.75 0 0 1 1.06 0l.93.94a.754.754 0 0 1 0 1.06" />
-              </svg></button>
-              <button class="btn-eliminar" (click)="pedirConfirmacionBorradoDiaRuta(dia, $event)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
+              </svg>
+            </button>
+            <button class="btn-eliminar" (click)="pedirConfirmacionBorradoDiaRuta(dia, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="1.3em" height="1.3em">
                 <path fill="#ef4444" d="m9.129 0l1.974.005c.778.094 1.46.46 2.022 1.078c.459.504.7 1.09.714 1.728h5.475a.69.69 0 0 1 .686.693a.69.69 0 0 1-.686.692l-1.836-.001v11.627c0 2.543-.949 4.178-3.041 4.178H5.419c-2.092 0-3.026-1.626-3.026-4.178V4.195H.686A.69.69 0 0 1 0 3.505c0-.383.307-.692.686-.692h5.47c.014-.514.205-1.035.554-1.55C7.23.495 8.042.074 9.129 0m6.977 4.195H3.764v11.627c0 1.888.52 2.794 1.655 2.794h9.018c1.139 0 1.67-.914 1.67-2.794zM6.716 6.34c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.726 0c.38 0 .686.31.686.692v8.05a.69.69 0 0 1-.686.692a.69.69 0 0 1-.685-.692v-8.05c0-.382.307-.692.685-.692m2.728 0c.378 0 .685.31.685.692v8.05a.69.69 0 0 1-.685.692a.69.69 0 0 1-.686-.692v-8.05a.69.69 0 0 1 .686-.692M9.176 1.382c-.642.045-1.065.264-1.334.662c-.198.291-.297.543-.313.768l4.938-.001c-.014-.291-.129-.547-.352-.792c-.346-.38-.73-.586-1.093-.635z" />
-              </svg></button>
-            </div>
+              </svg>
+            </button>
+          </div>
         </div>
-
+  
+        <!-- LÍNEA DE TIEMPO DEL ITINERARIO -->
+        <div class="ruta-elementos" cdkDropList (cdkDropListDropped)="reordenarElementosDia($event, dia)">
+          @for (elemento of dia.elementos; track elemento.id) {
+            
+            @if (elemento.tipo === 'nota') {
+              <!-- BLOQUE TIPO NOTA LIBRE -->
+              <div cdkDrag class="ruta-nota-card">
+                <div class="div-drag">
+                  <span class="tirador-arrastre" cdkDragHandle>☰</span>
+                  @if (notaEditandoId === elemento.id) {
+                    <input 
+                      type="text" 
+                      class="input-editar-nota"
+                      [(ngModel)]="textoNotaEditando"
+                      (keyup.enter)="guardarEdicionNota(elemento)"
+                      (blur)="guardarEdicionNota(elemento)"
+                      autofocus>
+                  } @else {
+                    <div class="ruta-nota-texto" (click)="iniciarEdicionNota(elemento, $event)" title="Toca para editar nota">
+                      💬 {{ elemento.nota }}
+                    </div>
+                  }
+                </div>
+                <button class="btn-eliminar-actividad" (click)="pedirConfirmacionQuitarActividad(dia, elemento, $event)">✖</button>
+              </div>
+            } @else {
+              <!-- BLOQUE TIPO LUGAR O GASTRONOMÍA -->
+              <div cdkDrag class="ruta-elemento" [class.es-gastro]="elemento.tipo === 'gastronomia'">
+                <div class="div-drag">
+                  <span class="tirador-arrastre" cdkDragHandle>☰</span>
+                  <button class="ruta-link" (click)="abrirModalDetalleRuta(elemento)">
+                    {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }} {{ elemento.referencia }}
+                  </button>
+                </div>
+                <button class="btn-eliminar-actividad" (click)="pedirConfirmacionQuitarActividad(dia, elemento, $event)">✖</button>
+              </div>
+            }
+  
+          }
+          @if (dia.elementos.length === 0) {
+            <div class="ruta-vacia">Todavía no has añadido paradas ni notas a este día.</div>
+          }
+        </div>
+  
+        <!-- BOTÓN Y PANEL COMPACTO ABAJO DEL DÍA -->
         <div class="ruta-agregar-compacto">
           @if (!dia.abiertoAgregar) {
             <button type="button" class="btn-toggle-agregar" (click)="dia.abiertoAgregar = true; dia.tipoAgregar = dia.tipoAgregar || 'lugar'">
-              + Añadir parada al itinerario
+              + Añadir parada o nota al día
             </button>
           } @else {
             <div class="panel-agregar-mini">
-              <!-- Fila superior: Selector tipo píldora + botón cerrar -->
               <div class="panel-agregar-top">
                 <div class="pills-tipo">
                   <button 
@@ -574,11 +622,16 @@
                     (click)="dia.tipoAgregar = 'gastronomia'">
                     🍴 Comida
                   </button>
+                  <button 
+                    type="button" 
+                    [class.active]="dia.tipoAgregar === 'nota'"
+                    (click)="dia.tipoAgregar = 'nota'">
+                    📝 Nota
+                  </button>
                 </div>
                 <button type="button" class="btn-cerrar-panel" (click)="dia.abiertoAgregar = false">✕</button>
               </div>
         
-              <!-- Desplegable único según la pestaña elegida -->
               @if ((dia.tipoAgregar || 'lugar') === 'lugar') {
                 <select [(ngModel)]="dia.lugarSeleccionado" (ngModelChange)="agregarLugarADia(dia)">
                   <option value="" disabled>Selecciona un monumento...</option>
@@ -586,7 +639,7 @@
                     <option [value]="lug.nombre">{{ lug.nombre }}</option>
                   }
                 </select>
-              } @else {
+              } @else if (dia.tipoAgregar === 'gastronomia') {
                 <select [(ngModel)]="dia.gastronomiaSeleccionada" (ngModelChange)="agregarGastronomiaADia(dia)">
                   <option value="" disabled selected>Selecciona un plato o local...</option>
                   <optgroup label="Restaurantes">
@@ -594,37 +647,29 @@
                       <option [value]="gastro.id">{{ gastro.nombre }}</option>
                     }
                   </optgroup>
-
                   <optgroup label="Comida típica">
                     @for (comida of comidasTipicasGlobales; track comida.id) {
                       <option [value]="comida.id">{{ comida.nombre }}</option>
                     }
                   </optgroup>
                 </select>
+              } @else {
+                <div class="ruta-nota-input-row">
+                  <input 
+                    type="text" 
+                    class="input-nota-rapida"
+                    [(ngModel)]="dia.nuevaNotaTexto"
+                    (keyup.enter)="agregarNotaADia(dia)"
+                    placeholder="Ej. Levantarnos sobre las 9:00 o comer por aquí...">
+                  <button type="button" class="btn-guardar-nota-mini" (click)="agregarNotaADia(dia)">Añadir</button>
+                </div>
               }              
             </div>
           }
-        </div>     
-
-        <div class="ruta-elementos" cdkDropList (cdkDropListDropped)="reordenarElementosDia($event, dia)">
-            @for (elemento of dia.elementos; track elemento.id) {
-              <div cdkDrag class="ruta-elemento" cdkDrag>
-                <div class="div-drag">
-                  <span class="tirador-arrastre" cdkDragHandle>☰</span>
-                  <button class="ruta-link" (click)="abrirModalDetalleRuta(elemento)">
-                    {{ elemento.tipo === 'lugar' ? '🏛️' : '🍴' }} {{ elemento.referencia }}
-                  </button>
-                </div>
-                <button class="btn-eliminar-actividad" (click)="pedirConfirmacionQuitarActividad(dia, elemento, $event)">✖</button>
-              </div>
-            }
-            @if (dia.elementos.length === 0) {
-              <div class="ruta-vacia">Todavía no has añadido actividades a este día.</div>
-            }
         </div>
       </div>
     }
-  }
+  }  
 </div>
 
 @if (mostrarConfirmarBorradoCiudad) {
