@@ -149,7 +149,6 @@ export class Maleta implements OnInit {
     this.cerrarModal();
 
     this.mostrarToast = true;
-    this.cdr.detectChanges();
 
     setTimeout(() => {
       this.mostrarToast = false;
