@@ -240,7 +240,7 @@ export class CiudadesRutaComponent implements OnInit {
             const limpia = linea.trim();
             
             if (limpia.startsWith('*') && limpia.endsWith(':*') && limpia.length > 3) {
-                return `<span class="subtitulo-lugar">${limpia.slice(1, -1)}</span>`;
+                return `<span class="subtitulo-lugar">${limpia.slice(1, -2)}</span>`;
             }
             
             if (limpia.endsWith(':') && limpia.length > 1) {
@@ -717,6 +717,23 @@ export class CiudadesRutaComponent implements OnInit {
         this.indiceCuriosidadEditando = -1;
         this.mostrarFormularioCuriosidad = false;
     }
+
+    curiosidadActivaIndex = 0;
+
+    onScrollCuriosidades(event: Event) {
+    const el = event.target as HTMLElement;
+    const slideWidth = el.offsetWidth * 0.88; // Mismo porcentaje que el ancho de la tarjeta
+    if (slideWidth > 0) {
+        this.curiosidadActivaIndex = Math.round(el.scrollLeft / slideWidth);
+    }
+    }
+
+    irACuriosidad(slider: HTMLElement, index: number) {
+    const slideWidth = slider.offsetWidth * 0.88 + 14; // ancho + gap
+    slider.scrollTo({ left: slideWidth * index, behavior: 'smooth' });
+    this.curiosidadActivaIndex = index;
+    }
+
 
     // ==================== GESTIÓN DE DÍAS DE RUTA ====================
     async agregarDiaRuta() {
