@@ -235,27 +235,21 @@ export class CiudadesRutaComponent implements OnInit {
 
     formatearTexto(texto: string | null): string {
         if (!texto) return '';
-        let res = texto.replace(/\n/g, '<br>');
-        const posDosPuntos = res.indexOf(':');
-        const posSalto = res.indexOf('<br>');
-        let corte = -1;
-        let longSep = 1;
-
-        if (posDosPuntos !== -1 && (posSalto === -1 || posDosPuntos < posSalto)) {
-            corte = posDosPuntos;
-        } else if (posSalto !== -1) {
-            corte = posSalto;
-            longSep = 4;
-        }
-
-        if (corte !== -1) {
-            const tit = res.substring(0, corte).trim();
-            const resto = res.substring(corte + longSep).trim();
-            res = `<span class="subtitulo-lugar">${tit}</span><br>${resto}`;
-        }
-
-        return res.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+        
+        const lineas = texto.split('\n').map(linea => {
+            const limpia = linea.trim();
+            // Si la línea termina en ":" la convierte en subtítulo azul
+            if (limpia.endsWith(':') && limpia.length > 1) {
+                return `<span class="subtitulo-lugar">${limpia.slice(0, -1)}</span>`;
+            }
+            return limpia;
+        });
+    
+        return lineas
+            .join('<br>')
+            .replace(/\*(.*?)\*/g, '<strong>$1</strong>');
     }
+    
 
     cambiarPestanaGastro(pestana: 'que-comer' | 'donde-comer') {
 

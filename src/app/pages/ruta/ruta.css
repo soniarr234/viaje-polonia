@@ -911,16 +911,16 @@
   color: #cbd5e1;
   margin-top: 15px;
 }
-.descripcion-enriquecida strong {
-  color: #ffffff !important;
+::ng-deep .descripcion-enriquecida strong {
+  color: #38bdf8 !important;
   font-weight: 700;
 }
-.descripcion-enriquecida .subtitulo-lugar {
+::ng-deep .descripcion-enriquecida .subtitulo-lugar {
   display: block;
   margin-top: 4px;
   margin-bottom: 6px;
   color: #38bdf8;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.1px;
 }
