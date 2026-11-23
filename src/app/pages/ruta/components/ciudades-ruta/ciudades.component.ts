@@ -238,19 +238,25 @@ export class CiudadesRutaComponent implements OnInit {
         
         const lineas = texto.split('\n').map(linea => {
             const limpia = linea.trim();
-            // Si la línea termina en ":" la convierte en subtítulo azul
-            if (limpia.endsWith(':') && limpia.length > 1) {
-                return `<span class="subtitulo-lugar">${limpia.slice(0, -1)}</span>`;
+            
+            if (limpia.startsWith('*') && limpia.endsWith(':*') && limpia.length > 3) {
+                return `<span class="subtitulo-lugar">${limpia.slice(1, -1)}</span>`;
             }
+            
+            if (limpia.endsWith(':') && limpia.length > 1) {
+                return `<span class="subtitulo-lugar">${limpia}</span>`;
+            }
+            
             return limpia;
         });
     
         return lineas
             .join('<br>')
+            .replace(/<\/span><br>/g, '</span>') // <-- Quita el espacio extra debajo del subtítulo
             .replace(/\*(.*?)\*/g, '<strong>$1</strong>');
     }
     
-
+   
     cambiarPestanaGastro(pestana: 'que-comer' | 'donde-comer') {
 
         this.pestanaGastroActive = pestana;
