@@ -1,13 +1,101 @@
 :host {
   display: block;
-  padding: 20px 10px 90px 10px;
+  padding: 16px 12px 95px 12px;
+}
+
+/* =========================
+   SELECTOR SONIA / IRENE
+========================= */
+.maleta-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 8px 18px 8px;
+}
+
+.maleta-tab {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.22s ease;
+}
+
+.maleta-tab:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.maleta-tab.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.16), rgba(30, 41, 59, 0.9));
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #f8fafc;
+  box-shadow: 0 8px 20px -6px rgba(56, 189, 248, 0.25);
+}
+
+.avatar-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.maleta-tab.active .avatar-badge {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.avatar-badge.irene {
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
+.maleta-tab.active .avatar-badge.irene {
+  background: #a78bfa;
+  color: #0f172a;
+}
+
+.tab-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tab-nombre {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.tab-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.maleta-tab.active .tab-sub {
+  color: #7dd3fc;
 }
 
 /* =========================
    ESTADO VACÍO
 ========================= */
 .empty-state {
-  min-height: calc(100vh - 90px);
+  min-height: calc(100vh - 210px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,191 +105,221 @@
 }
 
 .empty-icon {
-  width: 200px;
+  width: 185px;
   animation: flotar 3s ease-in-out infinite;
 }
 
 .empty-state h2 {
-  margin-top: -20px;
-  font-size: 17px;
-  margin-bottom: 8px;
+  margin-top: -12px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #f8fafc;
 }
 
 .empty-state p {
-  color: var(--text-secondary);
+  color: #94a3b8;
   font-size: 13px;
-  max-width: 250px;
+  max-width: 240px;
 }
 
+/* =========================
+   BOTÓN AÑADIR
+========================= */
 .add-button {
-  display: block;
-  width: 90%;
-  padding: 10px;
-  margin: 25px auto 0;
-  border-radius: 8px;
-  border: 1px dashed #38bdf8;
-  background: transparent;
-  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 16px);
+  padding: 13px;
+  margin: 14px auto 18px auto;
+  border-radius: 14px;
+  border: 1px dashed rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.06);
+  color: #38bdf8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-button:hover {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: #38bdf8;
+  transform: translateY(-1px);
 }
 
 /* =========================
    PROGRESO
 ========================= */
 .progress-card {
-  margin: 15px;
-  padding: 20px;
-  background: var(--surface);
-  border-radius: 10px;
-  border: 1px solid var(--border);
+  margin: 0 8px 14px 8px;
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.5);
 }
 
-.progress-header {
+.progress-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  font-weight: 600;
+  margin-bottom: 14px;
 }
 
-.progress-header span:last-child {
-  color: var(--primary);
+.progress-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.progress-count {
+  margin: 3px 0 0 0;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.progress-percent {
+  font-size: 22px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: -0.5px;
 }
 
 .progress-bar {
-  height: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  height: 10px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-fill {
   position: relative;
-
   height: 100%;
-
-  background: linear-gradient(90deg, var(--primary), #38bdf8);
-
-  box-shadow: 0 0 10px rgba(125, 211, 252, 0.4),
-    0 0 20px rgba(125, 211, 252, 0.2);
-
-  transition: width 0.5s ease;
-}
-
-.progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  animation: brillo 2s infinite;
-}
-
-.progress-fill::before {
-  content: '';
-
-  position: absolute;
-
-  right: -4px;
-  top: 50%;
-
-  width: 12px;
-  height: 12px;
-
-  transform: translateY(-50%);
-
-  border-radius: 50%;
-
-  background: white;
-
-  box-shadow: 0 0 10px white, 0 0 20px var(--primary);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* =========================
    CATEGORÍAS
 ========================= */
 .categoria-card {
-  margin: 15px;
-  padding: 15px;
-  border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    rgba(125, 211, 252, 0.08),
-    var(--surface)
-  );
-  border: 1px solid rgba(125, 211, 252, 0.12);
+  margin: 0 8px 14px 8px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.categoria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .categoria-titulo {
-  margin-bottom: 12px;
-  font-size: 16px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #7dd3fc;
+}
+
+.categoria-counter {
+  font-size: 11px;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
 }
 
 /* =========================
    OBJETOS
 ========================= */
 .objeto {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(15, 23, 42, 0.55);
   margin: 8px 0;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.objeto:last-child {
+  margin-bottom: 0;
 }
 
 .objeto:hover {
-  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(56, 189, 248, 0.2);
 }
 
 .objeto-preparado {
-  opacity: 0.65;
+  opacity: 0.52;
+  background: rgba(15, 23, 42, 0.3);
 }
 
 .objeto-info {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
-.objeto-info input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--primary);
+.custom-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 2px solid #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+.custom-check.checked {
+  background: #38bdf8;
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
 }
 
 .preparado {
   text-decoration: line-through;
+  color: #94a3b8;
 }
 
 .objeto-texto {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .objeto-texto strong {
   font-size: 14px;
   font-weight: 600;
+  color: #f1f5f9;
 }
 
 .cantidad-badge {
-  padding: 5px 10px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(125, 211, 252, 0.12);
-  color: var(--primary);
-  font-size: 13px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
 }
@@ -211,22 +329,36 @@
 ========================= */
 .acciones {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .edit-btn,
 .delete-btn {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .edit-btn {
-  color: var(--text);
+  color: #94a3b8;
 }
+
+.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
 
 /* =========================
    MODAL (REDISEÑADO)
@@ -234,8 +366,8 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 12, 0.85); /* Fondo oscuro más denso e inmersivo */
-  backdrop-filter: blur(8px); /* Desenfoque más elegante */
+  background: rgba(4, 7, 12, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,16 +377,23 @@
 
 .modal {
   width: 100%;
-  max-width: 400px; /* Evita que se deforme en pantallas grandes */
-  background: #1e293b; /* Color de superficie oscuro limpio */
+  max-width: 400px;
+  background: #1e293b;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px; /* Bordes más curvos y modernos */
+  border-radius: 22px;
   padding: 24px 22px;
   display: flex;
   flex-direction: column;
-  gap: 18px; /* Más aire entre campos */
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+  gap: 18px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
   animation: aparecer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .modal h2 {
@@ -262,35 +401,49 @@
   font-size: 19px;
   font-weight: 700;
   color: #f8fafc;
-  margin-bottom: 4px;
+  margin: 0;
 }
 
-/* Etiquetas elegantes superiores */
-.field label, .categoria-label {
+.modal-persona-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+}
+
+.modal-persona-pill.irene {
+  background: rgba(167, 139, 250, 0.16);
+  color: #a78bfa;
+}
+
+.field label,
+.categoria-label {
   color: #94a3b8;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
-/* Inputs Modernizados */
 .modal input {
   width: 100%;
-  background: rgba(15, 23, 42, 0.6); /* Fondo interior oscuro */
+  background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #f8fafc;
   padding: 12px 14px;
   border-radius: 12px;
   font-size: 15px;
+  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
 .modal input:focus {
   outline: none;
   border-color: #38bdf8;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
 }
 
@@ -303,7 +456,7 @@
 ========================= */
 .row {
   display: flex;
-  gap: 14px;
+  gap: 12px;
 }
 
 .field {
@@ -314,6 +467,7 @@
 
 .cantidad {
   flex: 0.35;
+  min-width: 82px;
 }
 
 /* =========================
@@ -330,10 +484,9 @@
   gap: 10px;
 }
 
-/* Botones de Categorías estilo píldora/tarjeta */
 .categoria-btn {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(15, 23, 42, 0.45);
   color: #cbd5e1;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
@@ -343,7 +496,7 @@
   justify-content: center;
   gap: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -354,13 +507,15 @@
   color: #f8fafc;
 }
 
-/* Estado activo con borde azul brillante y fondo translúcido */
 .categoria-btn.active {
   color: #38bdf8;
   border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  font-weight: 600;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.1);
+  background: rgba(56, 189, 248, 0.14);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.12);
+}
+
+.categoria-btn.full-width {
+  grid-column: span 2;
 }
 
 .categoria-btn svg {
@@ -372,10 +527,8 @@
 /* =========================
    BOTONES ACCIÓN INFERIOR
 ========================= */
-/* IMPORTANTE: En tu HTML veo que los botones están sueltos, 
-   asegúrate de envolver Cancelar y Guardar en un contenedor con la clase "modal-buttons" */
 .modal-buttons {
-  margin-top: 14px;
+  margin-top: 6px;
   display: flex;
   gap: 12px;
 }
@@ -384,14 +537,13 @@
   flex: 1;
   padding: 13px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 12px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* Botón Cancelar */
 .modal-buttons button:first-child {
   background: #334155;
   color: #cbd5e1;
@@ -402,10 +554,9 @@
   color: #ffffff;
 }
 
-/* Botón Guardar */
 .modal-buttons button:last-child {
-  background: #38bdf8; /* Tono de azul exacto a tu barra de progreso */
-  color: #0f172a; /* Texto oscuro para legibilidad total */
+  background: #38bdf8;
+  color: #0f172a;
   box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
 }
 
@@ -419,26 +570,25 @@
   transform: translateY(0);
 }
 
-
 /* =========================
    POP-UP CONFIRMACIÓN
 ========================= */
 .popup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 12, 0.8);
+  background: rgba(4, 7, 12, 0.82);
   backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Por encima de todo, incluso del modal principal */
+  z-index: 10000;
   padding: 20px;
 }
 
 .popup-box {
   width: 100%;
   max-width: 340px;
-  background: #1e293b; /* Fondo a juego con tu modal */
+  background: #1e293b;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 24px;
@@ -465,7 +615,6 @@
   color: #ffffff;
 }
 
-/* Botonera interna del Pop-up */
 .popup-buttons {
   display: flex;
   gap: 10px;
@@ -493,7 +642,7 @@
 }
 
 .btn-popup-eliminar {
-  background: #ef4444; /* Rojo de advertencia */
+  background: #ef4444;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
@@ -504,7 +653,17 @@
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
 }
 
-/* Animación de escala sutil */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @keyframes popAparecer {
   from {
     opacity: 0;
@@ -521,15 +680,15 @@
 ========================= */
 .toast-notificacion {
   position: fixed;
-  bottom: -100px; /* Empieza oculto debajo de la pantalla */
+  bottom: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background: #22c55e; /* Un verde vivo de éxito */
+  background: #22c55e;
   color: #ffffff;
   padding: 14px 24px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  z-index: 10000; /* Por encima de las modales y del fondo */
+  z-index: 10000;
   transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
   opacity: 0;
   pointer-events: none;
@@ -537,9 +696,8 @@
   width: max-content;
 }
 
-/* Esta clase se activa automáticamente desde Angular */
 .toast-notificacion.mostrar {
-  bottom: 30px; /* Sube flotando de manera fluida */
+  bottom: 30px;
   opacity: 1;
 }
 

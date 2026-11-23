@@ -50,6 +50,8 @@ export class CiudadesRutaComponent implements OnInit {
     mostrarConfirmarBorradoCiudad = false;
     mostrarConfirmarBorradoLugar = false;
     lugarParaBorrar: Lugar | null = null;
+    mostrarConfirmarBorradoGastronomia = false;
+    gastronomiaParaBorrar: Gastronomia | null = null;
 
 
     nuevaCiudad: Ciudad = {
@@ -78,6 +80,7 @@ export class CiudadesRutaComponent implements OnInit {
     editandoGastronomia = false;
     indiceGastronomiaEditando = -1;
     dropdownGastronomiaAbierto = false;
+    comidasTipicasGlobales: Gastronomia[] = [];
     pestanaGastroActive: 'que-comer' | 'donde-comer' = 'que-comer';
 
     nuevaGastronomia: Gastronomia = {
@@ -145,6 +148,29 @@ export class CiudadesRutaComponent implements OnInit {
             return;
         }
 
+        const { data: comidasData, error: comidasError } = await supabase
+        .from('gastronomia')
+        .select('id, ciudad_id, nombre, tipo, descripcion, direccion, imagen, maps, posicion')
+        .is('ciudad_id', null)
+        .order('posicion', { ascending: true });
+
+        if (comidasError) {
+            console.error('Error cargando comidas típicas:', comidasError);
+        }
+
+        this.comidasTipicasGlobales = (comidasData || []).map((g: any): Gastronomia => ({
+            id: g.id,
+            ciudadId: g.ciudad_id,
+            nombre: g.nombre,
+            tipo: g.tipo,
+            descripcion: g.descripcion || '',
+            direccion: g.direccion || '',
+            imagen: g.imagen || '',
+            maps: g.maps || '',
+            posicion: g.posicion || 0
+        }));
+
+
         this.ciudades = (data || []).map((c: any): Ciudad => ({
             id: c.id,
             nombre: c.nombre,
@@ -181,7 +207,9 @@ export class CiudadesRutaComponent implements OnInit {
                         const lug = ciudad?.lugares.find(l => l.id === el.lugar_id);
                         return { id: el.id, tipo: 'lugar', lugarId: el.lugar_id, referencia: lug?.nombre || 'Lugar no disponible', lugar: lug, posicion: el.posicion };
                     } else {
-                        const gastro = ciudad?.gastronomia.find(g => g.id === el.gastronomia_id);
+                        const gastro =
+                            ciudad?.gastronomia.find(g => g.id === el.gastronomia_id) ||
+                            this.comidasTipicasGlobales.find(g => g.id === el.gastronomia_id);
                         return { id: el.id, tipo: 'gastronomia', gastronomiaId: el.gastronomia_id, referencia: gastro?.nombre || 'Sitio no disponible', gastronomia: gastro, posicion: el.posicion };
                     }
                 });
@@ -436,16 +464,18 @@ export class CiudadesRutaComponent implements OnInit {
 
     // ==================== CRUD GASTRONOMÍA ====================
     async agregarGastronomia() {
-        if (this.ciudadSeleccionada?.id == null || !this.nuevaGastronomia.nombre.trim()) return;
-        const ciudadId = this.ciudadSeleccionada.id;
-        
-        let tipoFinal =
+        if (!this.nuevaGastronomia.nombre.trim()) return;
+        const ciudadId = this.ciudadSeleccionada?.id ?? null;
+
+        const tipoFinal =
             this.pestanaGastroActive === 'que-comer'
                 ? 'comida'
                 : 'local';
-        
+
+        if (tipoFinal === 'local' && ciudadId == null) return;
+
         const payload: any = {
-            ciudad_id: ciudadId,
+            ciudad_id: tipoFinal === 'comida' ? null : ciudadId,
             nombre: this.nuevaGastronomia.nombre.trim(),
             tipo: tipoFinal,
             descripcion: this.nuevaGastronomia.descripcion?.trim() || null,
@@ -454,12 +484,16 @@ export class CiudadesRutaComponent implements OnInit {
             maps: this.pestanaGastroActive === 'donde-comer' ? (this.nuevaGastronomia.maps?.trim() || null) : null
         };
 
+        const listaOrigen = tipoFinal === 'comida'
+            ? this.comidasTipicasGlobales
+            : (this.ciudadSeleccionada?.gastronomia || []);
+
         if (this.editandoGastronomia) {
-            const item = this.ciudadSeleccionada.gastronomia[this.indiceGastronomiaEditando];
+            const item = listaOrigen[this.indiceGastronomiaEditando];
             if (item?.id == null) return;
             await supabase.from('gastronomia').update(payload).eq('id', item.id);
         } else {
-            const maxPos = this.ciudadSeleccionada.gastronomia.reduce((max, item) => (item.posicion || 0) > max ? (item.posicion || 0) : max, 0);
+            const maxPos = listaOrigen.reduce((max, item) => (item.posicion || 0) > max ? (item.posicion || 0) : max, 0);
             payload.posicion = maxPos + 1;
             await supabase.from('gastronomia').insert([payload]);
         }
@@ -467,34 +501,39 @@ export class CiudadesRutaComponent implements OnInit {
         const eraEdicion = this.editandoGastronomia;
         this.reiniciarGastronomia();
         await this.cargarCiudades();
-        this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null
+        if (ciudadId != null) {
+            this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
+        }
         await this.cargarRutaDias();
-        this.mensajeToast = 'Elemento gastronómico eliminado';
+        this.mensajeToast = eraEdicion ? 'Elemento gastronómico actualizado' : 'Elemento gastronómico añadido';
         this.lanzarToast();
     }
 
     editarGastronomia(item: Gastronomia) {
         if (!this.ciudadSeleccionada) return;
-    
-        this.indiceGastronomiaEditando =
-          this.ciudadSeleccionada.gastronomia.indexOf(item);
-    
+
+        const listaOrigen = item.tipo === 'comida'
+            ? this.comidasTipicasGlobales
+            : this.ciudadSeleccionada.gastronomia;
+
+        this.indiceGastronomiaEditando = listaOrigen.indexOf(item);
+
         if (this.indiceGastronomiaEditando < 0) return;
-    
+
         this.editandoGastronomia = true;
         this.nuevaGastronomia = { ...item };
-    
+
         if (item.tipo === 'comida') {
             this.pestanaGastroActive = 'que-comer';
         } else {
             this.pestanaGastroActive = 'donde-comer';
         }
-    
+
         this.mostrarFormularioGastronomia = true;
         this.dropdownGastronomiaAbierto = false;
-    
+
         this.cdr.detectChanges();
-    
+
         setTimeout(() => {
             document
               .getElementById('form-gastronomia')
@@ -505,13 +544,44 @@ export class CiudadesRutaComponent implements OnInit {
         }, 100);
     }
 
+    pedirConfirmacionBorradoGastronomia(item: Gastronomia, event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
+    
+        this.gastronomiaParaBorrar = item;
+        this.mostrarConfirmarBorradoGastronomia = true;
+    
+        this.cdr.detectChanges();
+    }
+    
+    cerrarConfirmarBorradoGastronomia() {
+        this.mostrarConfirmarBorradoGastronomia = false;
+        this.gastronomiaParaBorrar = null;
+    
+        this.cdr.detectChanges();
+    }
+    
+    async confirmarEliminarGastronomia() {
+        if (!this.gastronomiaParaBorrar) {
+            this.cerrarConfirmarBorradoGastronomia();
+            return;
+        }
+    
+        const item = this.gastronomiaParaBorrar;
+        this.cerrarConfirmarBorradoGastronomia();
+    
+        await this.eliminarGastronomia(item);
+    }
+  
     async eliminarGastronomia(item: Gastronomia, event?: Event) {
         if (event) { event.preventDefault(); event.stopPropagation(); }
-        if (this.ciudadSeleccionada?.id == null || item.id == null) return;
-        const ciudadId = this.ciudadSeleccionada.id;
+        if (item.id == null) return;
+        const ciudadId = this.ciudadSeleccionada?.id ?? null;
         await supabase.from('gastronomia').delete().eq('id', item.id);
         await this.cargarCiudades();
-        this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
+        if (ciudadId != null) {
+            this.ciudadSeleccionada = this.ciudades.find(c => c.id === ciudadId) || null;
+        }
         await this.cargarRutaDias();
         this.mensajeToast = 'Elemento gastronómico eliminado';
         this.mostrarToast = true;
@@ -670,18 +740,22 @@ export class CiudadesRutaComponent implements OnInit {
     async agregarGastronomiaADia(dia: DiaRuta) {
         if (dia.id == null || dia.ciudadId == null || !dia.gastronomiaSeleccionada) return;
         const ciudad = this.ciudades.find(c => c.id === dia.ciudadId);
-        const gastro = ciudad?.gastronomia.find(
+        const listaCombinada = [
+            ...(ciudad?.gastronomia || []),
+            ...this.comidasTipicasGlobales
+        ];
+        const gastro = listaCombinada.find(
           item => item.id === Number(dia.gastronomiaSeleccionada) || item.nombre === dia.gastronomiaSeleccionada
         );
         if (gastro?.id == null) return;
-      
+
         if (dia.elementos.some(el => el.tipo === 'gastronomia' && el.gastronomiaId === gastro.id)) {
           dia.gastronomiaSeleccionada = '';
           dia.abiertoAgregar = false;
           this.cdr.detectChanges();
           return;
         }
-      
+
         await supabase.from('ruta_elementos').insert({
           ruta_dia_id: dia.id,
           tipo: 'gastronomia',
@@ -689,11 +763,11 @@ export class CiudadesRutaComponent implements OnInit {
           gastronomia_id: gastro.id,
           posicion: dia.elementos.length + 1
         });
-      
+
         dia.gastronomiaSeleccionada = '';
         dia.abiertoAgregar = false;
         await this.cargarRutaDias();
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
     }
         
     pedirConfirmacionQuitarActividad(dia: DiaRuta, elemento: RutaElemento, event: Event) {
@@ -924,7 +998,6 @@ export class CiudadesRutaComponent implements OnInit {
         this.cdr.detectChanges();
       
         setTimeout(() => {
-          console.log('OCULTANDO TOAST');
           this.mostrarToast = false;
           this.cdr.detectChanges();
         }, 4000);

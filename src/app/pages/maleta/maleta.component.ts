@@ -9,6 +9,7 @@ interface ItemMaleta {
   cantidad: number;
   categoria: string;
   preparado: boolean;
+  persona?: 'sonia' | 'irene';
 }
 
 @Component({
@@ -19,6 +20,7 @@ interface ItemMaleta {
   styleUrls: ['./maleta.css'],
 })
 export class Maleta implements OnInit {
+  maletaActiva: 'sonia' | 'irene' = 'sonia';
   objetos: ItemMaleta[] = [];
   mostrarModal = false;
 
@@ -43,6 +45,7 @@ export class Maleta implements OnInit {
     cantidad: 1,
     categoria: 'ropa',
     preparado: false,
+    persona: 'sonia',
   };
 
   constructor(private cdr: ChangeDetectorRef) {}
@@ -51,39 +54,50 @@ export class Maleta implements OnInit {
     await this.cargarObjetos();
   }
 
+  get objetosActivos(): ItemMaleta[] {
+    return this.objetos.filter(
+      (objeto) => (objeto.persona || 'sonia') === this.maletaActiva
+    );
+  }
+
+  cambiarMaleta(persona: 'sonia' | 'irene') {
+    this.maletaActiva = persona;
+    this.cdr.detectChanges();
+  }
+
   async cargarObjetos() {
     const { data, error } = await supabase
       .from('maleta')
       .select('*');
-  
+
     if (error) {
       console.error(error);
       return;
     }
-  
+
     this.objetos = [...(data || [])];
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
   abrirModal() {
+    this.nuevoObjeto.persona = this.maletaActiva;
     this.mostrarModal = true;
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
-  // Modificado para que limpie el objeto de forma segura al salir
   cerrarModal() {
     this.mostrarModal = false;
     this.limpiarFormulario();
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
-  // Método auxiliar para resetear el formulario a su estado original sin ID
   limpiarFormulario() {
     this.nuevoObjeto = {
       nombre: '',
       cantidad: 1,
       categoria: 'ropa',
       preparado: false,
+      persona: this.maletaActiva,
     };
   }
 
@@ -91,9 +105,10 @@ export class Maleta implements OnInit {
     if (!this.nuevoObjeto.nombre.trim()) {
       return;
     }
-  
+
     const nombreGuardado = this.nuevoObjeto.nombre;
     const esEdicion = !!this.nuevoObjeto.id;
+    const personaDestino = this.nuevoObjeto.persona || this.maletaActiva;
 
     if (esEdicion) {
       const { error } = await supabase
@@ -102,9 +117,10 @@ export class Maleta implements OnInit {
           nombre: this.nuevoObjeto.nombre,
           cantidad: this.nuevoObjeto.cantidad,
           categoria: this.nuevoObjeto.categoria,
+          persona: personaDestino,
         })
         .eq('id', this.nuevoObjeto.id);
-  
+
       if (error) {
         console.error('Error actualizando objeto:', error);
         return;
@@ -118,42 +134,45 @@ export class Maleta implements OnInit {
           cantidad: this.nuevoObjeto.cantidad,
           categoria: this.nuevoObjeto.categoria,
           preparado: false,
+          persona: personaDestino,
         });
-  
+
       if (error) {
         console.error('Error guardando objeto:', error);
         return;
       }
-      this.mensajeToast = `¡"${nombreGuardado}" se ha metido en la maleta!`;
+      const nombreDuena = personaDestino === 'sonia' ? 'Sonia' : 'Irene';
+      this.mensajeToast = `¡"${nombreGuardado}" se ha metido en la maleta de ${nombreDuena}!`;
     }
-  
+
     await this.cargarObjetos();
-    
-    // Cerramos la modal una única vez de forma limpia
     this.cerrarModal();
 
-    // Lanzamos la animación del Toast de éxito en pantalla
     this.mostrarToast = true;
     this.cdr.detectChanges();
 
-    // Se desvanece de manera automática tras 4 segundos exactos
     setTimeout(() => {
       this.mostrarToast = false;
       this.cdr.detectChanges();
     }, 4000);
   }
 
-  // Intercepta el clic de la papelera deteniendo el burbujeo de forma interna
+  cambiarCantidad(delta: number) {
+    const nueva = (this.nuevoObjeto.cantidad || 1) + delta;
+    if (nueva >= 1) {
+      this.nuevoObjeto.cantidad = nueva;
+    }
+  }
+
   pedirConfirmacionBorrado(objeto: ItemMaleta, event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    
+
     this.objetoParaBorrar = objeto;
     this.mostrarConfirmarBorrado = true;
     this.cdr.detectChanges();
   }
 
-  // Se ejecuta al confirmar definitivamente el borrado dentro del pop-up
   async confirmarEliminarObjeto() {
     if (!this.objetoParaBorrar || !this.objetoParaBorrar.id) {
       this.cerrarConfirmarBorrado();
@@ -161,7 +180,7 @@ export class Maleta implements OnInit {
     }
 
     const idBorrar = this.objetoParaBorrar.id;
-    this.cerrarConfirmarBorrado(); // Cierra visualmente el pop-up de inmediato
+    this.cerrarConfirmarBorrado();
 
     const { error } = await supabase
       .from('maleta')
@@ -182,14 +201,13 @@ export class Maleta implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Intercepta el clic de editar deteniendo el burbujeo de forma interna
   editarObjeto(objeto: ItemMaleta, event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
     this.nuevoObjeto = { ...objeto };
     this.mostrarModal = true;
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
   }
 
   async toggleObjeto(objeto: ItemMaleta) {
@@ -198,7 +216,7 @@ export class Maleta implements OnInit {
     }
 
     objeto.preparado = !objeto.preparado;
-    this.cdr.detectChanges(); 
+    this.cdr.detectChanges();
 
     const { error } = await supabase
       .from('maleta')
@@ -218,7 +236,7 @@ export class Maleta implements OnInit {
   }
 
   obtenerObjetosPorCategoria(categoria: string) {
-    return this.objetos
+    return this.objetosActivos
       .filter(
         (objeto) =>
           objeto.categoria.trim().toLowerCase() === categoria.trim().toLowerCase()
@@ -232,11 +250,26 @@ export class Maleta implements OnInit {
   }
 
   get porcentajeCompletado(): number {
-    if (this.objetos.length === 0) {
+    const lista = this.objetosActivos;
+    if (lista.length === 0) {
       return 0;
     }
 
-    const completados = this.objetos.filter((objeto) => objeto.preparado).length;
-    return Math.round((completados / this.objetos.length) * 100);
+    const completados = lista.filter((objeto) => objeto.preparado).length;
+    return Math.round((completados / lista.length) * 100);
   }
+
+  porcentajePorPersona(persona: 'sonia' | 'irene'): number {
+    const lista = this.objetos.filter(
+      (objeto) => (objeto.persona || 'sonia') === persona
+    );
+    if (lista.length === 0) return 0;
+    const completados = lista.filter((objeto) => objeto.preparado).length;
+    return Math.round((completados / lista.length) * 100);
+  }
+
+  get totalPreparadosActivos(): number {
+    return this.objetosActivos.filter((o) => o.preparado).length;
+  }
+
 }
