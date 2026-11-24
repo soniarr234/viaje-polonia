@@ -916,7 +916,6 @@
 }
 ::ng-deep .descripcion-enriquecida .subtitulo-lugar {
   display: block;
-  margin-top: 14px;
   margin-bottom: 4px;
   color: #38bdf8 !important;
   font-size: 14.5px;
@@ -1074,9 +1073,6 @@
 .gastro-content-abierto {
   padding: 0 14px 14px 14px;
   border-top: none;
-}
-.gastro-content-abierto .subtitulo-lugar {
-  margin-top: 2px;
 }
 /* =====================================================
    FORMULARIOS DENTRO DE CIUDAD
