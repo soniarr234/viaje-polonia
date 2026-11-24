@@ -951,7 +951,7 @@
   border: 1px solid rgba(56, 189, 248, 0.12);
   border-radius: 14px;
   overflow: hidden; /* Para que la imagen respete los bordes redondeados */
-  margin-bottom: 12px;
+  margin-bottom: 18px;
   transition: all 0.25s ease;
 }
 .timeline-header {
