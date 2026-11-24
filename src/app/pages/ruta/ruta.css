@@ -850,7 +850,7 @@
   box-sizing: border-box;
   width: min(100%, 1000px);
   max-width: 1000px;
-  padding: 18px;
+  padding: 18px 12px;
   margin: 15px auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
@@ -909,7 +909,6 @@
   font-size: 13.5px;
   line-height: 1.6;
   color: #cbd5e1;
-  margin-top: 15px;
 }
 ::ng-deep .descripcion-enriquecida strong {
   color: #f8fafc !important;
@@ -1060,7 +1059,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin: 14px 0;
   padding: 0px 18px;
 }
 .subtitulo-gastronomia {
@@ -1072,6 +1070,13 @@
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.4px;
+}
+.gastro-content-abierto {
+  padding: 0 14px 14px 14px;
+  border-top: none;
+}
+.gastro-content-abierto .subtitulo-lugar {
+  margin-top: 2px;
 }
 /* =====================================================
    FORMULARIOS DENTRO DE CIUDAD

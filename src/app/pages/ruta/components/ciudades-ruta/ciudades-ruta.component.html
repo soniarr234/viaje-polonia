@@ -411,7 +411,7 @@
                 
                 }  
           
-                <div class="timeline-header" (click)="toggleItem('gastro-' + gastro.id)">
+                <div class="timeline-header">
           
                   <div class="div-drag">
 
@@ -450,9 +450,9 @@
           
                 </div>
           
-                @if (itemAbierto === 'gastro-' + gastro.id) {
+                @if (gastro.descripcion) {
           
-                  <div class="timeline-content">
+                  <div class="timeline-content gastro-content-abierto">
           
                     <div
                       class="descripcion-enriquecida"
